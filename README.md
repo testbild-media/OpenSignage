@@ -159,7 +159,7 @@ Step by step, manual installation, certificates and hardware notes:
 | | |
 | --- | --- |
 | **Server** | Debian 12/13, Ubuntu 22.04+ or Raspberry Pi OS (64-bit); amd64 or arm64 |
-| **Players** | Raspberry Pi 4 (Raspberry Pi OS 64-bit Lite); x86 PCs with Intel graphics (Debian, Ubuntu), up to 4K |
+| **Players** | **Recommended:** small x86 PCs with Intel graphics (Debian, Ubuntu), up to 4K. **Minimum:** Raspberry Pi 4 (Raspberry Pi OS 64-bit Lite) |
 | **Operator view** | any current browser on phones, tablets and computers |
 
 Raspberry Pi 3 and 2 are **not supported**: their hardware video decoder fails about every

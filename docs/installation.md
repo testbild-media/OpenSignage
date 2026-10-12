@@ -152,8 +152,8 @@ the internet, through a VPN or directly.
 
 | Player | Status |
 | --- | --- |
-| Raspberry Pi 4 Model B (Raspberry Pi OS 64-bit Lite) | **supported** – hardware video decoding (V4L2) |
-| x86 PC with Intel graphics (tested: Intel Core i3-6100U, HD Graphics 520) | **supported** – hardware video decoding (VA-API), up to 4K |
+| Raspberry Pi 4 Model B (Raspberry Pi OS 64-bit Lite) | **supported, minimum** – hardware video decoding (V4L2) |
+| x86 PC with Intel graphics (tested: Intel Core i3-6100U, HD Graphics 520) | **supported, recommended** – hardware video decoding (VA-API), up to 4K |
 | x86 virtual machine | works – rendering in software |
 | Raspberry Pi 3 Model B (and 2) | **not supported** – see below; it may work with simple content |
 
