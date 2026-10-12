@@ -1,0 +1,19 @@
+{
+  "cancel": "Förkasta förberedd återställning",
+  "database": "Endast databas",
+  "download": "Skapa säkerhetskopia",
+  "downloadText": "Nedladdningen sker medan systemet är i drift. Den fullständiga säkerhetskopian innehåller databasen, all media, teckensnitt och servernycklarna (spelarna förblir parade efter en återställning). Förvara den säkert.",
+  "full": "Fullständig säkerhetskopia",
+  "media": "All media som ZIP",
+  "pending": "Återställning förberedd",
+  "pendingText": "Den kontrollerade säkerhetskopian tillämpas när servern startas om.",
+  "restart": "Starta om servern",
+  "restartConfirm": "Starta om servern nu? Webbgränssnittet är inte tillgängligt under några sekunder; skärmarna fortsätter att spela.",
+  "restarting": "Servern startar om…",
+  "restore": "Återställ",
+  "restoreConfirm": "Förbered återställning från ”{name}”? Inget ändras förrän vid omstarten.",
+  "restoreText": "Ladda upp en fullständig säkerhetskopia (.tar) eller en databaskopia (.db). Filen kontrolleras först och tillämpas vid en kontrollerad omstart. Det aktuella tillståndet sparas med en tidsstämpel.",
+  "restoreUpload": "Kontrollera och förbered",
+  "staged": "Säkerhetskopian har kontrollerats och är klar. Starta om servern för att tillämpa den.",
+  "title": "Säkerhetskopiering"
+}

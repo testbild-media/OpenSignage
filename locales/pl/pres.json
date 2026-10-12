@@ -1,0 +1,14 @@
+{
+  "create": "Utwórz",
+  "delete": "Usuń prezentację",
+  "deleteConfirm": "Usunąć „{name}”? Nie jest to możliwe, dopóki używa jej jakaś playlista.",
+  "deleted": "Prezentacja usunięta.",
+  "empty": "Brak prezentacji. Utwórz pierwszą.",
+  "new": "Nowa prezentacja",
+  "noTemplate": "Pusta prezentacja",
+  "published": "Opublikowano",
+  "saveTemplate": "Zapisz jako szablon",
+  "slides": "Slajdy: {count}",
+  "template": "Szablon",
+  "templateSaved": "Szablon zapisany."
+}

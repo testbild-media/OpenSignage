@@ -1,0 +1,14 @@
+{
+  "create": "Create",
+  "delete": "Delete presentation",
+  "deleteConfirm": "Delete “{name}”? This is refused while a playlist uses it.",
+  "deleted": "Presentation deleted.",
+  "empty": "No presentations yet. Create the first one.",
+  "new": "New presentation",
+  "noTemplate": "Empty presentation",
+  "published": "Published",
+  "saveTemplate": "Save as template",
+  "slides": "Slides: {count}",
+  "template": "Template",
+  "templateSaved": "Template saved."
+}

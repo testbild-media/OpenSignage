@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Žiniatinklio sąsaja",
+  "notice.certificate": "Serverio sertifikatas pasikeitė. Dėl saugumo ryšys atmestas. Patikrinkite serverį šio įrenginio žiniatinklio sąsajoje.",
+  "notice.version": "Versija neatitinka serverio – atnaujinkite administravime.",
+  "pairing.hint": "Administravime atidarykite Įrenginiai ir perimkite šį ekraną šiuo PIN kodu.",
+  "pairing.server": "Serverio raktas {fingerprint}",
+  "pairing.title": "Susieti šį ekraną",
+  "pin": "PIN",
+  "searching.hint": "Jei serveris nerandamas automatiškai, nurodykite jo adresą šio įrenginio žiniatinklio sąsajoje:",
+  "searching.title": "Ieškoma OpenSignage serverio …",
+  "standby.hint": "Administravime priskirkite šį ekraną zonai.",
+  "standby.title": "Zona nepriskirta",
+  "updating": "Diegiamas naujinimas …"
+}

@@ -1,0 +1,154 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  cursor: none;
+  user-select: none;
+  font-family: 'Montserrat', 'Noto Sans', sans-serif;
+}
+#stage {
+  position: fixed;
+  inset: 0;
+}
+.hidden {
+  display: none !important;
+}
+#zone-ticker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  overflow: hidden;
+}
+#black {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 20;
+}
+/* Full-screen system screens (PIN, searching, standby, updating) in brand design. */
+#screen {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #201c18;
+  color: #f2ede6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+  text-align: center;
+  padding: 4vh 6vw;
+  box-sizing: border-box;
+}
+#screen .logo {
+  height: 9vh;
+}
+#screen h1 {
+  font-size: 4.2vh;
+  font-weight: 600;
+  margin: 0;
+}
+#screen p {
+  font-size: 2.6vh;
+  color: #a99e90;
+  margin: 0;
+  max-width: 70vw;
+  line-height: 1.4;
+}
+#screen .pin {
+  display: flex;
+  gap: 1.6vh;
+}
+#screen .pin span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 9vh;
+  height: 12vh;
+  border: 0.4vh solid #ff8a00;
+  border-radius: 1.6vh;
+  color: #ff8a00;
+  font-size: 8vh;
+  font-weight: 700;
+  background: #2a251f;
+}
+#screen .addr {
+  font-size: 2.6vh;
+  color: #f2ede6;
+  line-height: 1.6;
+}
+#screen .addr b {
+  color: #ff9f40;
+  font-weight: 600;
+}
+#screen .fp {
+  font-size: 2vh;
+  color: #746b60;
+}
+#screen .warn {
+  color: #d99a1f;
+}
+#screen .spinner {
+  width: 5vh;
+  height: 5vh;
+  border-radius: 50%;
+  border: 0.6vh solid #453e35;
+  border-top-color: #ff8a00;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Discreet overlays: never full-screen, readable from a distance, no blinking. */
+#ip {
+  position: fixed;
+  right: 2vh;
+  bottom: 2vh;
+  z-index: 40;
+  background: rgba(32, 28, 24, 0.88);
+  color: #f2ede6;
+  border: 0.15vh solid #453e35;
+  border-left: 0.5vh solid #ff8a00;
+  border-radius: 1vh;
+  padding: 1.2vh 1.8vh;
+  font-size: 2.1vh;
+  line-height: 1.5;
+}
+#ip b {
+  color: #ff9f40;
+  font-weight: 600;
+}
+#notice {
+  position: fixed;
+  left: 2vh;
+  bottom: 2vh;
+  z-index: 40;
+  max-width: 55vw;
+  background: rgba(32, 28, 24, 0.9);
+  color: #f2ede6;
+  border-left: 0.5vh solid #d99a1f;
+  border-radius: 1vh;
+  padding: 1.2vh 1.8vh;
+  font-size: 2vh;
+  line-height: 1.4;
+}
+/* Plasma regeneration: white noise above everything else. */
+#noise {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #808080;
+}
+#noise canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated; /* the 2D fallback draws at half resolution */
+}

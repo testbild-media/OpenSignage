@@ -1,0 +1,19 @@
+{
+  "cancel": "Atmesti parengtą atkūrimą",
+  "database": "Tik duomenų bazė",
+  "download": "Sukurti atsarginę kopiją",
+  "downloadText": "Atsisiųsti galima sistemai veikiant. Visoje atsarginėje kopijoje yra duomenų bazė, visa medija, šriftai ir serverio raktai (atkūrus grotuvai lieka susieti). Laikykite ją saugioje vietoje.",
+  "full": "Visa atsarginė kopija",
+  "media": "Visa medija ZIP formatu",
+  "pending": "Atkūrimas parengtas",
+  "pendingText": "Patikrinta atsarginė kopija pritaikoma paleidus serverį iš naujo.",
+  "restart": "Paleisti serverį iš naujo",
+  "restartConfirm": "Paleisti serverį iš naujo dabar? Žiniatinklio sąsaja kelias sekundes bus nepasiekiama; ekranai toliau rodo turinį.",
+  "restarting": "Serveris paleidžiamas iš naujo …",
+  "restore": "Atkūrimas",
+  "restoreConfirm": "Parengti atkūrimą iš „{name}“? Iki paleidimo iš naujo niekas nepasikeis.",
+  "restoreText": "Įkelkite visą atsarginę kopiją (.tar) arba duomenų bazės atsarginę kopiją (.db). Pirmiausia failas patikrinamas, tada pritaikomas valdomai paleidžiant iš naujo. Dabartinė būsena išsaugoma su laiko žyma.",
+  "restoreUpload": "Patikrinti ir parengti",
+  "staged": "Atsarginė kopija patikrinta ir parengta. Kad ją pritaikytumėte, paleiskite serverį iš naujo.",
+  "title": "Atsarginė kopija"
+}

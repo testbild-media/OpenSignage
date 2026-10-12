@@ -1,0 +1,19 @@
+{
+  "cancel": "Descartar o restauro preparado",
+  "database": "Apenas base de dados",
+  "download": "Criar cópia de segurança",
+  "downloadText": "A transferência é feita com o sistema em funcionamento. A cópia de segurança completa contém a base de dados, todos os ficheiros multimédia, os tipos de letra e as chaves do servidor (os reprodutores continuam emparelhados após um restauro). Guarde-a num local seguro.",
+  "full": "Cópia de segurança completa",
+  "media": "Todos os ficheiros multimédia em ZIP",
+  "pending": "Restauro preparado",
+  "pendingText": "A cópia de segurança verificada é aplicada quando o servidor reiniciar.",
+  "restart": "Reiniciar o servidor",
+  "restartConfirm": "Reiniciar o servidor agora? A interface web fica indisponível durante alguns segundos; os ecrãs continuam a reproduzir.",
+  "restarting": "O servidor está a reiniciar…",
+  "restore": "Restaurar",
+  "restoreConfirm": "Preparar o restauro a partir de «{name}»? Nada muda até ao reinício.",
+  "restoreText": "Carregue uma cópia de segurança completa (.tar) ou uma cópia da base de dados (.db). O ficheiro é verificado primeiro e aplicado num reinício controlado. O estado atual é mantido com um carimbo de data/hora.",
+  "restoreUpload": "Verificar e preparar",
+  "staged": "A cópia de segurança foi verificada e está pronta. Reinicie o servidor para a aplicar.",
+  "title": "Cópia de segurança"
+}

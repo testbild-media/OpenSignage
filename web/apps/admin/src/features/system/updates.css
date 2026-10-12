@@ -1,0 +1,118 @@
+/* Updates page (features/system/Updates.tsx). */
+.upd-progress {
+  margin: 10px 0;
+}
+.upd-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+.upd-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--os-surface-2);
+  border: 1px solid var(--os-border);
+  overflow: hidden;
+}
+.upd-bar > div {
+  height: 100%;
+  background: var(--os-primary);
+  transition: width 0.3s ease;
+}
+.upd-bar-indeterminate > div {
+  width: 30%;
+  animation: upd-slide 1.4s ease-in-out infinite;
+}
+@keyframes upd-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+.upd-release {
+  border-top: 1px solid var(--os-border);
+  padding: 14px 0 4px;
+}
+.upd-release:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.upd-release-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.upd-release-version {
+  font-size: 15px;
+  font-weight: 600;
+}
+.upd-notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  color: var(--os-text-muted);
+  background: var(--os-surface-2);
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius-s);
+  padding: 10px 12px;
+  margin: 8px 0;
+  max-height: 240px;
+  overflow: auto;
+}
+.upd-actions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.upd-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-top: 1px solid var(--os-border);
+  padding-top: 14px;
+  margin-top: 6px;
+}
+.upd-run {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.upd-table-wrap {
+  overflow-x: auto;
+}
+.upd-small {
+  font-size: 12px;
+}
+.upd-keys {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+.upd-keys li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--os-border);
+}
+.upd-key {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.upd-notice {
+  border-color: var(--os-primary-soft);
+}
+.upd-alert {
+  border-color: var(--os-danger);
+}
+.upd-confirm p {
+  margin-top: 0;
+}

@@ -1,0 +1,19 @@
+{
+  "cancel": "Kassér forberedt gendannelse",
+  "database": "Kun database",
+  "download": "Opret sikkerhedskopi",
+  "downloadText": "Downloaden kører, mens systemet fortsat er i drift. Den fulde sikkerhedskopi indeholder databasen, alle medier, skrifttyper og serverens nøgler (afspillere forbliver parret efter en gendannelse). Opbevar den sikkert.",
+  "full": "Fuld sikkerhedskopi",
+  "media": "Alle medier som ZIP",
+  "pending": "Gendannelse forberedt",
+  "pendingText": "Den kontrollerede sikkerhedskopi anvendes, når serveren genstarter.",
+  "restart": "Genstart server",
+  "restartConfirm": "Vil du genstarte serveren nu? Webgrænsefladen er utilgængelig i nogle sekunder; skærmene fortsætter afspilningen.",
+  "restarting": "Serveren genstarter…",
+  "restore": "Gendan",
+  "restoreConfirm": "Vil du forberede gendannelse fra »{name}«? Intet ændres før genstarten.",
+  "restoreText": "Upload en fuld sikkerhedskopi (.tar) eller en databasesikkerhedskopi (.db). Filen kontrolleres først og anvendes ved en kontrolleret genstart. Den aktuelle tilstand bevares med et tidsstempel.",
+  "restoreUpload": "Kontrollér og forbered",
+  "staged": "Sikkerhedskopien er kontrolleret og klar. Genstart for at anvende den.",
+  "title": "Sikkerhedskopi"
+}

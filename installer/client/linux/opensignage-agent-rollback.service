@@ -1,0 +1,17 @@
+[Unit]
+Description=OpenSignage agent rollback after repeated start failures
+Documentation=https://github.com/testbild-media/OpenSignage
+# Triggered only by OnFailure= of opensignage-agent.service (no [Install] section).
+
+[Service]
+Type=oneshot
+User=opensignage
+Group=opensignage
+Environment=HOME=/var/lib/opensignage-agent
+WorkingDirectory=/var/lib/opensignage-agent
+# Runs the PREVIOUS agent binary unprivileged; it only switches the user-owned symlink.
+# The script then waits 20 s, so two broken releases never restart in a tight loop.
+ExecStart=/usr/lib/opensignage-agent/rollback.sh
+# Only these root-owned systemctl calls run privileged ("+"), also after a failure.
+ExecStopPost=+/usr/bin/systemctl reset-failed opensignage-agent.service
+ExecStopPost=+/usr/bin/systemctl start --no-block opensignage-agent.service

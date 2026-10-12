@@ -1,0 +1,19 @@
+{
+  "cancel": "Odbaci pripremljeno vraćanje",
+  "database": "Samo baza podataka",
+  "download": "Izradi sigurnosnu kopiju",
+  "downloadText": "Preuzimanje je moguće dok sustav radi. Potpuna sigurnosna kopija sadrži bazu podataka, sve medije, fontove i ključeve poslužitelja (reproduktori ostaju upareni nakon vraćanja). Čuvajte je na sigurnom.",
+  "full": "Potpuna sigurnosna kopija",
+  "media": "Svi mediji kao ZIP",
+  "pending": "Vraćanje pripremljeno",
+  "pendingText": "Provjerena sigurnosna kopija primjenjuje se pri ponovnom pokretanju poslužitelja.",
+  "restart": "Ponovno pokreni poslužitelj",
+  "restartConfirm": "Ponovno pokrenuti poslužitelj sada? Web-sučelje nekoliko sekundi neće biti dostupno; zasloni nastavljaju reprodukciju.",
+  "restarting": "Poslužitelj se ponovno pokreće …",
+  "restore": "Vraćanje",
+  "restoreConfirm": "Pripremiti vraćanje iz „{name}”? Do ponovnog pokretanja ništa se ne mijenja.",
+  "restoreText": "Prenesite potpunu sigurnosnu kopiju (.tar) ili sigurnosnu kopiju baze podataka (.db). Datoteka se najprije provjerava, a zatim primjenjuje kontroliranim ponovnim pokretanjem. Trenutačno stanje čuva se s vremenskom oznakom.",
+  "restoreUpload": "Provjeri i pripremi",
+  "staged": "Sigurnosna kopija je provjerena i spremna. Ponovno pokrenite poslužitelj da biste je primijenili.",
+  "title": "Sigurnosna kopija"
+}

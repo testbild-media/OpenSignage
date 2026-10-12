@@ -1,0 +1,19 @@
+{
+  "cancel": "Renunță la restaurarea pregătită",
+  "database": "Doar baza de date",
+  "download": "Creează o copie de rezervă",
+  "downloadText": "Descărcarea are loc în timp ce sistemul funcționează. Copia de rezervă completă conține baza de date, toate fișierele media, fonturile și cheile serverului (playerele rămân asociate după restaurare). Păstrați-o în siguranță.",
+  "full": "Copie de rezervă completă",
+  "media": "Toate fișierele media ca ZIP",
+  "pending": "Restaurare pregătită",
+  "pendingText": "Copia de rezervă verificată se aplică la repornirea serverului.",
+  "restart": "Repornește serverul",
+  "restartConfirm": "Reporniți serverul acum? Interfața web nu este disponibilă câteva secunde; ecranele continuă redarea.",
+  "restarting": "Serverul se repornește…",
+  "restore": "Restaurează",
+  "restoreConfirm": "Pregătiți restaurarea din „{name}”? Până la repornire nu se schimbă nimic.",
+  "restoreText": "Încărcați o copie de rezervă completă (.tar) sau o copie a bazei de date (.db). Fișierul este verificat mai întâi și aplicat printr-o repornire controlată. Starea actuală este păstrată cu marcaj de timp.",
+  "restoreUpload": "Verifică și pregătește",
+  "staged": "Copia de rezervă a fost verificată și este pregătită. Reporniți serverul pentru a o aplica.",
+  "title": "Copie de rezervă"
+}

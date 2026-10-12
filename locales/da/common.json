@@ -1,0 +1,16 @@
+{
+  "action.back": "Tilbage",
+  "action.cancel": "Annuller",
+  "action.close": "Luk",
+  "action.confirm": "Bekræft",
+  "action.delete": "Slet",
+  "action.edit": "Rediger",
+  "action.retry": "Prøv igen",
+  "action.save": "Gem",
+  "app.name": "OpenSignage",
+  "state.error": "Noget gik galt.",
+  "state.loading": "Indlæser…",
+  "state.offline": "Ingen forbindelse til serveren. Visningen er muligvis forældet.",
+  "state.saving": "Gemmer…",
+  "update.reloaded": "Serveren er opdateret til version {version}. Log venligst ind igen."
+}

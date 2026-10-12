@@ -1,0 +1,131 @@
+/* Devices: monitoring, remote action states, alerts. */
+.state-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.state-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.state-line svg {
+  flex: none;
+}
+.state-line.muted {
+  color: var(--os-text-muted);
+}
+.state-line.ok {
+  color: #6fd39a;
+}
+.state-line.warn {
+  color: #f0c060;
+}
+.state-line.bad {
+  color: #ff8c8c;
+}
+.state-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.state-group .state-label {
+  font-size: 13px;
+  margin-top: 6px;
+  color: var(--os-text-muted);
+}
+.problem-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  vertical-align: middle;
+}
+.align-block {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.align-block p {
+  margin: 0;
+}
+.dev-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--os-radius-m);
+  border: 1px solid var(--os-border);
+  margin-bottom: 12px;
+}
+.dev-banner svg {
+  flex: none;
+  margin-top: 2px;
+}
+.dev-banner.warning {
+  border-color: var(--os-warning);
+  background: rgba(217, 154, 31, 0.12);
+  color: #f0c060;
+}
+.dev-banner.danger {
+  border-color: var(--os-danger);
+  background: rgba(214, 69, 69, 0.12);
+  color: #ff8c8c;
+}
+.alert-problem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sev-critical {
+  color: #ff8c8c;
+}
+.sev-warning {
+  color: #f0c060;
+}
+.alert-table tr.alert-cont td {
+  border-top: 0;
+}
+.alert-table td.alert-ack {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
+}
+.alert-table td.alert-ack .btn {
+  padding: 2px 8px;
+  font-size: 13px;
+}
+.mode-custom {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dash-alerts {
+  margin-bottom: 20px;
+}
+a.kpi {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+a.kpi:hover {
+  border-color: var(--os-primary);
+}
+
+/* Display group and place of the screen. */
+.device-place {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 480px) {
+  .device-place {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

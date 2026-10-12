@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interfaccia web",
+  "notice.certificate": "Il certificato del server è cambiato. Per sicurezza la connessione è stata rifiutata. Controlla il server nell’interfaccia web di questo dispositivo.",
+  "notice.version": "La versione non corrisponde al server: aggiorna nell’amministrazione.",
+  "pairing.hint": "Nell’amministrazione apri Dispositivi e acquisisci questo schermo con questo PIN.",
+  "pairing.server": "Chiave del server {fingerprint}",
+  "pairing.title": "Associa questo schermo",
+  "pin": "PIN",
+  "searching.hint": "Se il server non viene trovato automaticamente, imposta il suo indirizzo nell’interfaccia web di questo dispositivo:",
+  "searching.title": "Ricerca del server OpenSignage …",
+  "standby.hint": "Assegna questo schermo a una zona nell’amministrazione.",
+  "standby.title": "Nessuna zona assegnata",
+  "updating": "Installazione dell’aggiornamento …"
+}

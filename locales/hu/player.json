@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Webes felület",
+  "notice.certificate": "A szerver tanúsítványa megváltozott. A kapcsolatot biztonsági okból elutasítottuk. Ellenőrizze a szervert az eszköz webes felületén.",
+  "notice.version": "A verzió nem egyezik a szerverrel – frissítsen az adminisztrációban.",
+  "pairing.hint": "Az adminisztrációban nyissa meg az Eszközöket, és vegye át ezt a képernyőt ezzel a PIN-kóddal.",
+  "pairing.server": "Szerverkulcs {fingerprint}",
+  "pairing.title": "Képernyő párosítása",
+  "pin": "PIN",
+  "searching.hint": "Ha a szerver nem található automatikusan, adja meg a címét az eszköz webes felületén:",
+  "searching.title": "OpenSignage szerver keresése …",
+  "standby.hint": "Rendelje hozzá ezt a képernyőt egy zónához az adminisztrációban.",
+  "standby.title": "Nincs hozzárendelt zóna",
+  "updating": "Frissítés telepítése …"
+}

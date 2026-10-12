@@ -1,0 +1,19 @@
+{
+  "cancel": "Descartar la restauración preparada",
+  "database": "Solo base de datos",
+  "download": "Crear copia de seguridad",
+  "downloadText": "La descarga se realiza sin detener el sistema. La copia de seguridad completa contiene la base de datos, todos los medios, las fuentes y las claves del servidor (los reproductores siguen vinculados tras una restauración). Guárdela en un lugar seguro.",
+  "full": "Copia de seguridad completa",
+  "media": "Todos los medios en ZIP",
+  "pending": "Restauración preparada",
+  "pendingText": "La copia de seguridad comprobada se aplica al reiniciar el servidor.",
+  "restart": "Reiniciar servidor",
+  "restartConfirm": "¿Reiniciar el servidor ahora? La interfaz web no estará disponible durante unos segundos; las pantallas siguen reproduciendo.",
+  "restarting": "El servidor se está reiniciando…",
+  "restore": "Restaurar",
+  "restoreConfirm": "¿Preparar la restauración desde «{name}»? No cambia nada hasta el reinicio.",
+  "restoreText": "Suba una copia de seguridad completa (.tar) o una copia de la base de datos (.db). Primero se comprueba el archivo y después se aplica con un reinicio controlado. El estado actual se conserva con una marca de tiempo.",
+  "restoreUpload": "Comprobar y preparar",
+  "staged": "La copia de seguridad se ha comprobado y está lista. Reinicie para aplicarla.",
+  "title": "Copia de seguridad"
+}

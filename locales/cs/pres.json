@@ -1,0 +1,14 @@
+{
+  "create": "Vytvořit",
+  "delete": "Smazat prezentaci",
+  "deleteConfirm": "Smazat „{name}“? Dokud prezentaci používá nějaký playlist, nelze ji smazat.",
+  "deleted": "Prezentace byla smazána.",
+  "empty": "Zatím žádné prezentace. Vytvořte první.",
+  "new": "Nová prezentace",
+  "noTemplate": "Prázdná prezentace",
+  "published": "Publikováno",
+  "saveTemplate": "Uložit jako šablonu",
+  "slides": "Snímky: {count}",
+  "template": "Šablona",
+  "templateSaved": "Šablona byla uložena."
+}

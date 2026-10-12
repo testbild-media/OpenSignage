@@ -1,0 +1,19 @@
+{
+  "cancel": "Odrzuć przygotowane przywracanie",
+  "database": "Tylko baza danych",
+  "download": "Utwórz kopię zapasową",
+  "downloadText": "Pobieranie odbywa się bez przerywania pracy systemu. Pełna kopia zapasowa zawiera bazę danych, wszystkie media, czcionki i klucze serwera (odtwarzacze pozostają sparowane po przywróceniu). Przechowuj ją w bezpiecznym miejscu.",
+  "full": "Pełna kopia zapasowa",
+  "media": "Wszystkie media jako ZIP",
+  "pending": "Przywracanie przygotowane",
+  "pendingText": "Sprawdzona kopia zapasowa zostanie wczytana przy ponownym uruchomieniu serwera.",
+  "restart": "Uruchom ponownie serwer",
+  "restartConfirm": "Uruchomić teraz ponownie serwer? Interfejs WWW będzie niedostępny przez kilka sekund; ekrany nadal odtwarzają treści.",
+  "restarting": "Serwer uruchamia się ponownie…",
+  "restore": "Przywróć",
+  "restoreConfirm": "Przygotować przywracanie z „{name}”? Do ponownego uruchomienia nic się nie zmieni.",
+  "restoreText": "Prześlij pełną kopię zapasową (.tar) lub kopię bazy danych (.db). Plik zostanie najpierw sprawdzony, a następnie wczytany podczas kontrolowanego ponownego uruchomienia. Bieżący stan zostanie zachowany ze znacznikiem czasu.",
+  "restoreUpload": "Sprawdź i przygotuj",
+  "staged": "Kopia zapasowa została sprawdzona i jest gotowa. Uruchom ponownie serwer, aby ją zastosować.",
+  "title": "Kopia zapasowa"
+}

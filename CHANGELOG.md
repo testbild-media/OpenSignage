@@ -1,0 +1,141 @@
+# Changelog
+
+All notable changes to OpenSignage are documented in this file. The format is based on
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
+[Semantic Versioning](https://semver.org/).
+
+## 1.0.0-rc.1 – 2026-10-12
+
+The first public release of OpenSignage, self-hosted digital signage for bars, restaurants
+and events (local server, Raspberry Pi and x86 players, no cloud). Everything below is new.
+
+### Server & administration
+- One server for Linux amd64/arm64 (Debian 12/13, Ubuntu 22.04+, Raspberry Pi OS 64-bit),
+  running as a systemd service under its own unprivileged user.
+- Admin WebGUI always on ports 80/443; HTTP redirects to HTTPS. HTTPS works without a
+  domain: each server has its own local certificate authority (download at `/ca.crt`,
+  trusted once per tablet or computer, still valid after an IP change), or you upload your
+  own certificate. Players use a separate pinned identity, so a new WebGUI certificate never
+  locks them out.
+- Setup wizard on first visit (no default login) or headless setup with `--admin`. Users have
+  the roles administrator, operator or user (users see only their zones). The last
+  administrator is protected, repeated failed logins lock the login for a while, and the
+  audit log records every change.
+- Backup and restore (database, media ZIP or full backup; validated, with a controlled
+  restart). Storage dashboard, unused media and a trash that can empty itself; uploads that
+  would fill the disk are refused before they start.
+- Problems page (offline, version differs, sync failed, low disk, under-voltage, GPU lost
+  and more), shown in the sidebar and on the dashboard. You can acknowledge a problem; it is
+  shown again when it goes away and comes back.
+- Device defaults: one central password for all player WebGUIs, a scaling mode for new
+  devices, and an option to bring devices with a different version up to date automatically.
+
+### Editor & content
+- Presentation editor in the browser, like Impress/PowerPoint: free design resolution, rich
+  text, shapes, images, videos, audio, product lists, single products, clock and ticker.
+  Backgrounds can be a colour, gradient, image or video. Transitions are cut, fade, slide and
+  zoom; pinned elements stay in place during a transition.
+- Undo/redo, copy/paste, grouping, alignment, snapping, context menus, rulers and guides; a
+  one-row toolbar with panel tabs (Presentation · Slide · Element · Layers).
+- Autosave never changes the screens: you publish or discard a draft. A version history
+  lets you restore an earlier version into the draft.
+- The editor and the player use the same rendering engine: the screen shows exactly what
+  the editor shows. A 1280×720 design stays sharp on a 1920×1080 screen.
+- Media manager for images, videos and audio, with folders and resumable uploads; replacing
+  a file keeps its ID. Videos are converted to H.264: a 1080p variant at the source frame
+  rate (up to 60 fps) for x86 players, for 50/60 fps videos a 1080p variant at half the frame
+  rate for the Raspberry Pi 4, and a 720p proxy at 25/30 fps for weak players.
+- 42 bundled font families (offline), plus your own uploaded fonts in the editor and on
+  every player. Font lists are sorted by name; the fonts page shows where each font is
+  used.
+- Products with categories and subcategories, type, quantity, description and price, and a
+  duplicate function. A brand logo can replace the name: its letters are as high as the
+  font's letters and sit on the baseline. Each product has its own logo size.
+
+### Playlists & time schedules
+- Playlists of presentations, single slides, images and videos. Each entry plays for a set
+  time or a set number of repeats. Drag and drop, search across media, draft and publish.
+- Time schedules: zone and global windows by weekday and time (they may cross midnight),
+  plus a default rule per zone. They switch playlists, prices and tickers in the configured
+  time zone, daylight saving time included.
+- Every player evaluates the schedules itself, so switches happen on time even when the
+  server is offline. Players use the server's clock, so a player without a real-time clock
+  (e.g. a Raspberry Pi) still switches on time.
+- Tickers come from schedule rules (e.g. happy hour prices with a ticker) or from a ticker
+  element; ticker templates set their look.
+- The "Now" view shows what is playing in each zone and display group.
+
+### Several screens in step
+- All screens of a zone switch slides at the same moment, with or without the server. A
+  screen that starts later joins mid-sequence, and its video jumps to the matching position.
+- Display groups with numbered places; playlists with up to 16 tracks (place n plays track
+  n), e.g. a menu across three screens. Rules change single things: the playlist for all
+  screens or one group, prices, or showing/hiding the ticker. Each group can have its own
+  playlist for CLOSED.
+- The players take the server's clock, measured every minute. Without the server, they
+  follow a time leader in the LAN (7445/udp, secured with the zone key).
+- Slide switches land within a few tens of milliseconds of the planned moment. A
+  frame-exact video across several screens (video wall) is not a goal.
+
+### Live operation
+- Operator view `/control` for desktop, tablet and phone. Operators switch products between
+  available and sold out and set the zone to OPEN or CLOSED. Every switch asks for
+  confirmation. CLOSED shows the zone's closed playlist.
+- All screens of the zone update in under a second: sold-out items are greyed out with a
+  red bar; unavailable items disappear without leaving a gap.
+- Only administrators can mark an item "not available", globally or per zone. Product
+  status is global and can be overridden per zone.
+- From the device page: blackout and remote actions (sync, reload the player, clean the
+  cache with a preview, screenshot, restart, reboot).
+
+### Players
+- Agent for Raspberry Pi OS (Lite included), Debian and Ubuntu. Chromium runs as a kiosk in
+  a minimal X session without a desktop; a cold start needs no login.
+- The installer asks for the player name and sets the host name to `osp-<name>`. The
+  administration suggests that name when you take the player over.
+- Finds the server in the LAN (7444/udp) within seconds and shows its PIN, IP addresses and
+  the server fingerprint. Across networks a server address or host name works – through a
+  VPN or directly over the internet, e.g. with the server in a data centre.
+- The display mode (resolution, refresh rate, rotation, custom modes, up to 4K) is set
+  remotely and survives restarts. Scaling: fit, fill or 1:1.
+- Player WebGUI on 8443 (status, server address, pair again, actions). The default password
+  `opensignage` must be changed at the first login.
+- Offline-safe: downloads are atomic, resumable and checksum-verified. Players keep playing
+  without the server or the internet and restart offline with their last content. The kiosk
+  browser opens no connections to the internet.
+- Hardware video decoding by default: V4L2 on the Raspberry Pi, VA-API with Vulkan on x86
+  (tested with Intel graphics). After repeated decode errors the player falls back to
+  software decoding.
+- Plasma protection (slight pixel shift) and plasma regeneration (white noise).
+- Supported: Raspberry Pi 4 and small x86 PCs with Intel graphics. Raspberry Pi 2/3 are not
+  supported: the installer warns, and the device page shows the board model and the known
+  issue.
+
+### Updates & installation
+- One-line installer for server and player (`curl` or `wget`). It downloads the newest
+  release for the machine (amd64, arm64, armv7) and checks the Ed25519 signature and the
+  checksum before it runs the package installer.
+- Packages contain ready-made binaries; the installers take the rest from the distribution
+  (ffmpeg on the server; X, Chromium, fonts and video drivers on the player). The player
+  uninstaller removes exactly what its installer added.
+- Settings → Updates: a daily check only shows new releases, and nothing installs until you
+  click. Releases come from GitHub or an uploaded offline bundle. The server and every player
+  check the release signature themselves.
+- Server updates back up the database first and roll back on their own if the self-test
+  fails or the new version does not start. The server then updates the players one per zone
+  at a time, with a health check and automatic rollback. Players that were offline get a
+  warning and can be brought up to date with one click.
+- After a server update, open admin and operator pages reload and ask for a new login.
+
+### Reliability & self-healing
+- A crashed browser restarts, a hanging video is skipped, a video with decode errors
+  reloads, and a memory watchdog restarts Chromium when it uses too much memory.
+- When Chromium loses the GPU, the player restarts (at most 3 times per hour), then raises
+  the alert "graphics acceleration lost". The device page shows what really renders.
+- Logs are bounded (rotating log files; the X server log does not grow). A misbehaving
+  device cannot affect the server or other devices.
+
+### Languages
+- 24 EU languages for the administration, the operator view, the player WebGUI and the
+  screens. Each user picks a language; the server language sets price and date formats on
+  the screens. Automated tests check every key in every language.

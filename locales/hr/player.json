@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Web-sučelje",
+  "notice.certificate": "Certifikat poslužitelja promijenio se. Veza je odbijena iz sigurnosnih razloga. Provjerite poslužitelj u web-sučelju ovog uređaja.",
+  "notice.version": "Verzija ne odgovara poslužitelju – ažurirajte u administraciji.",
+  "pairing.hint": "U administraciji otvorite Uređaje i preuzmite ovaj zaslon pomoću ovog PIN-a.",
+  "pairing.server": "Ključ poslužitelja {fingerprint}",
+  "pairing.title": "Upari ovaj zaslon",
+  "pin": "PIN",
+  "searching.hint": "Ako poslužitelj nije pronađen automatski, unesite njegovu adresu u web-sučelju ovog uređaja:",
+  "searching.title": "Traži se OpenSignage poslužitelj …",
+  "standby.hint": "Dodijelite ovaj zaslon zoni u administraciji.",
+  "standby.title": "Nije dodijeljena zona",
+  "updating": "Instalira se ažuriranje …"
+}

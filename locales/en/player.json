@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Web interface",
+  "notice.certificate": "The server certificate has changed. The connection was refused for safety. Check the server in this device’s web interface.",
+  "notice.version": "Version does not match the server – please update in the administration.",
+  "pairing.hint": "In the administration, open Devices and take over this screen with this PIN.",
+  "pairing.server": "Server key {fingerprint}",
+  "pairing.title": "Pair this screen",
+  "pin": "PIN",
+  "searching.hint": "If the server is not found automatically, set its address in this device’s web interface:",
+  "searching.title": "Looking for the OpenSignage server …",
+  "standby.hint": "Assign this screen to a zone in the administration.",
+  "standby.title": "No zone assigned",
+  "updating": "Installing update …"
+}

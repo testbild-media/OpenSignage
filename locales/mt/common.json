@@ -1,0 +1,16 @@
+{
+  "action.back": "Lura",
+  "action.cancel": "Ikkanċella",
+  "action.close": "Agħlaq",
+  "action.confirm": "Ikkonferma",
+  "action.delete": "Ħassar",
+  "action.edit": "Editja",
+  "action.retry": "Erġa’ pprova",
+  "action.save": "Issejvja",
+  "app.name": "OpenSignage",
+  "state.error": "Xi ħaġa marret ħażin.",
+  "state.loading": "Qed jitgħabba…",
+  "state.offline": "M’hemmx konnessjoni mas-server. Il-veduta tista’ ma tkunx aġġornata.",
+  "state.saving": "Qed jissejvja…",
+  "update.reloaded": "Is-server ġie aġġornat għall-verżjoni {version}. Jekk jogħġbok idħol mill-ġdid."
+}

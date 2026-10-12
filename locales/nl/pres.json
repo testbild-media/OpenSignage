@@ -1,0 +1,14 @@
+{
+  "create": "Aanmaken",
+  "delete": "Presentatie verwijderen",
+  "deleteConfirm": "“{name}” verwijderen? Dit wordt geweigerd zolang een afspeellijst de presentatie gebruikt.",
+  "deleted": "Presentatie verwijderd.",
+  "empty": "Nog geen presentaties. Maak de eerste aan.",
+  "new": "Nieuwe presentatie",
+  "noTemplate": "Lege presentatie",
+  "published": "Gepubliceerd",
+  "saveTemplate": "Opslaan als sjabloon",
+  "slides": "Dia’s: {count}",
+  "template": "Sjabloon",
+  "templateSaved": "Sjabloon opgeslagen."
+}

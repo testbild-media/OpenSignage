@@ -1,0 +1,19 @@
+{
+  "cancel": "Caith amach an t-athchóiriú ullmhaithe",
+  "database": "Bunachar sonraí amháin",
+  "download": "Cruthaigh cúltaca",
+  "downloadText": "Íoslódáil fad is a leanann an córas ag rith. Tá an bunachar sonraí, na meáin go léir, na clónna agus eochracha an fhreastalaí sa chúltaca iomlán (fanann na seinnteoirí péireáilte tar éis athchóirithe). Coinnigh slán é.",
+  "full": "Cúltaca iomlán",
+  "media": "Na meáin go léir mar ZIP",
+  "pending": "Athchóiriú ullmhaithe",
+  "pendingText": "Cuirtear an cúltaca seiceáilte i bhfeidhm nuair a atosaíonn an freastalaí.",
+  "restart": "Atosaigh an freastalaí",
+  "restartConfirm": "Atosaigh an freastalaí anois? Ní bheidh an comhéadan gréasáin ar fáil ar feadh cúpla soicind; leanann na scáileáin ag seinm.",
+  "restarting": "Tá an freastalaí ag atosú …",
+  "restore": "Athchóiriú",
+  "restoreConfirm": "Ullmhaigh an t-athchóiriú ó “{name}”? Ní athraíonn aon rud go dtí an t-atosú.",
+  "restoreText": "Uaslódáil cúltaca iomlán (.tar) nó cúltaca den bhunachar sonraí (.db). Seiceáiltear an comhad ar dtús; cuirtear i bhfeidhm é le hatosú rialaithe. Coinnítear an staid reatha le stampa ama.",
+  "restoreUpload": "Seiceáil agus ullmhaigh",
+  "staged": "Seiceáladh an cúltaca agus tá sé réidh. Atosaigh chun é a chur i bhfeidhm.",
+  "title": "Cúltaca"
+}

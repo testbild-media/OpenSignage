@@ -1,0 +1,19 @@
+{
+  "cancel": "Hylkää valmisteltu palautus",
+  "database": "Vain tietokanta",
+  "download": "Luo varmuuskopio",
+  "downloadText": "Lataus tapahtuu järjestelmän ollessa käynnissä. Täysi varmuuskopio sisältää tietokannan, kaiken median, fontit ja palvelimen avaimet (soittimien pari säilyy palautuksen jälkeen). Säilytä se turvallisessa paikassa.",
+  "full": "Täysi varmuuskopio",
+  "media": "Kaikki media ZIP-tiedostona",
+  "pending": "Palautus valmisteltu",
+  "pendingText": "Tarkistettu varmuuskopio otetaan käyttöön, kun palvelin käynnistetään uudelleen.",
+  "restart": "Käynnistä palvelin uudelleen",
+  "restartConfirm": "Käynnistetäänkö palvelin uudelleen nyt? Verkkoliittymä ei ole käytettävissä muutamaan sekuntiin; näytöt jatkavat toistoa.",
+  "restarting": "Palvelin käynnistyy uudelleen…",
+  "restore": "Palauta",
+  "restoreConfirm": "Valmistellaanko palautus tiedostosta ”{name}”? Mikään ei muutu ennen uudelleenkäynnistystä.",
+  "restoreText": "Lähetä täysi varmuuskopio (.tar) tai tietokannan varmuuskopio (.db). Tiedosto tarkistetaan ensin, ja se otetaan käyttöön hallitussa uudelleenkäynnistyksessä. Nykyinen tila säilytetään aikaleimalla.",
+  "restoreUpload": "Tarkista ja valmistele",
+  "staged": "Varmuuskopio on tarkistettu ja valmis. Ota se käyttöön käynnistämällä palvelin uudelleen.",
+  "title": "Varmuuskopio"
+}

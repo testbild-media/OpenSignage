@@ -1,0 +1,16 @@
+{
+  "action.back": "Vissza",
+  "action.cancel": "Mégse",
+  "action.close": "Bezárás",
+  "action.confirm": "Megerősítés",
+  "action.delete": "Törlés",
+  "action.edit": "Szerkesztés",
+  "action.retry": "Újra",
+  "action.save": "Mentés",
+  "app.name": "OpenSignage",
+  "state.error": "Hiba történt.",
+  "state.loading": "Betöltés…",
+  "state.offline": "Nincs kapcsolat a szerverrel. A nézet elavult lehet.",
+  "state.saving": "Mentés…",
+  "update.reloaded": "A kiszolgáló frissült a(z) {version} verzióra. Kérjük, jelentkezzen be újra."
+}

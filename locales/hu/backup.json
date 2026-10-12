@@ -1,0 +1,19 @@
+{
+  "cancel": "Előkészített visszaállítás elvetése",
+  "database": "Csak adatbázis",
+  "download": "Biztonsági mentés készítése",
+  "downloadText": "A letöltés a rendszer működése közben is lehetséges. A teljes biztonsági mentés tartalmazza az adatbázist, az összes médiát, a betűtípusokat és a szerver kulcsait (a lejátszók a visszaállítás után is párosítva maradnak). Tárolja biztonságos helyen.",
+  "full": "Teljes biztonsági mentés",
+  "media": "Minden média ZIP-fájlként",
+  "pending": "Visszaállítás előkészítve",
+  "pendingText": "Az ellenőrzött biztonsági mentés a szerver újraindításakor lép érvénybe.",
+  "restart": "Szerver újraindítása",
+  "restartConfirm": "Újraindítja most a szervert? A webes felület néhány másodpercig nem érhető el; a képernyők tovább játszanak.",
+  "restarting": "A szerver újraindul …",
+  "restore": "Visszaállítás",
+  "restoreConfirm": "Előkészíti a visszaállítást ebből: „{name}”? Az újraindításig semmi sem változik.",
+  "restoreText": "Töltsön fel egy teljes biztonsági mentést (.tar) vagy egy adatbázismentést (.db). A rendszer először ellenőrzi a fájlt, majd szabályozott újraindítással alkalmazza. A jelenlegi állapot időbélyeggel megmarad.",
+  "restoreUpload": "Ellenőrzés és előkészítés",
+  "staged": "A biztonsági mentés ellenőrizve, készen áll. Az alkalmazásához indítsa újra a szervert.",
+  "title": "Biztonsági mentés"
+}

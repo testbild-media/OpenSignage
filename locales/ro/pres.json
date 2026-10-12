@@ -1,0 +1,14 @@
+{
+  "create": "Creează",
+  "delete": "Șterge prezentarea",
+  "deleteConfirm": "Ștergeți „{name}”? Operația este refuzată cât timp o listă de redare folosește prezentarea.",
+  "deleted": "Prezentare ștearsă.",
+  "empty": "Încă nu există prezentări. Creați-o pe prima.",
+  "new": "Prezentare nouă",
+  "noTemplate": "Prezentare goală",
+  "published": "Publicat",
+  "saveTemplate": "Salvează ca șablon",
+  "slides": "Diapozitive: {count}",
+  "template": "Șablon",
+  "templateSaved": "Șablon salvat."
+}

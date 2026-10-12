@@ -1,0 +1,16 @@
+{
+  "action.back": "Retour",
+  "action.cancel": "Annuler",
+  "action.close": "Fermer",
+  "action.confirm": "Confirmer",
+  "action.delete": "Supprimer",
+  "action.edit": "Modifier",
+  "action.retry": "Réessayer",
+  "action.save": "Enregistrer",
+  "app.name": "OpenSignage",
+  "state.error": "Une erreur s’est produite.",
+  "state.loading": "Chargement…",
+  "state.offline": "Aucune connexion au serveur. L’affichage n’est peut-être pas à jour.",
+  "state.saving": "Enregistrement…",
+  "update.reloaded": "Le serveur a été mis à jour vers la version {version}. Veuillez vous reconnecter."
+}

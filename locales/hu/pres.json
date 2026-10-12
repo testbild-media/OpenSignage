@@ -1,0 +1,14 @@
+{
+  "create": "Létrehozás",
+  "delete": "Prezentáció törlése",
+  "deleteConfirm": "Törli: „{name}”? Nem törölhető, amíg egy lejátszási lista használja.",
+  "deleted": "A prezentáció törölve.",
+  "empty": "Még nincs prezentáció. Hozza létre az elsőt.",
+  "new": "Új prezentáció",
+  "noTemplate": "Üres prezentáció",
+  "published": "Közzétéve",
+  "saveTemplate": "Mentés sablonként",
+  "slides": "Diák: {count}",
+  "template": "Sablon",
+  "templateSaved": "A sablon mentve."
+}

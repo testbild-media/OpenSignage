@@ -1,0 +1,16 @@
+{
+  "action.back": "Πίσω",
+  "action.cancel": "Ακύρωση",
+  "action.close": "Κλείσιμο",
+  "action.confirm": "Επιβεβαίωση",
+  "action.delete": "Διαγραφή",
+  "action.edit": "Επεξεργασία",
+  "action.retry": "Δοκιμάστε ξανά",
+  "action.save": "Αποθήκευση",
+  "app.name": "OpenSignage",
+  "state.error": "Κάτι πήγε στραβά.",
+  "state.loading": "Φόρτωση…",
+  "state.offline": "Δεν υπάρχει σύνδεση με τον διακομιστή. Η προβολή ίσως δεν είναι ενημερωμένη.",
+  "state.saving": "Αποθήκευση…",
+  "update.reloaded": "Ο διακομιστής ενημερώθηκε στην έκδοση {version}. Συνδεθείτε ξανά."
+}

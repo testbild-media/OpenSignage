@@ -1,0 +1,14 @@
+{
+  "create": "Crea",
+  "delete": "Elimina presentazione",
+  "deleteConfirm": "Eliminare «{name}»? L’operazione viene rifiutata finché una playlist la utilizza.",
+  "deleted": "Presentazione eliminata.",
+  "empty": "Ancora nessuna presentazione. Crea la prima.",
+  "new": "Nuova presentazione",
+  "noTemplate": "Presentazione vuota",
+  "published": "Pubblicato",
+  "saveTemplate": "Salva come modello",
+  "slides": "Diapositive: {count}",
+  "template": "Modello",
+  "templateSaved": "Modello salvato."
+}

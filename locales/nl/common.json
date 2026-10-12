@@ -1,0 +1,16 @@
+{
+  "action.back": "Terug",
+  "action.cancel": "Annuleren",
+  "action.close": "Sluiten",
+  "action.confirm": "Bevestigen",
+  "action.delete": "Verwijderen",
+  "action.edit": "Bewerken",
+  "action.retry": "Opnieuw proberen",
+  "action.save": "Opslaan",
+  "app.name": "OpenSignage",
+  "state.error": "Er is iets misgegaan.",
+  "state.loading": "Laden…",
+  "state.offline": "Geen verbinding met de server. De weergave is mogelijk niet actueel.",
+  "state.saving": "Opslaan…",
+  "update.reloaded": "De server is bijgewerkt naar versie {version}. Meld u opnieuw aan."
+}

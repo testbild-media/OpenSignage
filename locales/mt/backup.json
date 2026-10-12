@@ -1,0 +1,19 @@
+{
+  "cancel": "Armi r-restawr ippreparat",
+  "database": "Il-bażi tad-dejta biss",
+  "download": "Oħloq kopja ta’ sigurtà",
+  "downloadText": "Niżżel waqt li s-sistema tibqa’ taħdem. Il-kopja ta’ sigurtà sħiħa fiha l-bażi tad-dejta, il-midja kollha, il-fonts u ċ-ċwievet tas-server (il-plejers jibqgħu mgħaqqda wara restawr). Żommha f’post sigur.",
+  "full": "Kopja ta’ sigurtà sħiħa",
+  "media": "Il-midja kollha bħala ZIP",
+  "pending": "Restawr ippreparat",
+  "pendingText": "Il-kopja ta’ sigurtà ċċekkjata tiġi applikata meta s-server jerġa’ jibda.",
+  "restart": "Erġa’ ibda s-server",
+  "restartConfirm": "Terġa’ tibda s-server issa? L-interfaċċja web ma tkunx disponibbli għal ftit sekondi; l-iskrins ikomplu jħaddmu.",
+  "restarting": "Is-server qed jerġa’ jibda …",
+  "restore": "Restawr",
+  "restoreConfirm": "Tipprepara r-restawr minn “{name}”? Xejn ma jinbidel sakemm is-server jerġa’ jibda.",
+  "restoreText": "Tella’ kopja ta’ sigurtà sħiħa (.tar) jew kopja ta’ sigurtà tal-bażi tad-dejta (.db). L-ewwel jiġi ċċekkjat il-fajl; imbagħad jiġi applikat b’bidu mill-ġdid ikkontrollat. L-istat attwali jinżamm b’timbru tal-ħin.",
+  "restoreUpload": "Iċċekkja u pprepara",
+  "staged": "Il-kopja ta’ sigurtà ġiet iċċekkjata u hija lesta. Erġa’ ibda s-server biex tapplikaha.",
+  "title": "Kopja ta’ sigurtà"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@opensignage/i18n",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  }
+}

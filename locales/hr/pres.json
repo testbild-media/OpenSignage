@@ -1,0 +1,14 @@
+{
+  "create": "Stvori",
+  "delete": "Izbriši prezentaciju",
+  "deleteConfirm": "Izbrisati „{name}”? Brisanje nije moguće dok je koristi neki popis za reprodukciju.",
+  "deleted": "Prezentacija je izbrisana.",
+  "empty": "Još nema prezentacija. Stvorite prvu.",
+  "new": "Nova prezentacija",
+  "noTemplate": "Prazna prezentacija",
+  "published": "Objavljeno",
+  "saveTemplate": "Spremi kao predložak",
+  "slides": "Slajdovi: {count}",
+  "template": "Predložak",
+  "templateSaved": "Predložak je spremljen."
+}

@@ -1,0 +1,19 @@
+{
+  "cancel": "Vorbereitete Wiederherstellung verwerfen",
+  "database": "Nur Datenbank",
+  "download": "Sicherung erstellen",
+  "downloadText": "Der Download läuft im laufenden Betrieb. Die Vollsicherung enthält Datenbank, alle Medien, Schriften und die Server-Schlüssel (Player bleiben nach einer Wiederherstellung gekoppelt). Sicher aufbewahren.",
+  "full": "Vollsicherung",
+  "media": "Alle Medien als ZIP",
+  "pending": "Wiederherstellung vorbereitet",
+  "pendingText": "Die geprüfte Sicherung wird beim Neustart des Servers eingespielt.",
+  "restart": "Server neu starten",
+  "restartConfirm": "Server jetzt neu starten? Die Weboberfläche ist einige Sekunden nicht erreichbar; die Bildschirme spielen weiter.",
+  "restarting": "Der Server startet neu …",
+  "restore": "Wiederherstellen",
+  "restoreConfirm": "Wiederherstellung aus „{name}“ vorbereiten? Bis zum Neustart ändert sich nichts.",
+  "restoreText": "Eine Vollsicherung (.tar) oder Datenbanksicherung (.db) hochladen. Die Datei wird zuerst geprüft und beim kontrollierten Neustart eingespielt. Der aktuelle Stand bleibt mit Zeitstempel erhalten.",
+  "restoreUpload": "Prüfen und vorbereiten",
+  "staged": "Die Sicherung wurde geprüft und liegt bereit. Zum Einspielen neu starten.",
+  "title": "Sicherung"
+}

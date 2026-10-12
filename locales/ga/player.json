@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Comhéadan gréasáin",
+  "notice.certificate": "Athraíodh deimhniú an fhreastalaí. Diúltaíodh don cheangal ar chúiseanna slándála. Seiceáil an freastalaí i gcomhéadan gréasáin an ghléis seo.",
+  "notice.version": "Ní mheaitseálann an leagan leis an bhfreastalaí – nuashonraigh sa riarachán, le do thoil.",
+  "pairing.hint": "Sa riarachán, oscail Gléasanna agus glac seilbh ar an scáileán seo leis an UAP seo.",
+  "pairing.server": "Eochair an fhreastalaí {fingerprint}",
+  "pairing.title": "Péireáil an scáileán seo",
+  "pin": "UAP",
+  "searching.hint": "Mura n-aimsítear an freastalaí go huathoibríoch, socraigh a sheoladh i gcomhéadan gréasáin an ghléis seo:",
+  "searching.title": "Ag cuardach an fhreastalaí OpenSignage …",
+  "standby.hint": "Sann an scáileán seo do chrios sa riarachán.",
+  "standby.title": "Níl aon chrios sannta",
+  "updating": "Nuashonrú á shuiteáil …"
+}

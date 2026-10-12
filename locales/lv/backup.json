@@ -1,0 +1,19 @@
+{
+  "cancel": "Atmest sagatavoto atjaunošanu",
+  "database": "Tikai datubāze",
+  "download": "Izveidot dublējumu",
+  "downloadText": "Lejupielāde notiek, sistēmai turpinot darboties. Pilnajā dublējumā ir datubāze, visa multivide, fonti un servera atslēgas (pēc atjaunošanas atskaņotāji paliek savienoti pārī). Glabājiet to drošā vietā.",
+  "full": "Pilns dublējums",
+  "media": "Visa multivide ZIP formātā",
+  "pending": "Atjaunošana sagatavota",
+  "pendingText": "Pārbaudītais dublējums tiek lietots, kad serveris tiek restartēts.",
+  "restart": "Restartēt serveri",
+  "restartConfirm": "Vai restartēt serveri tūlīt? Tīmekļa saskarne dažas sekundes nebūs pieejama; ekrāni turpina atskaņošanu.",
+  "restarting": "Serveris tiek restartēts …",
+  "restore": "Atjaunošana",
+  "restoreConfirm": "Vai sagatavot atjaunošanu no „{name}“? Līdz restartēšanai nekas nemainās.",
+  "restoreText": "Augšupielādējiet pilnu dublējumu (.tar) vai datubāzes dublējumu (.db). Fails vispirms tiek pārbaudīts un pēc tam lietots ar kontrolētu restartēšanu. Pašreizējais stāvoklis tiek saglabāts ar laikspiedolu.",
+  "restoreUpload": "Pārbaudīt un sagatavot",
+  "staged": "Dublējums ir pārbaudīts un gatavs. Lai to lietotu, restartējiet serveri.",
+  "title": "Dublējums"
+}

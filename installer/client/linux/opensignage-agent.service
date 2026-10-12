@@ -1,0 +1,31 @@
+[Unit]
+Description=OpenSignage client agent (sync, scheduler, kiosk, client WebGUI)
+Documentation=https://github.com/testbild-media/OpenSignage
+After=network-online.target opensignage-display.service
+Wants=network-online.target opensignage-display.service
+# A crash loop (5 starts within 5 minutes) puts the unit into "failed"; the rollback unit
+# then starts the previous release (self-rollback after a broken update).
+StartLimitIntervalSec=300
+StartLimitBurst=5
+OnFailure=opensignage-agent-rollback.service
+
+[Service]
+Type=simple
+User=opensignage
+Group=opensignage
+Environment=DISPLAY=:0
+Environment=HOME=/var/lib/opensignage-agent
+WorkingDirectory=/var/lib/opensignage-agent
+ExecStart=/opt/opensignage-agent/current/bin/opensignage-agent run -config /etc/opensignage/agent.env
+# Also after a clean exit: the agent exits to switch to a new release.
+Restart=always
+RestartSec=2
+# Automatic restarts do not pass through "failed", so OnFailure (rollback unit) only runs
+# when the start limit is hit (systemd >= 254; older versions ignore the key).
+RestartMode=direct
+TimeoutStopSec=20
+# Chromium is a child of the agent: stopping the service stops the whole group.
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

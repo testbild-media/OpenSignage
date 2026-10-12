@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Webgrænseflade",
+  "notice.certificate": "Servercertifikatet er ændret. Forbindelsen blev afvist af sikkerhedshensyn. Kontrollér serveren i denne enheds webgrænseflade.",
+  "notice.version": "Versionen passer ikke til serveren – opdater venligst i administrationen.",
+  "pairing.hint": "Åbn Enheder i administrationen, og overtag denne skærm med denne PIN.",
+  "pairing.server": "Servernøgle {fingerprint}",
+  "pairing.title": "Par denne skærm",
+  "pin": "PIN",
+  "searching.hint": "Hvis serveren ikke findes automatisk, skal du angive dens adresse i denne enheds webgrænseflade:",
+  "searching.title": "Søger efter OpenSignage-serveren …",
+  "standby.hint": "Tildel denne skærm til en zone i administrationen.",
+  "standby.title": "Ingen zone tildelt",
+  "updating": "Installerer opdatering …"
+}

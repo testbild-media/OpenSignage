@@ -1,0 +1,16 @@
+{
+  "action.back": "Back",
+  "action.cancel": "Cancel",
+  "action.close": "Close",
+  "action.confirm": "Confirm",
+  "action.delete": "Delete",
+  "action.edit": "Edit",
+  "action.retry": "Try again",
+  "action.save": "Save",
+  "app.name": "OpenSignage",
+  "state.error": "Something went wrong.",
+  "state.loading": "Loading…",
+  "state.offline": "No connection to the server. The view may be out of date.",
+  "state.saving": "Saving…",
+  "update.reloaded": "The server was updated to version {version}. Please log in again."
+}

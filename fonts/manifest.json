@@ -1,0 +1,692 @@
+{
+  "version": 1,
+  "fallback": "Noto Sans",
+  "families": [
+    {
+      "id": "barlow",
+      "family": "Barlow",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "barlow/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/barlow",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "barlow/Barlow-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "119bd7412ac14083c382ee41682599e34f2e4c58bb4977efaf2a5d365cb6898f", "size": 22600 },
+        { "file": "barlow/Barlow-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "006f44d039d2d65a29d0db4a26683475297f2098b23008fa7aabfa733dba52e1", "size": 22636 },
+        { "file": "barlow/Barlow-Medium.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [500, 500], "sha256": "4478f1818368ee9100f12f93aa1bff4d7996efdeeb4bd1923ea2c4549493e3e7", "size": 22740 },
+        { "file": "barlow/Barlow-SemiBold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [600, 600], "sha256": "6c9925a191140f4519d5c8d80d6b1fdc30f2560dabe4a56d954f312bed7bead6", "size": 23044 },
+        { "file": "barlow/Barlow-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "f489492f4f7143a27ca1db64689aee719186cc3211c3a5c7e1c80fe5d3bd39d0", "size": 22960 },
+        { "file": "barlow/Barlow-Black.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [900, 900], "sha256": "c48f99f7d26dbc771a2c44ccf0480aa2aa58e8f47852c0b9e92a97a43b8c3b96", "size": 21812 },
+        { "file": "barlow/Barlow-LightItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 300], "sha256": "4c509e4181650b59b8de8c29c4e314b0d822ac8cb30cfe07b191dd467c3d080c", "size": 25688 },
+        { "file": "barlow/Barlow-Italic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [400, 400], "sha256": "3bd0a54e1c6221116403bd0e605dc285698252afe00e07296c22024afa3229d7", "size": 25660 },
+        { "file": "barlow/Barlow-MediumItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [500, 500], "sha256": "56185552237f8b23150b6700c1db483fc219abe003e11e7a73faa1d0d229fd30", "size": 25708 },
+        { "file": "barlow/Barlow-SemiBoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [600, 600], "sha256": "642797c09a416f8047b2d0221c30c5e8b5caa0a322cb442f6c63df284463cac9", "size": 25716 },
+        { "file": "barlow/Barlow-BoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [700, 700], "sha256": "749b4dc4bd162eb274a1d2dc32ba90f9c987bcf4df5d235ece1a8991edd86d4d", "size": 25432 },
+        { "file": "barlow/Barlow-BlackItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [900, 900], "sha256": "9cf4c135712b24261b8d1d679d21f607c7d31a8de6a11000aa3b796634da28a0", "size": 24312 }
+      ]
+    },
+    {
+      "id": "dm-sans",
+      "family": "DM Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "dm-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/dmsans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2014 The DM Sans Project Authors (https://github.com/googlefonts/dm-fonts)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "dm-sans/DMSans-opsz-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 1000], "sha256": "489b34ebfe9d32832ea68bf7761038a6f7a6bcc2698af99c94e6ecfd66329c2c", "size": 81424 },
+        { "file": "dm-sans/DMSans-Italic-opsz-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 1000], "sha256": "0aca716337990889397938612dd23dabf397efdfeaff3cd5c7409b37ce2582e5", "size": 100000 }
+      ]
+    },
+    {
+      "id": "fira-sans",
+      "family": "Fira Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "fira-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/firasans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2012-2015, The Mozilla Foundation and Telefonica S.A.",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "fira-sans/FiraSans-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "1d43525ef3551fb42facfd8133d391f8edee7079e7dc72559764778d89290d01", "size": 71360 },
+        { "file": "fira-sans/FiraSans-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "9864211c2a830116b3e6d20492fe649d545e568638eda4dd8335f332fa1caf16", "size": 70224 },
+        { "file": "fira-sans/FiraSans-Medium.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [500, 500], "sha256": "f1ff8cb4c9a0088e98b054a9d4c68199a6e946684fa8d05b908f1735d8ddeca9", "size": 72020 },
+        { "file": "fira-sans/FiraSans-SemiBold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [600, 600], "sha256": "cbec26778c5cc208203ec4dbe36167049b55fabcdcfdc1d32b89f6efdc4a2f9d", "size": 72168 },
+        { "file": "fira-sans/FiraSans-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "e8a9b3d587c1a32aa06c31a57e312192794faf0f09fc6de59f8d24f87cb6702b", "size": 72132 },
+        { "file": "fira-sans/FiraSans-Black.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [900, 900], "sha256": "e5659b7702c80b8003027815248d8e030dc320bb03e17f2311b4d91945689fff", "size": 69332 },
+        { "file": "fira-sans/FiraSans-LightItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 300], "sha256": "014397cb39475ca6aee42a45fed210422a946815fc9f40b41ecac8716d19abe8", "size": 75684 },
+        { "file": "fira-sans/FiraSans-Italic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [400, 400], "sha256": "7096961c8045ca9ac3b91da942ebd05dac2a9312504b6fa33a6643ad2bbb33d0", "size": 75316 },
+        { "file": "fira-sans/FiraSans-MediumItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [500, 500], "sha256": "b8856d9f753cc9dfaec5884b6cbaf9bed4da719b3f7987e05bafe125f3709528", "size": 77016 },
+        { "file": "fira-sans/FiraSans-SemiBoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [600, 600], "sha256": "5e240d11a2f8e897d532661f4643a50cadf62ee4c3d8a98d65364078c8bd9bb1", "size": 76952 },
+        { "file": "fira-sans/FiraSans-BoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [700, 700], "sha256": "63ae1b3f3a33d9efe66186c6242c8eee3377d69b04a3264c07e3b1f610b440df", "size": 77016 },
+        { "file": "fira-sans/FiraSans-BlackItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [900, 900], "sha256": "368e836c7076863e54199044111a16ff48473b4373dcc74ba79b50a7f6bb3b97", "size": 74568 }
+      ]
+    },
+    {
+      "id": "ibm-plex-sans",
+      "family": "IBM Plex Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "ibm-plex-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/ibmplexsans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright © 2017 IBM Corp. with Reserved Font Name \"Plex\"",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "ibm-plex-sans/IBMPlexSans-wdth-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [100, 700], "width": [75, 100], "sha256": "3b031aa4216174205bd8471f88a49b91f093169e9e87bd5262242bc5967fe2e3", "size": 537244 },
+        { "file": "ibm-plex-sans/IBMPlexSans-Italic-wdth-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [100, 700], "width": [75, 100], "sha256": "0b94c5e981993764db32bf9c610ecc60cbd34ad77ec2f10ba03c64ab75124d8e", "size": 599624 }
+      ]
+    },
+    {
+      "id": "inter",
+      "family": "Inter",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "inter/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/inter",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "inter/Inter-opsz-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "sha256": "df799bf311183af73526e80012c3c76de8ca23715a1939e3fc840917ab69f133", "size": 225904 },
+        { "file": "inter/Inter-Italic-opsz-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "sha256": "f183ab58026f4c7b5b029c0f6e66d80c1dbb0b2263ddf49a65eb3bb1d380e44b", "size": 248136 }
+      ]
+    },
+    {
+      "id": "lato",
+      "family": "Lato",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "lato/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/lato",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2010-2014 by tyPoland Lukasz Dziedzic (team@latofonts.com) with Reserved Font Name \"Lato\"",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "lato/Lato-Light.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [300, 300], "sha256": "cf2a774503baf418d584f49967bd160e1e03f087c13b25602f28024ec7788f08", "size": 643884 },
+        { "file": "lato/Lato-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "d636e4683231f931eda222d588e944d082bfd3bdba02f928bee461c0f185b251", "size": 656568 },
+        { "file": "lato/Lato-Medium.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [500, 500], "sha256": "d3ac182a6833e005745dd75679fbad081c0b12535df4e93ad8ed57817a31a338", "size": 636396 },
+        { "file": "lato/Lato-SemiBold.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [600, 600], "sha256": "71b8b7decbe75a881ed267be539d402bd1e9420b799658aada4e0d1bd5af803c", "size": 668548 },
+        { "file": "lato/Lato-Bold.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [700, 700], "sha256": "8a0aace75d33794eece4b28187bfc1df0bbd2888b5d8a56e01788c8d65d16be1", "size": 656544 },
+        { "file": "lato/Lato-Black.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [900, 900], "sha256": "808c62839c62dbce7de689af7603666fc7f8b81e0df537d8a5212c87580d4337", "size": 664748 },
+        { "file": "lato/Lato-LightItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [300, 300], "sha256": "700e6722fd14a10e7646347a6b14c486d4c364a373ba61c70e0b5ccee7811635", "size": 657552 },
+        { "file": "lato/Lato-Italic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [400, 400], "sha256": "e399c44efe1387100531d26c7e4800c5d12251b890d6654a3098c7c679cb1786", "size": 722900 },
+        { "file": "lato/Lato-MediumItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [500, 500], "sha256": "ecbce6cffa42d8a67afeb27a9d6e85d515e81481d4b2cece989e833a48048405", "size": 694924 },
+        { "file": "lato/Lato-SemiBoldItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [600, 600], "sha256": "5adeb6b334d8fb99ef053bc052b952773d544315e0e1d668a12c0ce8bd51375c", "size": 697364 },
+        { "file": "lato/Lato-BoldItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [700, 700], "sha256": "62c1b7f0d2e74b45960154c3520efc337b553db0961bfdc950d5618334596cc8", "size": 698364 },
+        { "file": "lato/Lato-BlackItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [900, 900], "sha256": "3214f75bf96783a571bd25338c867c669e7c5e7c08a227f18a7b63766d6e6cbe", "size": 698264 }
+      ]
+    },
+    {
+      "id": "montserrat",
+      "family": "Montserrat",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "montserrat/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/montserrat",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2024 The Montserrat.Git Project Authors (https://github.com/JulietaUla/Montserrat.git)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "montserrat/Montserrat-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "sha256": "148c08cadad111f506a093bef35392b5f4a6fba428fe7671c9cc0b651868a987", "size": 146892 },
+        { "file": "montserrat/Montserrat-Italic-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "sha256": "b22c2ece8dda33560f1aa6f3be2a84853a15e0c631811f9b54de6eecd64d0c98", "size": 157520 }
+      ]
+    },
+    {
+      "id": "noto-sans",
+      "family": "Noto Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "noto-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/notosans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2022 The Noto Project Authors (https://github.com/notofonts/latin-greek-cyrillic)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "noto-sans/NotoSans-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "width": [62.5, 100], "sha256": "487a3086990c967f3b3418eb3f0b7eb768f2f7b81dc6542d4bd35126f254d1d1", "size": 327672 },
+        { "file": "noto-sans/NotoSans-Italic-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "width": [62.5, 100], "sha256": "d3e6f83af1069207caa3d2a814586ca55df708da927591dcffe716408fd2548f", "size": 380144 }
+      ]
+    },
+    {
+      "id": "nunito",
+      "family": "Nunito",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "nunito/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/nunito",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "nunito/Nunito-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [200, 1000], "sha256": "354ec203e2deed1f3c32acf8c2e72e92672b4989c0e285ff9743ade698b91510", "size": 87676 },
+        { "file": "nunito/Nunito-Italic-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [200, 1000], "sha256": "a64e8a59c7bbe8fcdd18c2ed1c600e6cab60795889b9ebf5d2ef75acf796a0c8", "size": 95984 }
+      ]
+    },
+    {
+      "id": "open-sans",
+      "family": "Open Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "open-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/opensans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Open Sans Project Authors (https://github.com/googlefonts/opensans)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "open-sans/OpenSans-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 800], "width": [75, 100], "sha256": "a308d6af1f1cef7adc9de18da2abf6d49db39d78951b4917ffe49ba3e1650374", "size": 219296 },
+        { "file": "open-sans/OpenSans-Italic-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 800], "width": [75, 100], "sha256": "7666f2878d5bd5f2e172e5201d5cd9ad859741532417ea8a108b982f0f81d72b", "size": 248748 }
+      ]
+    },
+    {
+      "id": "poppins",
+      "family": "Poppins",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "poppins/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/poppins",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "poppins/Poppins-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "92931b09b0e008bbb3ff858ae568abdd2498ccf5c2011ca8b323b8c30f380ccf", "size": 11556 },
+        { "file": "poppins/Poppins-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "6f139eabead6e51565302b8484bc8c390a32a95e5231c2795d66a41f0cbbd515", "size": 11644 },
+        { "file": "poppins/Poppins-Medium.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [500, 500], "sha256": "a63240dddd35f90e64fe8bbfb2c5a524fdd245402f09f1debb010f17ca12a721", "size": 11432 },
+        { "file": "poppins/Poppins-SemiBold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [600, 600], "sha256": "e4584997083c09c1e98d39101398b79a05cd508dcfd270722c85be2c4d42e971", "size": 11756 },
+        { "file": "poppins/Poppins-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "dc2277f851e028ff49bf18694e1eb4b2913866b96df981c30c2de90904033b4f", "size": 11460 },
+        { "file": "poppins/Poppins-Black.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [900, 900], "sha256": "b0dca02aa8e213f860579601ecd139d4b9bbb535acd35a34154eba33b136823d", "size": 11140 },
+        { "file": "poppins/Poppins-LightItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 300], "sha256": "e84eab08513a84390ab34c1aac0fa1041ead6051fbe38b3fa5790baeb381a1be", "size": 12728 },
+        { "file": "poppins/Poppins-Italic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [400, 400], "sha256": "6bee3098fe7f96806e1fa8f79070a0e05c55e4c2d5a3bc759635ae01af464925", "size": 12676 },
+        { "file": "poppins/Poppins-MediumItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [500, 500], "sha256": "7f214ff2df388e109f8899635de0aafbb1290384a6de5c73ac97e144429bb05a", "size": 12380 },
+        { "file": "poppins/Poppins-SemiBoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [600, 600], "sha256": "7de125da9621b2705d6ce4e64ad163f1b15b64cefe5d6c15442cab20df13ba21", "size": 12724 },
+        { "file": "poppins/Poppins-BoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [700, 700], "sha256": "ad525794f227270be4040806b284b5d2b689e20e7cdecee01062fdfaf2dc67c2", "size": 12524 },
+        { "file": "poppins/Poppins-BlackItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [900, 900], "sha256": "2fab39b53eb9f41776355648d1fcf8ad9a6a548e863d68f8b0c0b7e42c1b2d0c", "size": 12228 }
+      ]
+    },
+    {
+      "id": "raleway",
+      "family": "Raleway",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "raleway/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/raleway",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2010 The Raleway Project Authors (impallari@gmail.com), with Reserved Font Name \"Raleway\".",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "raleway/Raleway-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [100, 900], "sha256": "8bbcc3eb8275c388f4bcd998832f8a4b943eadbaf6a595205312774b5951aefb", "size": 312352 },
+        { "file": "raleway/Raleway-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [100, 900], "sha256": "96629caf2202183fab46c70237055a7d67e6a5400b85413d45a77ed6f2a0770c", "size": 318476 }
+      ]
+    },
+    {
+      "id": "roboto",
+      "family": "Roboto",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "roboto/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/roboto",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "roboto/Roboto-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "width": [75, 100], "sha256": "d6656ba9e7ef334b5e255508530706f898032f05755c43ead615d5dd4df51c6e", "size": 188884 },
+        { "file": "roboto/Roboto-Italic-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "width": [75, 100], "sha256": "cb8f471c4b72af6358062c6bc5a00606f642b73c22c03efdd85e80461008a7b1", "size": 218744 }
+      ]
+    },
+    {
+      "id": "source-sans-3",
+      "family": "Source Sans 3",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "source-sans-3/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/sourcesans3",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2010-2020 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'. All Rights Reserved. Source is a trademark of Adobe in the United States and/or other countries.",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "source-sans-3/SourceSans3-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [200, 900], "sha256": "042fe2cc0b933e328410d7acbd0aa6a1873dca5aef81875f4bc214b08825c7b9", "size": 646340 },
+        { "file": "source-sans-3/SourceSans3-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [200, 900], "sha256": "39e3ab05ccd7cb94907c31005bb5bec1d5432f0b096a2b782976e217a540eb6c", "size": 395372 }
+      ]
+    },
+    {
+      "id": "work-sans",
+      "family": "Work Sans",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "licenseFile": "work-sans/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/worksans",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2019 The Work Sans Project Authors (https://github.com/weiweihuanghuang/Work-Sans)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "work-sans/WorkSans-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "sha256": "4aa682fa0a5967f6cab333d25234cf9f1ea6a53523eb740ac66025e326ee5e10", "size": 111428 },
+        { "file": "work-sans/WorkSans-Italic-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "sha256": "5cf6700e1d1b994b3519557ef8f2c4a5758d037f6b49bf38f4c109df711d3ac4", "size": 104516 }
+      ]
+    },
+    {
+      "id": "libre-baskerville",
+      "family": "Libre Baskerville",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "libre-baskerville/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/librebaskerville",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2012 The Libre Baskerville Project Authors (https://github.com/impallari/Libre-Baskerville) with Reserved Font Name Libre Baskerville.",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "libre-baskerville/LibreBaskerville-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 700], "sha256": "05a95421961341c5b2556285e8415df9db27dab4f4abe22b446b3c6a8b916c5d", "size": 171900 },
+        { "file": "libre-baskerville/LibreBaskerville-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [400, 700], "sha256": "223959683dc73ec4437bd61fabaa4b3f22209e22855ffd3aee36ba61a5116e97", "size": 167456 }
+      ]
+    },
+    {
+      "id": "lora",
+      "family": "Lora",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "lora/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/lora",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name \"Lora\".",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "lora/Lora-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 700], "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7", "size": 212196 },
+        { "file": "lora/Lora-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [400, 700], "sha256": "22d8d8854b53807aa664ca34f2031a9ed57a1d0dea296b8b96cdd3aad937a2b3", "size": 221232 }
+      ]
+    },
+    {
+      "id": "merriweather",
+      "family": "Merriweather",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "merriweather/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/merriweather",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Merriweather Project Authors (https://github.com/EbenSorkin/Merriweather4) with Reserved Font Name \"Merriweather\".",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "merriweather/Merriweather-opsz-wdth-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [300, 900], "width": [87, 112], "sha256": "d0ed0e359e396af7ad05e73dffd11a3a4c326ea0d0283c56bd9361cb2cc86a96", "size": 4628080 },
+        { "file": "merriweather/Merriweather-Italic-opsz-wdth-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [300, 900], "width": [87, 112], "sha256": "f68a8f4989258679e4fbaf50aa42400132b5373c2d9d2514ba82ef6e85947a0b", "size": 4591168 }
+      ]
+    },
+    {
+      "id": "noto-serif",
+      "family": "Noto Serif",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "noto-serif/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/notoserif",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2022 The Noto Project Authors (https://github.com/notofonts/latin-greek-cyrillic)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "noto-serif/NotoSerif-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "width": [62.5, 100], "sha256": "c6e35f6ac3c2fdae9abe937a291b6c67fd535377701e5f51897695c363700cb1", "size": 361460 },
+        { "file": "noto-serif/NotoSerif-Italic-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "width": [62.5, 100], "sha256": "7102614229049eafa134a53747b4c009fa71eb5ad52b994c4c6e856a5b3ccfa9", "size": 462156 }
+      ]
+    },
+    {
+      "id": "playfair-display",
+      "family": "Playfair Display",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "playfair-display/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/playfairdisplay",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2017 The Playfair Display Project Authors (https://github.com/clauseggers/Playfair-Display), with Reserved Font Name \"Playfair Display\"",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "playfair-display/PlayfairDisplay-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 900], "sha256": "c40f2293766a503bc70cce9e512ef844a4ccb7cbcde792fe2ea31d191917d8d6", "size": 300724 },
+        { "file": "playfair-display/PlayfairDisplay-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [400, 900], "sha256": "a5e26dc5e2e77fb2803a0bf02fd4f81ee136ec8dea863ccdb0c59a263b21378b", "size": 278688 }
+      ]
+    },
+    {
+      "id": "source-serif-4",
+      "family": "Source Serif 4",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "licenseFile": "source-serif-4/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/sourceserif4",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2014 The Source Serif 4 Project Authors (https://github.com/adobe-fonts/source-serif)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "source-serif-4/SourceSerif4-opsz-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [200, 900], "sha256": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b", "size": 1209508 },
+        { "file": "source-serif-4/SourceSerif4-Italic-opsz-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [200, 900], "sha256": "15fbc7e4679489a501998c3669272637a6646388ef7e4bd77eebb5bf967a1f42", "size": 855432 }
+      ]
+    },
+    {
+      "id": "abril-fatface",
+      "family": "Abril Fatface",
+      "category": "display",
+      "license": "OFL-1.1",
+      "licenseFile": "abril-fatface/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/abrilfatface",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2011, TypeTogether (www.type-together.com)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "abril-fatface/AbrilFatface-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "5971d4a3758a922a9fedc7f6fb825a96341a2e718c45a4b2c9a6b417c8c4dbe9", "size": 67364 }
+      ]
+    },
+    {
+      "id": "alfa-slab-one",
+      "family": "Alfa Slab One",
+      "category": "display",
+      "license": "OFL-1.1",
+      "licenseFile": "alfa-slab-one/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/alfaslabone",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2016 The Alfa Slab One Project Authors (http://www.jmsole.cl | info@jmsole.cl), with Reserved Font Name \"Alfa Slab\".",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "alfa-slab-one/AlfaSlabOne-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "28664afa698a3393bd5a29eec750230a0645c5301d62200e5f2d3a027fb2299d", "size": 97376 }
+      ]
+    },
+    {
+      "id": "bungee",
+      "family": "Bungee",
+      "category": "display",
+      "license": "OFL-1.1",
+      "licenseFile": "bungee/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/bungee",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2023 The Bungee Project Authors (https://github.com/djrrb/Bungee)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "bungee/Bungee-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "fe6e322ac89aeca4009d68e9b1d2af02ae30c3b78a2fd3ad709e4168c6a21264", "size": 32612 }
+      ]
+    },
+    {
+      "id": "righteous",
+      "family": "Righteous",
+      "category": "display",
+      "license": "OFL-1.1",
+      "licenseFile": "righteous/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/righteous",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2011 by Brian J. Bonislawsky DBA Astigmatic (AOETI)",
+      "scripts": ["latin"],
+      "files": [
+        { "file": "righteous/Righteous-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "2ffb3fe5c27d7e6571210b800448c4e234e651b46c6b4426c1bb567e5341348a", "size": 43104 }
+      ]
+    },
+    {
+      "id": "anton",
+      "family": "Anton",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "anton/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/anton",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Anton Project Authors (https://github.com/googlefonts/AntonFont.git)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "anton/Anton-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "8bd759704dab4cc4e75c008271773637fdf3868945be1312221127543d896d55", "size": 27448 }
+      ]
+    },
+    {
+      "id": "archivo",
+      "family": "Archivo",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "archivo/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/archivo",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The Archivo Project Authors (https://github.com/Omnibus-Type/Archivo)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "archivo/Archivo-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "width": [62, 125], "sha256": "dd061e9c8613482c013f2ec11fe83351e1268321f3acf3809e25e5ccca04e8d7", "size": 162136 },
+        { "file": "archivo/Archivo-Italic-wdth-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "width": [62, 125], "sha256": "9d0b61e966f39ba2a0005cdc65c47d633fefc236d32dc13a582d18d733733bb1", "size": 179920 }
+      ]
+    },
+    {
+      "id": "barlow-condensed",
+      "family": "Barlow Condensed",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "barlow-condensed/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/barlowcondensed",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "barlow-condensed/BarlowCondensed-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "b2a07b8ad499ddde019f7c38fbf50539cea689dc553ee643f1670bdcf60da2b5", "size": 21452 },
+        { "file": "barlow-condensed/BarlowCondensed-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "a8e1ecd2212ba6d6b06d00a24b923ca8726760979db43b494a1011b7795bbf16", "size": 21600 },
+        { "file": "barlow-condensed/BarlowCondensed-Medium.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [500, 500], "sha256": "eb8cdeb09ea10f14294951c2c36b42782d2342c35404336345b0c3f5f7ec6220", "size": 21612 },
+        { "file": "barlow-condensed/BarlowCondensed-SemiBold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [600, 600], "sha256": "6449e4beca06378d0659dc5ef1328b7489560b68923b8ff344ccf2a64f5259cf", "size": 21856 },
+        { "file": "barlow-condensed/BarlowCondensed-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "748c209d6f3b0d1da459e1df99cca9fb811663cf4155de40ef88bbc629351424", "size": 21784 },
+        { "file": "barlow-condensed/BarlowCondensed-Black.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [900, 900], "sha256": "4302ad8cacb0577feb7c2b141b8d794c15564597bde6e8cc3e3d1c7ab04e4c8e", "size": 20528 },
+        { "file": "barlow-condensed/BarlowCondensed-LightItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 300], "sha256": "d3957e0b2ab2e8b83b20aefbb2fe5240a5d72927c3b3aa4064975d92d64a06c7", "size": 24500 },
+        { "file": "barlow-condensed/BarlowCondensed-Italic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [400, 400], "sha256": "7d8675080d80bd736f1b03867d97273852103f3ba4a4ae860e12efd7c2de906a", "size": 24524 },
+        { "file": "barlow-condensed/BarlowCondensed-MediumItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [500, 500], "sha256": "986b9b729311afab530885f8a5b4d0f4c4250d53fc3ed47ca4f498f83b16f680", "size": 24496 },
+        { "file": "barlow-condensed/BarlowCondensed-SemiBoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [600, 600], "sha256": "e2d7bf27aade99d24dd26d66d7d0f730745d21129c56c892257aff4cc21469cd", "size": 24320 },
+        { "file": "barlow-condensed/BarlowCondensed-BoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [700, 700], "sha256": "084630c533f762003309e36c424437a20f029f908d6329e906d4f42bc8db293e", "size": 24200 },
+        { "file": "barlow-condensed/BarlowCondensed-BlackItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [900, 900], "sha256": "d6f6a0c560b12fa0d5d9bf4613ef4bc87b12341fd06f6ac49d8dd3b0509ca380", "size": 23012 }
+      ]
+    },
+    {
+      "id": "barlow-semi-condensed",
+      "family": "Barlow Semi Condensed",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "barlow-semi-condensed/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/barlowsemicondensed",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "d30de6906abe3083f50b8b25b4d96c9d6353238b9d68627f1c7d47ec65f5326b", "size": 22880 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "2faef49b53c989d72a09237a8161dfc134cad997af3c37dc43ddc4a9b217ae31", "size": 23100 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Medium.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [500, 500], "sha256": "09cef08f841dacba18766860d52f78ddf1cf456e979f20b6cf7e0b3d283348dc", "size": 23068 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-SemiBold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [600, 600], "sha256": "5cdb38ee43fdf9491cb21a026e87446ce294fb85892c47c8dfad3c9dfd04d98f", "size": 23356 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "b23558c287e884890c5a04c8e825fec259d9ed49af76f0f8d285525be9c2dc88", "size": 23120 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Black.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [900, 900], "sha256": "f78e568439cd5345c313eea05a793b0d4134032aa398ac5862984316d4734b31", "size": 22496 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-LightItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [300, 300], "sha256": "338474404e78092d63c2805fe6156e5399ab3e5cda9a2a6262d52c7d17994050", "size": 25960 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-Italic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [400, 400], "sha256": "db0e1ff1f740afbe0a8554a38a2d4582527b1057f6f39f43bb1cb32c58ea9c8a", "size": 25840 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-MediumItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [500, 500], "sha256": "e253ca58af7d8adf777954b71703ce9e9e8e45c1dddb5de7c8f3d1fdbd358aaf", "size": 26064 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-SemiBoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [600, 600], "sha256": "5a8d5a554506d34f13f043338e4247c046499bc423b032ae48f2f636b20b4acf", "size": 25820 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-BoldItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [700, 700], "sha256": "e913256df0d4b2cc5ab40c5c6ee4e32d0169f42b6f819aeaa955c731d53ffb05", "size": 25648 },
+        { "file": "barlow-semi-condensed/BarlowSemiCondensed-BlackItalic.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [900, 900], "sha256": "47a23909f3c7e8077692d2e311d5fc6e55d65d55ba8a5a553c77fde189c00c79", "size": 24852 }
+      ]
+    },
+    {
+      "id": "bebas-neue",
+      "family": "Bebas Neue",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "bebas-neue/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/bebasneue",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright © 2010 by Dharma Type.",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "bebas-neue/BebasNeue-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "436129386303345d3509a47eda0c99a85634f90f44138e2afe43b27b0d8ce7eb", "size": 10844 }
+      ]
+    },
+    {
+      "id": "oswald",
+      "family": "Oswald",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "oswald/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/oswald",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2016 The Oswald Project Authors (https://github.com/googlefonts/OswaldFont)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "oswald/Oswald-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [200, 700], "sha256": "8482c8a04daade3eaa6a5f0088517dffa20208ec730756dee0c9813338041809", "size": 59600 }
+      ]
+    },
+    {
+      "id": "roboto-condensed",
+      "family": "Roboto Condensed",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "licenseFile": "roboto-condensed/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/robotocondensed",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "roboto-condensed/RobotoCondensed-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 900], "sha256": "151d77ca67cc5994aab4c85ec7374731a48bd9a9368ceb4dd34d63d0104f5601", "size": 144020 },
+        { "file": "roboto-condensed/RobotoCondensed-Italic-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 900], "sha256": "aefc5d71dcd2cda0de5aa0f17c2a98a33db7fda15022069797e5249441349f07", "size": 164276 }
+      ]
+    },
+    {
+      "id": "caveat",
+      "family": "Caveat",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "caveat/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/caveat",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2014 The Caveat Project Authors (https://github.com/googlefonts/caveat)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "caveat/Caveat-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 700], "sha256": "8313fe25d3b1886124e445620f19cdb12b6ecd06764e163dc7c9b79d6bb9ef59", "size": 162376 }
+      ]
+    },
+    {
+      "id": "dancing-script",
+      "family": "Dancing Script",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "dancing-script/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/dancingscript",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2016 The Dancing Script Project Authors (https://github.com/googlefonts/DancingScript), with Reserved Font Name 'Dancing Script'.",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "dancing-script/DancingScript-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 700], "sha256": "21808625578fe8d8cd10cb684be546dca077b27cd03a53a2f1ec11dc743c924c", "size": 133636 }
+      ]
+    },
+    {
+      "id": "great-vibes",
+      "family": "Great Vibes",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "great-vibes/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/greatvibes",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2015 The Great Vibes Pro Project Authors (https://github.com/googlefonts/great-vibes)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "great-vibes/GreatVibes-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "fa35593e368129efd21add35ce128bb32a145d1c4b324b58e861d3d87df7cc66", "size": 87008 }
+      ]
+    },
+    {
+      "id": "kalam",
+      "family": "Kalam",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "kalam/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/kalam",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2014, Indian Type Foundry (info@indiantypefoundry.com).",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "kalam/Kalam-Light.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [300, 300], "sha256": "4fe6d65460210633ec02adc24581ab980b9e2cbeea9b1757d899f2470ff212be", "size": 16732 },
+        { "file": "kalam/Kalam-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "ace797ffa71d3805964fea5387ab292b7d58cf46f1e9d9c98cba75f0a466738a", "size": 18288 },
+        { "file": "kalam/Kalam-Bold.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [700, 700], "sha256": "9d72b5e0fd034c14dfeee5cc041a0cc317214fae3396830c296ee31c9ac7564b", "size": 16704 }
+      ]
+    },
+    {
+      "id": "lobster",
+      "family": "Lobster",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "lobster/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/lobster",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2010 The Lobster Project Authors (https://github.com/impallari/The-Lobster-Font), with Reserved Font Name \"Lobster\".",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "lobster/Lobster-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "d6568e697fd50cedc0be04d8aae4127fe95add607e7bff954ca88604be80c205", "size": 406076 }
+      ]
+    },
+    {
+      "id": "pacifico",
+      "family": "Pacifico",
+      "category": "script",
+      "license": "OFL-1.1",
+      "licenseFile": "pacifico/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/pacifico",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2018 The Pacifico Project Authors (https://github.com/googlefonts/Pacifico)",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "pacifico/Pacifico-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "cdd62a7fc2288c9544f2c04cde639c9ffddd85c58c2449f7ec9cc644cc212fd3", "size": 57536 }
+      ]
+    },
+    {
+      "id": "permanent-marker",
+      "family": "Permanent Marker",
+      "category": "script",
+      "license": "Apache-2.0",
+      "licenseFile": "permanent-marker/LICENSE.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/apache/permanentmarker",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright (c) 2010 by Font Diner, Inc. All rights reserved.",
+      "scripts": ["latin"],
+      "files": [
+        { "file": "permanent-marker/PermanentMarker-Regular.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [400, 400], "sha256": "cf0e9b717f550ba978338ac88fc5610f1339a819cd07b3d6f27b2ba4422885a5", "size": 29548 }
+      ]
+    },
+    {
+      "id": "ibm-plex-mono",
+      "family": "IBM Plex Mono",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "licenseFile": "ibm-plex-mono/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/ibmplexmono",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright © 2017 IBM Corp. with Reserved Font Name \"Plex\"",
+      "scripts": ["latin", "latin-ext", "cyrillic"],
+      "files": [
+        { "file": "ibm-plex-mono/IBMPlexMono-Light.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [300, 300], "sha256": "780bcf65509d72a35ec114b57bcbe220dc6b77d8ea2e9b25e294be3c570c5025", "size": 135216 },
+        { "file": "ibm-plex-mono/IBMPlexMono-Regular.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [400, 400], "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46", "size": 135580 },
+        { "file": "ibm-plex-mono/IBMPlexMono-Medium.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [500, 500], "sha256": "a9b4c49bb299e05b5f6c481e7fb5e78943d2793249a0c8874ab574a2d1ea6755", "size": 136704 },
+        { "file": "ibm-plex-mono/IBMPlexMono-SemiBold.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [600, 600], "sha256": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46", "size": 140216 },
+        { "file": "ibm-plex-mono/IBMPlexMono-Bold.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [700, 700], "sha256": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be", "size": 137784 },
+        { "file": "ibm-plex-mono/IBMPlexMono-LightItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [300, 300], "sha256": "2bb4dd18abb03cb8a0a1ae69a0a10b194e02027b817c7b13126ef4724a7f5c73", "size": 143432 },
+        { "file": "ibm-plex-mono/IBMPlexMono-Italic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [400, 400], "sha256": "3362fc791b0652193328b862c1c5f23a789bc7288b1617fa63302f88689a2a34", "size": 143920 },
+        { "file": "ibm-plex-mono/IBMPlexMono-MediumItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [500, 500], "sha256": "de6e0f805a15a2a1538be5d1074741298a07ffcba6fa1f4cd93983ff73155a7d", "size": 144004 },
+        { "file": "ibm-plex-mono/IBMPlexMono-SemiBoldItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [600, 600], "sha256": "391ef0e273eb52571eccaab6a6dbddeec48e1d282cb7bf153043512b797ed6f0", "size": 147368 },
+        { "file": "ibm-plex-mono/IBMPlexMono-BoldItalic.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [700, 700], "sha256": "af4e05a761e98c1adf064c48a6352c9bec1a6ad70982cd2a544149323391f98e", "size": 144512 }
+      ]
+    },
+    {
+      "id": "jetbrains-mono",
+      "family": "JetBrains Mono",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "licenseFile": "jetbrains-mono/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/jetbrainsmono",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+      "scripts": ["latin", "latin-ext", "greek", "cyrillic"],
+      "files": [
+        { "file": "jetbrains-mono/JetBrainsMono-wght.woff2", "format": "woff2", "modified": true, "style": "normal", "weight": [100, 800], "sha256": "07d32f3e564125f5828bfacb7f04a85a66bef407a2ec1086394f87515a15997e", "size": 58696 },
+        { "file": "jetbrains-mono/JetBrainsMono-Italic-wght.woff2", "format": "woff2", "modified": true, "style": "italic", "weight": [100, 800], "sha256": "2950760dc342fa42c833741c5ea6776372f8a87032206f2194cbae69169e1d29", "size": 63080 }
+      ]
+    },
+    {
+      "id": "source-code-pro",
+      "family": "Source Code Pro",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "licenseFile": "source-code-pro/OFL.txt",
+      "source": "https://github.com/google/fonts/tree/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/sourcecodepro",
+      "upstreamCommit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "copyright": "Copyright 2010, 2012 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name 'Source'. All Rights Reserved. Source is a trademark of Adobe Systems Incorporated in the United States and/or other countries.",
+      "scripts": ["latin", "latin-ext"],
+      "files": [
+        { "file": "source-code-pro/SourceCodePro-wght.ttf", "format": "truetype", "modified": false, "style": "normal", "weight": [200, 900], "sha256": "b400fc584e10aff25d0e775ce181b4fc1c5ea1b5dc37b81aeb2084375b945790", "size": 212340 },
+        { "file": "source-code-pro/SourceCodePro-Italic-wght.ttf", "format": "truetype", "modified": false, "style": "italic", "weight": [200, 900], "sha256": "6db77d25aa7b30eff449305b5c998e475694c74d398421127ea5a60f536413cd", "size": 174852 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "action.back": "Înapoi",
+  "action.cancel": "Anulează",
+  "action.close": "Închide",
+  "action.confirm": "Confirmă",
+  "action.delete": "Șterge",
+  "action.edit": "Editează",
+  "action.retry": "Încearcă din nou",
+  "action.save": "Salvează",
+  "app.name": "OpenSignage",
+  "state.error": "Ceva nu a funcționat.",
+  "state.loading": "Se încarcă…",
+  "state.offline": "Nu există conexiune la server. Afișarea poate fi neactualizată.",
+  "state.saving": "Se salvează…",
+  "update.reloaded": "Serverul a fost actualizat la versiunea {version}. Autentificați-vă din nou."
+}

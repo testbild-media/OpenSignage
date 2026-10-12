@@ -1,0 +1,16 @@
+{
+  "action.back": "Atgal",
+  "action.cancel": "Atšaukti",
+  "action.close": "Uždaryti",
+  "action.confirm": "Patvirtinti",
+  "action.delete": "Ištrinti",
+  "action.edit": "Redaguoti",
+  "action.retry": "Bandyti dar kartą",
+  "action.save": "Išsaugoti",
+  "app.name": "OpenSignage",
+  "state.error": "Kažkas nepavyko.",
+  "state.loading": "Įkeliama…",
+  "state.offline": "Nėra ryšio su serveriu. Rodinys gali būti pasenęs.",
+  "state.saving": "Saugoma…",
+  "update.reloaded": "Serveris atnaujintas į {version} versiją. Prisijunkite iš naujo."
+}

@@ -1,0 +1,16 @@
+{
+  "action.back": "Atpakaļ",
+  "action.cancel": "Atcelt",
+  "action.close": "Aizvērt",
+  "action.confirm": "Apstiprināt",
+  "action.delete": "Dzēst",
+  "action.edit": "Rediģēt",
+  "action.retry": "Mēģināt vēlreiz",
+  "action.save": "Saglabāt",
+  "app.name": "OpenSignage",
+  "state.error": "Kaut kas nogāja greizi.",
+  "state.loading": "Ielādē…",
+  "state.offline": "Nav savienojuma ar serveri. Skats var būt novecojis.",
+  "state.saving": "Saglabā…",
+  "update.reloaded": "Serveris ir atjaunināts uz versiju {version}. Lūdzu, piesakieties vēlreiz."
+}

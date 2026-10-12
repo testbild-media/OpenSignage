@@ -1,0 +1,16 @@
+{
+  "action.back": "Indietro",
+  "action.cancel": "Annulla",
+  "action.close": "Chiudi",
+  "action.confirm": "Conferma",
+  "action.delete": "Elimina",
+  "action.edit": "Modifica",
+  "action.retry": "Riprova",
+  "action.save": "Salva",
+  "app.name": "OpenSignage",
+  "state.error": "Qualcosa è andato storto.",
+  "state.loading": "Caricamento…",
+  "state.offline": "Nessuna connessione al server. La vista potrebbe non essere aggiornata.",
+  "state.saving": "Salvataggio…",
+  "update.reloaded": "Il server è stato aggiornato alla versione {version}. Accedere di nuovo."
+}

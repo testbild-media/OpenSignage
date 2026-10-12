@@ -1,0 +1,19 @@
+{
+  "cancel": "Abandonner la restauration préparée",
+  "database": "Base de données uniquement",
+  "download": "Créer une sauvegarde",
+  "downloadText": "Le téléchargement s’effectue pendant que le système continue de fonctionner. La sauvegarde complète contient la base de données, tous les médias, les polices et les clés du serveur (les lecteurs restent associés après une restauration). Conservez-la en lieu sûr.",
+  "full": "Sauvegarde complète",
+  "media": "Tous les médias au format ZIP",
+  "pending": "Restauration préparée",
+  "pendingText": "La sauvegarde vérifiée est appliquée au redémarrage du serveur.",
+  "restart": "Redémarrer le serveur",
+  "restartConfirm": "Redémarrer le serveur maintenant ? L’interface web est indisponible pendant quelques secondes ; les écrans continuent la diffusion.",
+  "restarting": "Le serveur redémarre…",
+  "restore": "Restaurer",
+  "restoreConfirm": "Préparer la restauration à partir de « {name} » ? Rien ne change avant le redémarrage.",
+  "restoreText": "Importez une sauvegarde complète (.tar) ou une sauvegarde de la base de données (.db). Le fichier est d’abord vérifié, puis appliqué lors d’un redémarrage contrôlé. L’état actuel est conservé avec un horodatage.",
+  "restoreUpload": "Vérifier et préparer",
+  "staged": "La sauvegarde a été vérifiée et est prête. Redémarrez pour l’appliquer.",
+  "title": "Sauvegarde"
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenSignage Player</title>
+<style>
+  :root { --bg: #201c18; --surface: #2a251f; --border: #453e35; --text: #f2ede6; --muted: #a99e90; --primary: #ff8a00; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; cursor: none; }
+  main { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5vh; text-align: center; }
+  .brand { font-size: 5vh; font-weight: 700; letter-spacing: .02em; }
+  .brand .o { color: #a63d00; } .brand .s { color: var(--primary); }
+  .kind { font-size: 3vh; color: var(--muted); text-transform: uppercase; letter-spacing: .2em; }
+  .pin { font-size: 16vh; font-weight: 700; color: var(--primary); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5vh 4vh; font-size: 2.6vh; line-height: 1.6; }
+  .muted { color: var(--muted); }
+  .notice { color: #d99a1f; font-size: 2.6vh; }
+  .hint { position: fixed; left: 2vh; bottom: 2vh; font-size: 1.8vh; color: var(--muted); }
+  .overlay { position: fixed; right: 2vh; bottom: 2vh; background: rgba(32, 28, 24, .85); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2vh 2vh; font-size: 2vh; text-align: right; }
+  .black { background: #000; }
+</style>
+</head>
+<body>
+<main id="main">
+  <div class="brand"><span class="o">Open</span><span class="s">Signage</span></div>
+  <div class="kind" id="kind">starting</div>
+  <div class="pin" id="pin" hidden></div>
+  <div class="card" id="info"></div>
+  <div class="notice" id="notice" hidden></div>
+</main>
+<div class="hint">Player app not built – fallback page served by opensignage-agent</div>
+<div class="overlay" id="overlay" hidden></div>
+<script>
+(function () {
+  'use strict';
+  var mode = null, overlayShown = false, ws = null, item = '';
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+  function render() {
+    if (!mode) { return; }
+    var black = mode.kind === 'blackout' || mode.kind === 'cleared';
+    document.body.className = black ? 'black' : '';
+    $('main').style.visibility = black ? 'hidden' : 'visible';
+    $('kind').textContent = mode.kind;
+    $('pin').hidden = !mode.pin;
+    $('pin').textContent = mode.pin || '';
+    var lines = [];
+    if (mode.deviceName) { lines.push('<b>' + esc(mode.deviceName) + '</b>'); }
+    (mode.ips || []).forEach(function (ip) { lines.push(esc(ip)); });
+    lines.push('<span class="muted">' + esc(mode.webguiUrl || '') + '</span>');
+    if (mode.serverAddress) { lines.push('<span class="muted">Server ' + esc(mode.serverAddress) + '</span>'); }
+    if (mode.fingerprint) { lines.push('<span class="muted">' + esc(mode.fingerprint) + '</span>'); }
+    $('info').innerHTML = lines.join('<br>');
+    $('notice').hidden = !mode.notice;
+    $('notice').textContent = mode.notice || '';
+  }
+  function showOverlay() {
+    if (overlayShown || !mode) { return; }
+    overlayShown = true;
+    $('overlay').innerHTML = (mode.ips || []).map(esc).join('<br>') + '<br><span class="muted">' + esc(mode.webguiUrl || '') + '</span>';
+    $('overlay').hidden = false;
+    setTimeout(function () { $('overlay').hidden = true; }, 12000);
+  }
+  var cfg = null;
+  function connect() {
+    ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws');
+    ws.onmessage = function (ev) {
+      var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      if (m.t === 'mode') { mode = m.p; render(); if (cfg && cfg.showIpOverlay) { showOverlay(); } }
+      else if (m.t === 'config') { cfg = m.p; if (cfg.showIpOverlay) { showOverlay(); } }
+      else if (m.t === 'source') { item = m.p.playlistId || ''; }
+      else if (m.t === 'cmd' && m.p.name === 'reload') { location.reload(); }
+    };
+    ws.onclose = function () { setTimeout(connect, 2000); };
+    ws.onerror = function () { try { ws.close(); } catch (e) { /* ignore */ } };
+  }
+  setInterval(function () {
+    if (!ws || ws.readyState !== 1) { return; }
+    var heap = (performance && performance.memory) ? performance.memory.usedJSHeapSize : 0;
+    ws.send(JSON.stringify({ t: 'ping', p: { heap: heap, fps: 0, item: item } }));
+  }, 5000);
+  connect();
+})();
+</script>
+</body>
+</html>

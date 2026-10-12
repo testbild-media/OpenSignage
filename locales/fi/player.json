@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Verkkoliittymä",
+  "notice.certificate": "Palvelimen varmenne on muuttunut. Yhteys hylättiin turvallisuussyistä. Tarkista palvelin tämän laitteen verkkoliittymässä.",
+  "notice.version": "Versio ei vastaa palvelinta – päivitä hallinnassa.",
+  "pairing.hint": "Avaa hallinnassa Laitteet ja ota tämä näyttö käyttöön tällä PIN-koodilla.",
+  "pairing.server": "Palvelimen avain {fingerprint}",
+  "pairing.title": "Muodosta pari tälle näytölle",
+  "pin": "PIN",
+  "searching.hint": "Jos palvelinta ei löydy automaattisesti, aseta sen osoite tämän laitteen verkkoliittymässä:",
+  "searching.title": "Etsitään OpenSignage-palvelinta …",
+  "standby.hint": "Määritä tämä näyttö vyöhykkeelle hallinnassa.",
+  "standby.title": "Vyöhykettä ei ole määritetty",
+  "updating": "Asennetaan päivitystä …"
+}

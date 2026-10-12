@@ -1,0 +1,14 @@
+{
+  "create": "Sukurti",
+  "delete": "Ištrinti pateiktį",
+  "deleteConfirm": "Ištrinti „{name}“? Tai neleidžiama, kol pateiktį naudoja grojaraštis.",
+  "deleted": "Pateiktis ištrinta.",
+  "empty": "Pateikčių dar nėra. Sukurkite pirmąją.",
+  "new": "Nauja pateiktis",
+  "noTemplate": "Tuščia pateiktis",
+  "published": "Paskelbta",
+  "saveTemplate": "Išsaugoti kaip šabloną",
+  "slides": "Skaidrės: {count}",
+  "template": "Šablonas",
+  "templateSaved": "Šablonas išsaugotas."
+}

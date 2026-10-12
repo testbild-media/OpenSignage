@@ -1,0 +1,19 @@
+{
+  "cancel": "Discard prepared restore",
+  "database": "Database only",
+  "download": "Create a backup",
+  "downloadText": "Download while the system keeps running. The full backup contains the database, all media, fonts and the server keys (players stay paired after a restore). Keep it safe.",
+  "full": "Full backup",
+  "media": "All media as ZIP",
+  "pending": "Restore prepared",
+  "pendingText": "The checked backup is applied when the server restarts.",
+  "restart": "Restart server",
+  "restartConfirm": "Restart the server now? The web interface is unavailable for a few seconds; screens keep playing.",
+  "restarting": "The server is restarting …",
+  "restore": "Restore",
+  "restoreConfirm": "Prepare the restore from “{name}”? Nothing changes until the restart.",
+  "restoreText": "Upload a full backup (.tar) or a database backup (.db). The file is checked first; it is applied with a controlled restart. The current state is kept with a timestamp.",
+  "restoreUpload": "Check and prepare",
+  "staged": "The backup was checked and is ready. Restart to apply it.",
+  "title": "Backup"
+}

@@ -1,0 +1,14 @@
+{
+  "create": "Izveidot",
+  "delete": "Dzēst prezentāciju",
+  "deleteConfirm": "Vai dzēst „{name}“? To nevar izdarīt, kamēr to izmanto kāds atskaņošanas saraksts.",
+  "deleted": "Prezentācija izdzēsta.",
+  "empty": "Prezentāciju vēl nav. Izveidojiet pirmo.",
+  "new": "Jauna prezentācija",
+  "noTemplate": "Tukša prezentācija",
+  "published": "Publicēts",
+  "saveTemplate": "Saglabāt kā veidni",
+  "slides": "Slaidi: {count}",
+  "template": "Veidne",
+  "templateSaved": "Veidne saglabāta."
+}

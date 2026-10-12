@@ -1,0 +1,19 @@
+{
+  "cancel": "Zahodit připravenou obnovu",
+  "database": "Pouze databáze",
+  "download": "Vytvořit zálohu",
+  "downloadText": "Stahování probíhá za běhu systému. Úplná záloha obsahuje databázi, všechna média, písma a klíče serveru (přehrávače zůstanou po obnově spárované). Uložte ji na bezpečné místo.",
+  "full": "Úplná záloha",
+  "media": "Všechna média jako ZIP",
+  "pending": "Obnova připravena",
+  "pendingText": "Zkontrolovaná záloha se použije při restartu serveru.",
+  "restart": "Restartovat server",
+  "restartConfirm": "Restartovat server nyní? Webové rozhraní nebude několik sekund dostupné; obrazovky budou dál přehrávat.",
+  "restarting": "Server se restartuje…",
+  "restore": "Obnovit",
+  "restoreConfirm": "Připravit obnovu ze zálohy „{name}“? Až do restartu se nic nezmění.",
+  "restoreText": "Nahrajte úplnou zálohu (.tar) nebo zálohu databáze (.db). Soubor se nejprve zkontroluje a poté se použije při řízeném restartu. Aktuální stav se zachová s časovým razítkem.",
+  "restoreUpload": "Zkontrolovat a připravit",
+  "staged": "Záloha byla zkontrolována a je připravena. Pro její použití restartujte server.",
+  "title": "Záloha"
+}

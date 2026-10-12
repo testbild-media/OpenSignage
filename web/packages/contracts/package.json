@@ -1,0 +1,9 @@
+{
+  "name": "@opensignage/contracts",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  }
+}

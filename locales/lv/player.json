@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Tīmekļa saskarne",
+  "notice.certificate": "Servera sertifikāts ir mainījies. Savienojums drošības nolūkos tika noraidīts. Pārbaudiet serveri šīs ierīces tīmekļa saskarnē.",
+  "notice.version": "Versija neatbilst serverim – lūdzu, atjauniniet administrācijā.",
+  "pairing.hint": "Administrācijā atveriet Ierīces un pārņemiet šo ekrānu ar šo PIN.",
+  "pairing.server": "Servera atslēga {fingerprint}",
+  "pairing.title": "Savienot šo ekrānu pārī",
+  "pin": "PIN",
+  "searching.hint": "Ja serveris netiek atrasts automātiski, iestatiet tā adresi šīs ierīces tīmekļa saskarnē:",
+  "searching.title": "Meklē OpenSignage serveri …",
+  "standby.hint": "Administrācijā piešķiriet šo ekrānu zonai.",
+  "standby.title": "Zona nav piešķirta",
+  "updating": "Instalē atjauninājumu …"
+}

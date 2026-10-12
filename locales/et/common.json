@@ -1,0 +1,16 @@
+{
+  "action.back": "Tagasi",
+  "action.cancel": "Tühista",
+  "action.close": "Sulge",
+  "action.confirm": "Kinnita",
+  "action.delete": "Kustuta",
+  "action.edit": "Muuda",
+  "action.retry": "Proovi uuesti",
+  "action.save": "Salvesta",
+  "app.name": "OpenSignage",
+  "state.error": "Midagi läks valesti.",
+  "state.loading": "Laadimine…",
+  "state.offline": "Serveriga ühendus puudub. Vaade ei pruugi olla ajakohane.",
+  "state.saving": "Salvestamine…",
+  "update.reloaded": "Server uuendati versioonile {version}. Palun logige uuesti sisse."
+}

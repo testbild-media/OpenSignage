@@ -1,0 +1,78 @@
+/* Playlist editor additions: result groups in the sidebar search, notes in the item dialog. */
+.pl-group {
+  margin: 10px 0 4px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--os-text-faint);
+}
+.pl-group:first-child {
+  margin-top: 0;
+}
+.pl-note {
+  padding: 8px 12px;
+  border: 1px solid var(--os-warning);
+  border-radius: var(--os-radius-s);
+  background: rgba(217, 154, 31, 0.12);
+  font-size: 13px;
+}
+/* Playlist name in the page header (was borrowed from the editor CSS before it was scoped). */
+.pl-title {
+  max-width: 340px;
+  font-weight: 600;
+}
+
+/* Playlists for several screens: one row per step, one cell per track. */
+.pl-screens {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+  font-size: 13px;
+}
+.pl-screens .input {
+  width: auto;
+}
+.pl-tracks-hint {
+  margin: 0 0 8px;
+}
+.pl-steps {
+  overflow-x: auto;
+}
+.pl-steps .pl-step {
+  display: grid;
+  grid-template-columns: 20px repeat(var(--tracks), minmax(140px, 1fr)) auto auto auto;
+  align-items: center;
+  gap: 6px;
+  min-width: calc(var(--tracks) * 146px + 140px);
+}
+.pl-step-head {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--os-text-faint);
+  padding: 0 8px;
+}
+.pl-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 32px;
+  padding: 2px 6px;
+  border: 1px dashed var(--os-border);
+  border-radius: var(--os-radius-s);
+}
+.pl-cell:not(.empty) {
+  border-style: solid;
+}
+.pl-cell .pl-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

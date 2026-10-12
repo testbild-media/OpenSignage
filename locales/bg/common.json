@@ -1,0 +1,16 @@
+{
+  "action.back": "Назад",
+  "action.cancel": "Отказ",
+  "action.close": "Затвори",
+  "action.confirm": "Потвърди",
+  "action.delete": "Изтрий",
+  "action.edit": "Редактирай",
+  "action.retry": "Опитай отново",
+  "action.save": "Запази",
+  "app.name": "OpenSignage",
+  "state.error": "Нещо се обърка.",
+  "state.loading": "Зареждане…",
+  "state.offline": "Няма връзка със сървъра. Изгледът може да е остарял.",
+  "state.saving": "Запазване…",
+  "update.reloaded": "Сървърът беше обновен до версия {version}. Моля, влезте отново."
+}

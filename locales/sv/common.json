@@ -1,0 +1,16 @@
+{
+  "action.back": "Tillbaka",
+  "action.cancel": "Avbryt",
+  "action.close": "Stäng",
+  "action.confirm": "Bekräfta",
+  "action.delete": "Ta bort",
+  "action.edit": "Redigera",
+  "action.retry": "Försök igen",
+  "action.save": "Spara",
+  "app.name": "OpenSignage",
+  "state.error": "Något gick fel.",
+  "state.loading": "Laddar…",
+  "state.offline": "Ingen anslutning till servern. Vyn kan vara inaktuell.",
+  "state.saving": "Sparar…",
+  "update.reloaded": "Servern har uppdaterats till version {version}. Logga in igen."
+}

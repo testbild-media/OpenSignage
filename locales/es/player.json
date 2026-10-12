@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interfaz web",
+  "notice.certificate": "El certificado del servidor ha cambiado. Por seguridad se rechazó la conexión. Compruebe el servidor en la interfaz web de este dispositivo.",
+  "notice.version": "La versión no coincide con el servidor: actualice en la administración.",
+  "pairing.hint": "En la administración, abra Dispositivos y adopte esta pantalla con este PIN.",
+  "pairing.server": "Clave del servidor {fingerprint}",
+  "pairing.title": "Vincular esta pantalla",
+  "pin": "PIN",
+  "searching.hint": "Si el servidor no se encuentra automáticamente, introduzca su dirección en la interfaz web de este dispositivo:",
+  "searching.title": "Buscando el servidor OpenSignage …",
+  "standby.hint": "Asigne esta pantalla a una zona en la administración.",
+  "standby.title": "Sin zona asignada",
+  "updating": "Instalando actualización …"
+}

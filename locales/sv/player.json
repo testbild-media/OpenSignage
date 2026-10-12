@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Webbgränssnitt",
+  "notice.certificate": "Servercertifikatet har ändrats. Anslutningen nekades av säkerhetsskäl. Kontrollera servern i enhetens webbgränssnitt.",
+  "notice.version": "Versionen matchar inte servern – uppdatera i administrationen.",
+  "pairing.hint": "Öppna Enheter i administrationen och ta över den här skärmen med denna PIN.",
+  "pairing.server": "Servernyckel {fingerprint}",
+  "pairing.title": "Para den här skärmen",
+  "pin": "PIN",
+  "searching.hint": "Om servern inte hittas automatiskt anger du dess adress i enhetens webbgränssnitt:",
+  "searching.title": "Söker efter OpenSignage-servern …",
+  "standby.hint": "Tilldela den här skärmen till en zon i administrationen.",
+  "standby.title": "Ingen zon tilldelad",
+  "updating": "Installerar uppdatering …"
+}

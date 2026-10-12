@@ -1,0 +1,19 @@
+{
+  "cancel": "Scarta il ripristino preparato",
+  "database": "Solo database",
+  "download": "Crea un backup",
+  "downloadText": "Il download avviene mentre il sistema continua a funzionare. Il backup completo contiene il database, tutti i media, i font e le chiavi del server (dopo un ripristino i player restano associati). Conservalo al sicuro.",
+  "full": "Backup completo",
+  "media": "Tutti i media come ZIP",
+  "pending": "Ripristino preparato",
+  "pendingText": "Il backup verificato viene applicato al riavvio del server.",
+  "restart": "Riavvia il server",
+  "restartConfirm": "Riavviare ora il server? L’interfaccia web non sarà disponibile per alcuni secondi; gli schermi continuano la riproduzione.",
+  "restarting": "Il server si sta riavviando …",
+  "restore": "Ripristino",
+  "restoreConfirm": "Preparare il ripristino da «{name}»? Fino al riavvio non cambia nulla.",
+  "restoreText": "Carica un backup completo (.tar) o un backup del database (.db). Il file viene prima verificato e poi applicato con un riavvio controllato. Lo stato attuale viene conservato con data e ora.",
+  "restoreUpload": "Verifica e prepara",
+  "staged": "Il backup è stato verificato ed è pronto. Riavvia per applicarlo.",
+  "title": "Backup"
+}

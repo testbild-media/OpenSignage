@@ -1,0 +1,14 @@
+{
+  "create": "Crear",
+  "delete": "Eliminar presentación",
+  "deleteConfirm": "¿Eliminar «{name}»? No se puede mientras una lista de reproducción la use.",
+  "deleted": "Presentación eliminada.",
+  "empty": "Aún no hay presentaciones. Cree la primera.",
+  "new": "Nueva presentación",
+  "noTemplate": "Presentación vacía",
+  "published": "Publicada",
+  "saveTemplate": "Guardar como plantilla",
+  "slides": "Diapositivas: {count}",
+  "template": "Plantilla",
+  "templateSaved": "Plantilla guardada."
+}

@@ -1,0 +1,16 @@
+{
+  "action.back": "Nazaj",
+  "action.cancel": "Prekliči",
+  "action.close": "Zapri",
+  "action.confirm": "Potrdi",
+  "action.delete": "Izbriši",
+  "action.edit": "Uredi",
+  "action.retry": "Poskusi znova",
+  "action.save": "Shrani",
+  "app.name": "OpenSignage",
+  "state.error": "Prišlo je do napake.",
+  "state.loading": "Nalaganje …",
+  "state.offline": "Ni povezave s strežnikom. Prikaz morda ni posodobljen.",
+  "state.saving": "Shranjevanje …",
+  "update.reloaded": "Strežnik je bil posodobljen na različico {version}. Znova se prijavite."
+}

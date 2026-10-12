@@ -1,0 +1,14 @@
+{
+  "create": "Oħloq",
+  "delete": "Ħassar il-preżentazzjoni",
+  "deleteConfirm": "Tħassar “{name}”? Dan mhuwiex possibbli sakemm playlist tuża l-preżentazzjoni.",
+  "deleted": "Il-preżentazzjoni tħassret.",
+  "empty": "Għad m’hemm l-ebda preżentazzjoni. Oħloq l-ewwel waħda.",
+  "new": "Preżentazzjoni ġdida",
+  "noTemplate": "Preżentazzjoni vojta",
+  "published": "Ippubblikat",
+  "saveTemplate": "Issejvja bħala mudell",
+  "slides": "Slajds: {count}",
+  "template": "Mudell",
+  "templateSaved": "Il-mudell ġie ssejvjat."
+}

@@ -1,0 +1,56 @@
+{
+  "_comment": "Input of tools/fonts/build_fonts.py. 'path' is the directory inside github.com/google/fonts (ofl/... = SIL OFL 1.1, apache/... = Apache 2.0). 'id' becomes the folder name under fonts/. 'required' families abort the build when they fail; every other family that fails the license check is excluded loudly. 'mustCover' lists scripts the subset must fully cover (build aborts otherwise).",
+  "upstream": "https://github.com/google/fonts",
+  "fallback": "noto-sans",
+  "budgetBytes": 60000000,
+  "extraStaticStyles": ["Light", "Medium", "SemiBold", "Black"],
+  "families": [
+    { "id": "montserrat", "family": "Montserrat", "category": "sans", "path": "ofl/montserrat", "license": "OFL-1.1", "required": true, "mustCover": ["latin", "latin-ext", "cyrillic"] },
+    { "id": "inter", "family": "Inter", "category": "sans", "path": "ofl/inter", "license": "OFL-1.1" },
+    { "id": "open-sans", "family": "Open Sans", "category": "sans", "path": "ofl/opensans", "license": "OFL-1.1" },
+    { "id": "lato", "family": "Lato", "category": "sans", "path": "ofl/lato", "license": "OFL-1.1" },
+    { "id": "poppins", "family": "Poppins", "category": "sans", "path": "ofl/poppins", "license": "OFL-1.1" },
+    { "id": "raleway", "family": "Raleway", "category": "sans", "path": "ofl/raleway", "license": "OFL-1.1" },
+    { "id": "nunito", "family": "Nunito", "category": "sans", "path": "ofl/nunito", "license": "OFL-1.1" },
+    { "id": "work-sans", "family": "Work Sans", "category": "sans", "path": "ofl/worksans", "license": "OFL-1.1" },
+    { "id": "dm-sans", "family": "DM Sans", "category": "sans", "path": "ofl/dmsans", "license": "OFL-1.1" },
+    { "id": "source-sans-3", "family": "Source Sans 3", "category": "sans", "path": "ofl/sourcesans3", "license": "OFL-1.1" },
+    { "id": "fira-sans", "family": "Fira Sans", "category": "sans", "path": "ofl/firasans", "license": "OFL-1.1" },
+    { "id": "ibm-plex-sans", "family": "IBM Plex Sans", "category": "sans", "path": "ofl/ibmplexsans", "license": "OFL-1.1" },
+    { "id": "barlow", "family": "Barlow", "category": "sans", "path": "ofl/barlow", "license": "OFL-1.1" },
+    { "id": "roboto", "family": "Roboto", "category": "sans", "path": "ofl/roboto", "license": "OFL-1.1" },
+    { "id": "noto-sans", "family": "Noto Sans", "category": "sans", "path": "ofl/notosans", "license": "OFL-1.1", "required": true, "mustCover": ["latin", "latin-ext", "greek", "cyrillic"] },
+
+    { "id": "playfair-display", "family": "Playfair Display", "category": "serif", "path": "ofl/playfairdisplay", "license": "OFL-1.1" },
+    { "id": "merriweather", "family": "Merriweather", "category": "serif", "path": "ofl/merriweather", "license": "OFL-1.1" },
+    { "id": "lora", "family": "Lora", "category": "serif", "path": "ofl/lora", "license": "OFL-1.1" },
+    { "id": "source-serif-4", "family": "Source Serif 4", "category": "serif", "path": "ofl/sourceserif4", "license": "OFL-1.1" },
+    { "id": "libre-baskerville", "family": "Libre Baskerville", "category": "serif", "path": "ofl/librebaskerville", "license": "OFL-1.1" },
+    { "id": "noto-serif", "family": "Noto Serif", "category": "serif", "path": "ofl/notoserif", "license": "OFL-1.1", "required": true, "mustCover": ["latin", "latin-ext", "greek", "cyrillic"] },
+
+    { "id": "abril-fatface", "family": "Abril Fatface", "category": "display", "path": "ofl/abrilfatface", "license": "OFL-1.1" },
+    { "id": "alfa-slab-one", "family": "Alfa Slab One", "category": "display", "path": "ofl/alfaslabone", "license": "OFL-1.1" },
+    { "id": "righteous", "family": "Righteous", "category": "display", "path": "ofl/righteous", "license": "OFL-1.1" },
+    { "id": "bungee", "family": "Bungee", "category": "display", "path": "ofl/bungee", "license": "OFL-1.1" },
+
+    { "id": "oswald", "family": "Oswald", "category": "condensed", "path": "ofl/oswald", "license": "OFL-1.1" },
+    { "id": "bebas-neue", "family": "Bebas Neue", "category": "condensed", "path": "ofl/bebasneue", "license": "OFL-1.1" },
+    { "id": "anton", "family": "Anton", "category": "condensed", "path": "ofl/anton", "license": "OFL-1.1" },
+    { "id": "barlow-condensed", "family": "Barlow Condensed", "category": "condensed", "path": "ofl/barlowcondensed", "license": "OFL-1.1" },
+    { "id": "barlow-semi-condensed", "family": "Barlow Semi Condensed", "category": "condensed", "path": "ofl/barlowsemicondensed", "license": "OFL-1.1" },
+    { "id": "roboto-condensed", "family": "Roboto Condensed", "category": "condensed", "path": "ofl/robotocondensed", "license": "OFL-1.1" },
+    { "id": "archivo", "family": "Archivo", "category": "condensed", "path": "ofl/archivo", "license": "OFL-1.1" },
+
+    { "id": "pacifico", "family": "Pacifico", "category": "script", "path": "ofl/pacifico", "license": "OFL-1.1" },
+    { "id": "lobster", "family": "Lobster", "category": "script", "path": "ofl/lobster", "license": "OFL-1.1" },
+    { "id": "dancing-script", "family": "Dancing Script", "category": "script", "path": "ofl/dancingscript", "license": "OFL-1.1" },
+    { "id": "great-vibes", "family": "Great Vibes", "category": "script", "path": "ofl/greatvibes", "license": "OFL-1.1" },
+    { "id": "caveat", "family": "Caveat", "category": "script", "path": "ofl/caveat", "license": "OFL-1.1" },
+    { "id": "kalam", "family": "Kalam", "category": "script", "path": "ofl/kalam", "license": "OFL-1.1" },
+    { "id": "permanent-marker", "family": "Permanent Marker", "category": "script", "path": "apache/permanentmarker", "license": "Apache-2.0" },
+
+    { "id": "source-code-pro", "family": "Source Code Pro", "category": "mono", "path": "ofl/sourcecodepro", "license": "OFL-1.1" },
+    { "id": "jetbrains-mono", "family": "JetBrains Mono", "category": "mono", "path": "ofl/jetbrainsmono", "license": "OFL-1.1" },
+    { "id": "ibm-plex-mono", "family": "IBM Plex Mono", "category": "mono", "path": "ofl/ibmplexmono", "license": "OFL-1.1" }
+  ]
+}

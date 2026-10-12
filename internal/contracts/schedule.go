@@ -1,0 +1,200 @@
+package contracts
+
+import (
+	"fmt"
+	"strings"
+	"unicode/utf8"
+)
+
+// Money is an amount in minor units (e.g. cents) plus ISO 4217 currency code.
+type Money struct {
+	Amount   int64  `json:"amount"`
+	Currency string `json:"currency"`
+}
+
+// MaxRuleNameRunes bounds the name of a schedule rule.
+const MaxRuleNameRunes = 200
+
+// Rule scopes.
+const (
+	ScopeZone    = "zone"
+	ScopeGlobal  = "global"
+	ScopeDefault = "default"
+)
+
+// Window is a recurring weekly time window. Days are ISO weekdays (1=Mon..7=Sun) of the
+// day the window starts. End <= Start means the window crosses midnight; End == Start
+// means 24 hours.
+type Window struct {
+	Days  []int  `json:"days"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
+// PriceOverride replaces the base price of one product while the rule is active.
+type PriceOverride struct {
+	ProductID string `json:"productId"`
+	Price     Money  `json:"price"`
+}
+
+// MaxTickerRunes bounds a ticker text.
+const MaxTickerRunes = 2000
+
+// RuleTicker is a ticker shown over the content of every screen of the zone while the
+// rule is active, e.g. "Happy Hour" without a ticker in the presentation.
+// Hide instead hides the ticker of a lower rule while this rule is active.
+type RuleTicker struct {
+	Hide bool   `json:"hide,omitempty"`
+	Text string `json:"text"`
+	// TemplateID chooses the ticker template; "" = the template of the zone (or the default).
+	TemplateID string `json:"templateId,omitempty"`
+	// Template is the resolved style, set in deployment manifests only.
+	Template *TickerTemplate `json:"template,omitempty"`
+}
+
+// NoGroupID targets the screens of a zone that are in no display group.
+const NoGroupID = "ungrouped"
+
+// GroupPlaylist sets the playlist of one display group of the zone (or NoGroupID).
+type GroupPlaylist struct {
+	GroupID    string `json:"groupId"`
+	PlaylistID string `json:"playlistId"`
+}
+
+// Rule is a time schedule rule (see ARCHITECTURE §5.4). A rule changes only what it sets:
+// the playlist of all screens, the playlist of single display groups,
+// prices, showing or hiding the ticker; everything else stays as lower rules have it.
+type Rule struct {
+	ID         string  `json:"id"`
+	Revision   int64   `json:"revision"`
+	Name       string  `json:"name"`
+	Scope      string  `json:"scope"`
+	ZoneID     string  `json:"zoneId,omitempty"`
+	Window     *Window `json:"window,omitempty"`
+	PlaylistID string  `json:"playlistId,omitempty"`
+	// GroupPlaylists: playlists of single display groups (zone and default rules only).
+	GroupPlaylists []GroupPlaylist `json:"groupPlaylists,omitempty"`
+	Prices         []PriceOverride `json:"prices"`
+	Ticker         *RuleTicker     `json:"ticker,omitempty"`
+	Enabled        bool            `json:"enabled"`
+}
+
+// ParseHHMM parses "HH:MM" (00:00..23:59) into minutes since midnight. Exactly two ASCII
+// digits are required on each side: no signs, spaces or other number forms.
+func ParseHHMM(s string) (int, error) {
+	h, m, ok := strings.Cut(s, ":")
+	if !ok || !twoDigits(h) || !twoDigits(m) {
+		return 0, fmt.Errorf("invalid time %q (expected HH:MM)", s)
+	}
+	hh := int(h[0]-'0')*10 + int(h[1]-'0')
+	mm := int(m[0]-'0')*10 + int(m[1]-'0')
+	if hh > 23 || mm > 59 {
+		return 0, fmt.Errorf("invalid time %q (expected HH:MM)", s)
+	}
+	return hh*60 + mm, nil
+}
+
+func twoDigits(s string) bool {
+	return len(s) == 2 && s[0] >= '0' && s[0] <= '9' && s[1] >= '0' && s[1] <= '9'
+}
+
+// Validate checks the structural validity of a rule (not overlaps, not references).
+func (r *Rule) Validate() error {
+	if strings.TrimSpace(r.Name) == "" {
+		return fieldErr("name", "required")
+	}
+	if utf8.RuneCountInString(r.Name) > MaxRuleNameRunes {
+		return fieldErr("name", "too_long")
+	}
+	switch r.Scope {
+	case ScopeZone:
+		if r.ZoneID == "" {
+			return fieldErr("zoneId", "required")
+		}
+		if r.Window == nil {
+			return fieldErr("window", "required")
+		}
+	case ScopeGlobal:
+		if r.ZoneID != "" {
+			return fieldErr("zoneId", "must_be_empty")
+		}
+		if r.Window == nil {
+			return fieldErr("window", "required")
+		}
+	case ScopeDefault:
+		if r.ZoneID == "" {
+			return fieldErr("zoneId", "required")
+		}
+		if r.Window != nil {
+			return fieldErr("window", "must_be_empty")
+		}
+	default:
+		return fieldErr("scope", "invalid")
+	}
+	if r.Window != nil {
+		if len(r.Window.Days) == 0 {
+			return fieldErr("window.days", "required")
+		}
+		seen := map[int]bool{}
+		for _, d := range r.Window.Days {
+			if d < 1 || d > 7 || seen[d] {
+				return fieldErr("window.days", "invalid")
+			}
+			seen[d] = true
+		}
+		if _, err := ParseHHMM(r.Window.Start); err != nil {
+			return fieldErr("window.start", "invalid")
+		}
+		if _, err := ParseHHMM(r.Window.End); err != nil {
+			return fieldErr("window.end", "invalid")
+		}
+	}
+	if r.PlaylistID == "" && len(r.GroupPlaylists) == 0 && len(r.Prices) == 0 && r.Ticker == nil {
+		return fieldErr("playlistId", "playlist_prices_or_ticker_required")
+	}
+	if len(r.GroupPlaylists) > 0 && r.Scope == ScopeGlobal {
+		return fieldErr("groupPlaylists", "must_be_empty") // groups belong to a zone
+	}
+	groups := map[string]bool{}
+	for _, g := range r.GroupPlaylists {
+		if g.GroupID == "" || g.PlaylistID == "" || groups[g.GroupID] {
+			return fieldErr("groupPlaylists", "invalid")
+		}
+		groups[g.GroupID] = true
+	}
+	if r.Ticker != nil {
+		if r.Ticker.Hide {
+			if r.Ticker.Text != "" || r.Ticker.TemplateID != "" {
+				return fieldErr("ticker.text", "must_be_empty")
+			}
+		} else {
+			if strings.TrimSpace(r.Ticker.Text) == "" {
+				return fieldErr("ticker.text", "required")
+			}
+			if utf8.RuneCountInString(r.Ticker.Text) > MaxTickerRunes {
+				return fieldErr("ticker.text", "too_long")
+			}
+		}
+	}
+	seen := map[string]bool{}
+	for i, p := range r.Prices {
+		if p.ProductID == "" || seen[p.ProductID] {
+			return fieldErr("prices", "invalid")
+		}
+		seen[p.ProductID] = true
+		if err := p.Price.Validate(fmt.Sprintf("prices[%d].price", i)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FieldError describes an invalid input field; Code is translated by the UI.
+type FieldError struct {
+	Field string `json:"field"`
+	Code  string `json:"code"`
+}
+
+func (e *FieldError) Error() string { return e.Field + ": " + e.Code }
+
+func fieldErr(field, code string) error { return &FieldError{Field: field, Code: code} }

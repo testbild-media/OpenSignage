@@ -1,0 +1,14 @@
+{
+  "create": "Erstellen",
+  "delete": "Präsentation löschen",
+  "deleteConfirm": "„{name}“ löschen? Das wird abgelehnt, solange eine Playlist sie verwendet.",
+  "deleted": "Präsentation gelöscht.",
+  "empty": "Noch keine Präsentationen. Erstellen Sie die erste.",
+  "new": "Neue Präsentation",
+  "noTemplate": "Leere Präsentation",
+  "published": "Veröffentlicht",
+  "saveTemplate": "Als Vorlage speichern",
+  "slides": "Folien: {count}",
+  "template": "Vorlage",
+  "templateSaved": "Vorlage gespeichert."
+}

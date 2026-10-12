@@ -1,0 +1,14 @@
+{
+  "create": "Opret",
+  "delete": "Slet præsentation",
+  "deleteConfirm": "Vil du slette »{name}«? Det afvises, så længe en afspilningsliste bruger den.",
+  "deleted": "Præsentationen er slettet.",
+  "empty": "Ingen præsentationer endnu. Opret den første.",
+  "new": "Ny præsentation",
+  "noTemplate": "Tom præsentation",
+  "published": "Udgivet",
+  "saveTemplate": "Gem som skabelon",
+  "slides": "Slides: {count}",
+  "template": "Skabelon",
+  "templateSaved": "Skabelonen er gemt."
+}

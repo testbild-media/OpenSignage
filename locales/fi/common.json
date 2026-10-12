@@ -1,0 +1,16 @@
+{
+  "action.back": "Takaisin",
+  "action.cancel": "Peruuta",
+  "action.close": "Sulje",
+  "action.confirm": "Vahvista",
+  "action.delete": "Poista",
+  "action.edit": "Muokkaa",
+  "action.retry": "Yritä uudelleen",
+  "action.save": "Tallenna",
+  "app.name": "OpenSignage",
+  "state.error": "Jokin meni vikaan.",
+  "state.loading": "Ladataan…",
+  "state.offline": "Ei yhteyttä palvelimeen. Näkymä voi olla vanhentunut.",
+  "state.saving": "Tallennetaan…",
+  "update.reloaded": "Palvelin päivitettiin versioon {version}. Kirjaudu sisään uudelleen."
+}

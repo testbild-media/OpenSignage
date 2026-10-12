@@ -1,0 +1,16 @@
+{
+  "action.back": "Natrag",
+  "action.cancel": "Odustani",
+  "action.close": "Zatvori",
+  "action.confirm": "Potvrdi",
+  "action.delete": "Izbriši",
+  "action.edit": "Uredi",
+  "action.retry": "Pokušaj ponovno",
+  "action.save": "Spremi",
+  "app.name": "OpenSignage",
+  "state.error": "Nešto je pošlo po zlu.",
+  "state.loading": "Učitavanje…",
+  "state.offline": "Nema veze s poslužiteljem. Prikaz možda nije ažuran.",
+  "state.saving": "Spremanje…",
+  "update.reloaded": "Poslužitelj je ažuriran na verziju {version}. Ponovno se prijavite."
+}

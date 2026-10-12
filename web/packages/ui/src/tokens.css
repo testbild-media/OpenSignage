@@ -1,0 +1,28 @@
+/* OpenSignage design tokens (docs/branding.md). Warm neutrals only, dark everywhere. */
+:root {
+  --os-primary: #ff8a00;
+  --os-primary-hover: #ffa733;
+  --os-primary-active: #e67a00;
+  --os-primary-soft: rgba(255, 138, 0, 0.3);
+  --os-accent: #ff9f40;
+  --os-brand-dark: #a63d00;
+  --os-bg: #201c18;
+  --os-surface: #2a251f;
+  --os-surface-2: #332d26;
+  --os-border: #453e35;
+  --os-border-strong: #5a5147;
+  --os-text: #f2ede6;
+  --os-text-muted: #a99e90;
+  --os-text-faint: #746b60;
+  --os-success: #2f9e5c;
+  --os-warning: #d99a1f;
+  --os-danger: #d64545;
+  --os-radius-s: 6px;
+  --os-radius-m: 10px;
+  --os-radius-l: 16px;
+  --os-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --os-font: 'Montserrat', 'Noto Sans', system-ui, sans-serif;
+  --os-sidebar: 248px;
+  --os-sidebar-collapsed: 64px;
+  color-scheme: dark;
+}

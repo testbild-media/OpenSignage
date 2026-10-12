@@ -1,0 +1,55 @@
+{
+  "id": "01920000-0000-7000-8000-000000000001",
+  "name": "Bar menu",
+  "width": 1280,
+  "height": 720,
+  "typography": {
+    "heading": { "font": "Montserrat", "size": 34, "color": "#ff8a00", "bold": true, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.2, "align": "left" },
+    "subheading": { "font": "Montserrat", "size": 26, "color": "#ffa733", "bold": true, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.2, "align": "left" },
+    "item": { "font": "Montserrat", "size": 24, "color": "#ffffff", "bold": false, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.25, "align": "left" },
+    "description": { "font": "Montserrat", "size": 16, "color": "#ffffff", "bold": false, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.25, "align": "left" },
+    "price": { "font": "Montserrat", "size": 24, "color": "#ffffff", "bold": true, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.25, "align": "right" }
+  },
+  "slides": [
+    {
+      "id": "s1",
+      "name": "Drinks",
+      "hidden": false,
+      "duration": { "mode": "fixed", "ms": 15000 },
+      "background": { "type": "video", "color": "#000000", "assetId": "asset-video", "fit": "cover" },
+      "transition": { "type": "slide", "ms": 700, "direction": "left" },
+      "elements": [
+        { "id": "logo", "type": "image", "name": "Logo", "x": 1100, "y": 20, "w": 160, "h": 80, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": true, "assetId": "asset-image", "fit": "contain" },
+        { "id": "title", "type": "text", "name": "", "x": 40, "y": 30, "w": 800, "h": 90, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": false,
+          "style": { "font": "Montserrat", "size": 60, "color": "#f2ede6", "bold": false, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1.1, "align": "left" },
+          "valign": "middle", "padding": [0, 0, 0, 0], "autoShrink": true,
+          "doc": { "paragraphs": [ { "runs": [ { "text": "Happy " }, { "text": "Hour", "marks": { "bold": true, "color": "#ff8a00" } } ] } ] } },
+        { "id": "list", "type": "productList", "name": "", "x": 40, "y": 140, "w": 1200, "h": 520, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": false,
+          "source": { "kind": "all", "ids": [] }, "columns": 2, "fields": { "name": true, "quantity": true, "description": true, "price": true },
+          "categoryHeadings": true, "subcategoryHeadings": true, "scale": 1, "rowGap": 6, "columnGap": 40, "priceAlign": "right" },
+        { "id": "line", "type": "shape", "name": "", "x": 40, "y": 125, "w": 1200, "h": 4, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": false,
+          "shape": "line", "stroke": { "color": "#a63d00", "width": 3, "dash": "solid" } },
+        { "id": "clock", "type": "clock", "name": "", "x": 900, "y": 650, "w": 340, "h": 60, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": true,
+          "format": "HH:mm", "date": "short", "valign": "middle",
+          "style": { "font": "Montserrat", "size": 32, "color": "#ffffff", "bold": false, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1, "align": "right" } },
+        { "id": "tick", "type": "ticker", "name": "", "x": 0, "y": 680, "w": 1280, "h": 40, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": false,
+          "tickerSource": "zone", "text": "", "fill": "#201c18", "speed": 120, "direction": "left",
+          "style": { "font": "Montserrat", "size": 26, "color": "#ffffff", "bold": false, "italic": false, "underline": false, "strike": false, "letterSpacing": 0, "lineHeight": 1, "align": "left" } }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Event",
+      "hidden": false,
+      "duration": { "mode": "video", "maxMs": 600000 },
+      "background": { "type": "video", "color": "#000000", "assetId": "asset-video", "fit": "cover" },
+      "transition": { "type": "fade", "ms": 600 },
+      "elements": [
+        { "id": "logo", "type": "image", "name": "Logo", "x": 1100, "y": 20, "w": 160, "h": 80, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": true, "assetId": "asset-image", "fit": "contain" },
+        { "id": "clip", "type": "video", "name": "", "x": 100, "y": 100, "w": 640, "h": 360, "rotation": 0, "opacity": 1, "locked": false, "hidden": false, "pinned": false, "assetId": "asset-video", "fit": "contain", "loop": true, "muted": true },
+        { "id": "box", "type": "shape", "name": "", "x": 800, "y": 300, "w": 300, "h": 200, "rotation": 5, "opacity": 0.8, "locked": false, "hidden": false, "pinned": false,
+          "shape": "rect", "fill": "#ff8a00cc", "radius": 16, "stroke": { "color": "#ffffff", "width": 2, "dash": "dashed" } }
+      ]
+    }
+  ]
+}

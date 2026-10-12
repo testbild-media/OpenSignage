@@ -1,0 +1,14 @@
+{
+  "create": "Cruthaigh",
+  "delete": "Scrios an cur i láthair",
+  "deleteConfirm": "Scrios “{name}”? Ní féidir é a scriosadh fad is a úsáideann seinmliosta é.",
+  "deleted": "Scriosadh an cur i láthair.",
+  "empty": "Níl aon chur i láthair ann go fóill. Cruthaigh an chéad cheann.",
+  "new": "Cur i láthair nua",
+  "noTemplate": "Cur i láthair folamh",
+  "published": "Foilsithe",
+  "saveTemplate": "Sábháil mar theimpléad",
+  "slides": "Sleamhnáin: {count}",
+  "template": "Teimpléad",
+  "templateSaved": "Sábháladh an teimpléad."
+}

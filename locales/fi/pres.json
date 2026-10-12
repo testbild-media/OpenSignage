@@ -1,0 +1,14 @@
+{
+  "create": "Luo",
+  "delete": "Poista esitys",
+  "deleteConfirm": "Poistetaanko ”{name}”? Se ei onnistu, kun jokin soittolista käyttää sitä.",
+  "deleted": "Esitys poistettu.",
+  "empty": "Esityksiä ei ole vielä. Luo ensimmäinen.",
+  "new": "Uusi esitys",
+  "noTemplate": "Tyhjä esitys",
+  "published": "Julkaistu",
+  "saveTemplate": "Tallenna malliksi",
+  "slides": "Diat: {count}",
+  "template": "Malli",
+  "templateSaved": "Malli tallennettu."
+}

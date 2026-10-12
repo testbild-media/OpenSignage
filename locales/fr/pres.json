@@ -1,0 +1,14 @@
+{
+  "create": "Créer",
+  "delete": "Supprimer la présentation",
+  "deleteConfirm": "Supprimer « {name} » ? Impossible tant qu’une liste de lecture l’utilise.",
+  "deleted": "Présentation supprimée.",
+  "empty": "Aucune présentation pour le moment. Créez la première.",
+  "new": "Nouvelle présentation",
+  "noTemplate": "Présentation vide",
+  "published": "Publiée",
+  "saveTemplate": "Enregistrer comme modèle",
+  "slides": "Diapositives : {count}",
+  "template": "Modèle",
+  "templateSaved": "Modèle enregistré."
+}

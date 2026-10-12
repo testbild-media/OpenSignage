@@ -1,0 +1,16 @@
+{
+  "action.back": "Späť",
+  "action.cancel": "Zrušiť",
+  "action.close": "Zavrieť",
+  "action.confirm": "Potvrdiť",
+  "action.delete": "Odstrániť",
+  "action.edit": "Upraviť",
+  "action.retry": "Skúsiť znova",
+  "action.save": "Uložiť",
+  "app.name": "OpenSignage",
+  "state.error": "Niečo sa pokazilo.",
+  "state.loading": "Načítava sa…",
+  "state.offline": "Žiadne spojenie so serverom. Zobrazenie nemusí byť aktuálne.",
+  "state.saving": "Ukladá sa…",
+  "update.reloaded": "Server bol aktualizovaný na verziu {version}. Prihláste sa znova."
+}

@@ -1,0 +1,31 @@
+[Unit]
+Description=OpenSignage display (minimal Xorg session on tty7)
+Documentation=https://github.com/testbild-media/OpenSignage
+After=systemd-user-sessions.service plymouth-quit-wait.service systemd-logind.service
+Conflicts=getty@tty7.service autovt@tty7.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=opensignage
+Group=opensignage
+# A logind session on tty7 lets Xorg run without root (KMS, input and VT access).
+PAMName=login
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+UtmpIdentifier=tty7
+UtmpMode=user
+WorkingDirectory=/var/lib/opensignage-agent
+Environment=HOME=/var/lib/opensignage-agent
+ExecStartPre=+/usr/bin/chvt 7
+ExecStart=/usr/bin/xinit /usr/lib/opensignage-agent/session.sh -- :0 vt7 -nocursor -nolisten tcp -keeptty
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

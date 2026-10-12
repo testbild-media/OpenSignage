@@ -1,0 +1,14 @@
+{
+  "create": "Vytvoriť",
+  "delete": "Odstrániť prezentáciu",
+  "deleteConfirm": "Odstrániť „{name}“? Ak ju používa playlist, odstránenie sa zamietne.",
+  "deleted": "Prezentácia bola odstránená.",
+  "empty": "Zatiaľ žiadne prezentácie. Vytvorte prvú.",
+  "new": "Nová prezentácia",
+  "noTemplate": "Prázdna prezentácia",
+  "published": "Zverejnené",
+  "saveTemplate": "Uložiť ako šablónu",
+  "slides": "Snímky: {count}",
+  "template": "Šablóna",
+  "templateSaved": "Šablóna bola uložená."
+}

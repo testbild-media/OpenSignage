@@ -1,0 +1,19 @@
+{
+  "cancel": "Voorbereid herstel verwerpen",
+  "database": "Alleen database",
+  "download": "Back-up maken",
+  "downloadText": "Het downloaden werkt terwijl het systeem blijft draaien. De volledige back-up bevat de database, alle media, lettertypen en de serversleutels (spelers blijven na een herstel gekoppeld). Bewaar de back-up op een veilige plek.",
+  "full": "Volledige back-up",
+  "media": "Alle media als ZIP",
+  "pending": "Herstel voorbereid",
+  "pendingText": "De gecontroleerde back-up wordt toegepast wanneer de server opnieuw opstart.",
+  "restart": "Server herstarten",
+  "restartConfirm": "De server nu herstarten? De webinterface is enkele seconden niet bereikbaar; de schermen blijven afspelen.",
+  "restarting": "De server wordt herstart…",
+  "restore": "Herstellen",
+  "restoreConfirm": "Herstel uit “{name}” voorbereiden? Tot de herstart verandert er niets.",
+  "restoreText": "Upload een volledige back-up (.tar) of een databaseback-up (.db). Het bestand wordt eerst gecontroleerd en daarna bij een geordende herstart toegepast. De huidige stand blijft met een tijdstempel bewaard.",
+  "restoreUpload": "Controleren en voorbereiden",
+  "staged": "De back-up is gecontroleerd en staat klaar. Herstart de server om deze toe te passen.",
+  "title": "Back-up"
+}

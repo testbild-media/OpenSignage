@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Webinterface",
+  "notice.certificate": "Het servercertificaat is gewijzigd. De verbinding is uit veiligheidsoverwegingen geweigerd. Controleer de server in de webinterface van dit apparaat.",
+  "notice.version": "Versie komt niet overeen met de server – werk bij via het beheer.",
+  "pairing.hint": "Open in het beheer Apparaten en neem dit scherm over met deze pincode.",
+  "pairing.server": "Serversleutel {fingerprint}",
+  "pairing.title": "Dit scherm koppelen",
+  "pin": "Pincode",
+  "searching.hint": "Als de server niet automatisch wordt gevonden, stel dan het adres in via de webinterface van dit apparaat:",
+  "searching.title": "OpenSignage-server zoeken …",
+  "standby.hint": "Wijs dit scherm in het beheer toe aan een zone.",
+  "standby.title": "Geen zone toegewezen",
+  "updating": "Update wordt geïnstalleerd …"
+}

@@ -1,0 +1,19 @@
+{
+  "cancel": "Loobu ettevalmistatud taastamisest",
+  "database": "Ainult andmebaas",
+  "download": "Loo varukoopia",
+  "downloadText": "Allalaadimine toimub süsteemi töö ajal. Täielik varukoopia sisaldab andmebaasi, kogu meediat, fonte ja serveri võtmeid (esitajad jäävad pärast taastamist seotuks). Hoia seda turvalises kohas.",
+  "full": "Täielik varukoopia",
+  "media": "Kogu meedia ZIP-failina",
+  "pending": "Taastamine on ette valmistatud",
+  "pendingText": "Kontrollitud varukoopia rakendatakse serveri taaskäivitamisel.",
+  "restart": "Taaskäivita server",
+  "restartConfirm": "Kas taaskäivitada server kohe? Veebiliides pole mõne sekundi jooksul saadaval; ekraanid jätkavad esitamist.",
+  "restarting": "Server taaskäivitub…",
+  "restore": "Taasta",
+  "restoreConfirm": "Kas valmistada ette taastamine failist „{name}“? Enne taaskäivitamist midagi ei muutu.",
+  "restoreText": "Laadi üles täielik varukoopia (.tar) või andmebaasi varukoopia (.db). Fail kontrollitakse esmalt ja rakendatakse kontrollitud taaskäivitamisel. Praegune seis säilitatakse ajatempliga.",
+  "restoreUpload": "Kontrolli ja valmista ette",
+  "staged": "Varukoopia on kontrollitud ja valmis. Rakendamiseks taaskäivita server.",
+  "title": "Varukoopia"
+}

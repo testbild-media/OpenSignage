@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interfejs WWW",
+  "notice.certificate": "Certyfikat serwera uległ zmianie. Połączenie zostało odrzucone ze względów bezpieczeństwa. Sprawdź serwer w interfejsie WWW tego urządzenia.",
+  "notice.version": "Wersja nie pasuje do serwera – zaktualizuj w administracji.",
+  "pairing.hint": "W administracji otwórz Urządzenia i przejmij ten ekran za pomocą tego PIN-u.",
+  "pairing.server": "Klucz serwera {fingerprint}",
+  "pairing.title": "Sparuj ten ekran",
+  "pin": "PIN",
+  "searching.hint": "Jeśli serwer nie zostanie znaleziony automatycznie, ustaw jego adres w interfejsie WWW tego urządzenia:",
+  "searching.title": "Wyszukiwanie serwera OpenSignage …",
+  "standby.hint": "Przypisz ten ekran do strefy w administracji.",
+  "standby.title": "Nie przypisano strefy",
+  "updating": "Instalowanie aktualizacji …"
+}

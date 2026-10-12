@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Webové rozhraní",
+  "notice.certificate": "Certifikát serveru se změnil. Spojení bylo z bezpečnostních důvodů odmítnuto. Zkontrolujte server ve webovém rozhraní tohoto zařízení.",
+  "notice.version": "Verze neodpovídá serveru – aktualizujte prosím v administraci.",
+  "pairing.hint": "V administraci otevřete Zařízení a převezměte tuto obrazovku pomocí tohoto PIN.",
+  "pairing.server": "Klíč serveru {fingerprint}",
+  "pairing.title": "Spárovat tuto obrazovku",
+  "pin": "PIN",
+  "searching.hint": "Pokud server není nalezen automaticky, zadejte jeho adresu ve webovém rozhraní tohoto zařízení:",
+  "searching.title": "Hledá se server OpenSignage …",
+  "standby.hint": "Přiřaďte tuto obrazovku v administraci k zóně.",
+  "standby.title": "Není přiřazena žádná zóna",
+  "updating": "Instaluje se aktualizace …"
+}

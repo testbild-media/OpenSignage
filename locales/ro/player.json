@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interfață web",
+  "notice.certificate": "Certificatul serverului s-a schimbat. Conexiunea a fost refuzată din motive de securitate. Verificați serverul în interfața web a acestui dispozitiv.",
+  "notice.version": "Versiunea nu corespunde serverului – actualizați în administrare.",
+  "pairing.hint": "În administrare, deschideți Dispozitive și preluați acest ecran cu acest PIN.",
+  "pairing.server": "Cheia serverului {fingerprint}",
+  "pairing.title": "Asociază acest ecran",
+  "pin": "PIN",
+  "searching.hint": "Dacă serverul nu este găsit automat, setați adresa acestuia în interfața web a acestui dispozitiv:",
+  "searching.title": "Se caută serverul OpenSignage …",
+  "standby.hint": "Atribuiți acest ecran unei zone în administrare.",
+  "standby.title": "Nicio zonă atribuită",
+  "updating": "Se instalează actualizarea …"
+}

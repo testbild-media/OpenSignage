@@ -1,0 +1,19 @@
+{
+  "cancel": "Zahodiť pripravené obnovenie",
+  "database": "Iba databáza",
+  "download": "Vytvoriť zálohu",
+  "downloadText": "Sťahovanie prebieha počas bežnej prevádzky. Úplná záloha obsahuje databázu, všetky médiá, písma a kľúče servera (prehrávače zostanú po obnovení spárované). Uschovajte ju na bezpečnom mieste.",
+  "full": "Úplná záloha",
+  "media": "Všetky médiá ako ZIP",
+  "pending": "Obnovenie je pripravené",
+  "pendingText": "Skontrolovaná záloha sa použije pri reštarte servera.",
+  "restart": "Reštartovať server",
+  "restartConfirm": "Reštartovať server teraz? Webové rozhranie bude niekoľko sekúnd nedostupné; obrazovky budú ďalej prehrávať.",
+  "restarting": "Server sa reštartuje…",
+  "restore": "Obnoviť",
+  "restoreConfirm": "Pripraviť obnovenie zo zálohy „{name}“? Do reštartu sa nič nezmení.",
+  "restoreText": "Nahrajte úplnú zálohu (.tar) alebo zálohu databázy (.db). Súbor sa najprv skontroluje a použije sa pri riadenom reštarte. Aktuálny stav sa zachová s časovou pečiatkou.",
+  "restoreUpload": "Skontrolovať a pripraviť",
+  "staged": "Záloha bola skontrolovaná a je pripravená. Reštartujte server, aby sa použila.",
+  "title": "Zálohovanie"
+}

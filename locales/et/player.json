@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Veebiliides",
+  "notice.certificate": "Serveri sertifikaat on muutunud. Turvalisuse huvides keelduti ühendusest. Kontrolli serverit selle seadme veebiliideses.",
+  "notice.version": "Versioon ei vasta serverile – palun uuenda halduses.",
+  "pairing.hint": "Ava halduses Seadmed ja võta see ekraan selle PIN-koodiga üle.",
+  "pairing.server": "Serveri võti {fingerprint}",
+  "pairing.title": "Seo see ekraan",
+  "pin": "PIN",
+  "searching.hint": "Kui serverit automaatselt ei leita, sisesta selle aadress selle seadme veebiliideses:",
+  "searching.title": "OpenSignage’i serveri otsimine …",
+  "standby.hint": "Määra see ekraan halduses tsooni.",
+  "standby.title": "Tsooni pole määratud",
+  "updating": "Värskenduse paigaldamine …"
+}

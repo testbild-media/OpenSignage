@@ -1,0 +1,306 @@
+// Time schedules grouped by zone plus global rules: weekly timeline, "what runs now",
+// rule editor, enable/disable and delete.
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { NO_GROUP_ID, type Rule } from '@opensignage/contracts';
+import { getLanguage } from '@opensignage/i18n';
+import { del, errorText, patch } from '../../lib/api';
+import { useAction, useQuery, useT } from '../../lib/hooks';
+import { useEvents } from '../../lib/events';
+import { useSession } from '../../lib/session';
+import { useConfirm, useToast } from '../../components/feedback';
+import { Badge, Button, DataState, IconButton, PageHeader } from '../../components/ui';
+import { Switch } from '../../components/controls';
+import type { Category, Product } from '../products/types';
+import { playablePlaylists, type PlaylistSummary, type Zone, type TickerTemplateList } from '../zones/types';
+import { NowPanel } from './NowPanel';
+import { RuleDialog, type RuleDialogData } from './RuleDialog';
+import { Timeline } from './WeekTimeline';
+import { formatDays, midnightInfo, weekdayLabels } from './windows';
+
+type Editing = { rule: Rule | null; preset?: { scope: Rule['scope']; zoneId?: string } } | null;
+
+function RulesTable({
+  rules,
+  playlists,
+  zones,
+  onEdit,
+  onToggle,
+  onDelete,
+  busyId,
+  deleting,
+}: {
+  rules: Rule[];
+  playlists: PlaylistSummary[] | undefined;
+  zones: Zone[];
+  onEdit: (r: Rule) => void;
+  onToggle: (r: Rule) => void;
+  onDelete: (r: Rule) => void;
+  busyId: string | null;
+  deleting: boolean;
+}) {
+  const t = useT();
+  const lang = getLanguage();
+  const labels = useMemo(() => weekdayLabels(lang), [lang]);
+  const playable = new Set(playablePlaylists(playlists).map((p) => p.id));
+  const groupName = (r: Rule, id: string): string =>
+    id === NO_GROUP_ID ? t('admin.zones.groups.ungrouped') : (zones.find((z) => z.id === r.zoneId)?.groups?.find((g) => g.id === id)?.name ?? '…');
+  const sorted = [...rules].sort((a, b) => (a.scope === 'default' ? -1 : 0) - (b.scope === 'default' ? -1 : 0));
+  return (
+    <table className="table rules-table">
+      <thead>
+        <tr>
+          <th>{t('admin.schedules.field.name')}</th>
+          <th>{t('admin.schedules.when')}</th>
+          <th>{t('admin.schedules.field.playlist')}</th>
+          <th className="num">{t('admin.schedules.prices.title')}</th>
+          <th>{t('admin.schedules.field.enabled')}</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        {sorted.map((r) => {
+          const info = r.window ? midnightInfo(r.window.start, r.window.end) : null;
+          const pl = r.playlistId ? playlists?.find((p) => p.id === r.playlistId) : undefined;
+          return (
+            <tr key={r.id} className={r.enabled ? '' : 'rule-disabled'}>
+              <td>
+                <button type="button" className="link-btn strong" onClick={() => onEdit(r)}>
+                  {r.name}
+                </button>
+                {r.scope === 'default' && (
+                  <div>
+                    <Badge tone="primary">{t('admin.schedules.scope.default')}</Badge>
+                  </div>
+                )}
+              </td>
+              <td className="nowrap">
+                {r.window ? (
+                  <>
+                    <div>{formatDays(r.window.days, (d) => labels[d] ?? '')}</div>
+                    <div className="muted">
+                      {r.window.start}–{r.window.end} {info === 'crosses' && <Badge>{t('admin.schedules.nextDay')}</Badge>}
+                      {info === 'full_day' && <Badge>{t('admin.schedules.fullDay')}</Badge>}
+                    </div>
+                  </>
+                ) : (
+                  <span className="muted">{t('admin.schedules.always')}</span>
+                )}
+              </td>
+              <td>
+                {r.ticker && (
+                  <div>
+                    <Badge tone="primary">{r.ticker.hide ? t('admin.schedules.ticker.hiddenBadge') : t('admin.schedules.ticker.badge')}</Badge>
+                  </div>
+                )}
+                {(r.groupPlaylists ?? []).map((g) => (
+                  <div key={g.groupId} className="muted">
+                    {groupName(r, g.groupId)}: {playlists?.find((p) => p.id === g.playlistId)?.name ?? '…'}
+                  </div>
+                ))}
+                {!r.playlistId ? (
+                  (r.groupPlaylists ?? []).length === 0 && <Badge>{t('admin.schedules.pricesOnly')}</Badge>
+                ) : (
+                  <>
+                    <span>{pl?.name ?? '…'}</span>
+                    {playlists && !playable.has(r.playlistId) && (
+                      <div>
+                        <Badge tone="warning">{t('admin.schedules.playlistUnavailable')}</Badge>
+                      </div>
+                    )}
+                  </>
+                )}
+              </td>
+              <td className="num">{r.prices.length || '—'}</td>
+              <td>
+                <Switch checked={r.enabled} busy={busyId === r.id} label={r.enabled ? t('admin.schedules.on') : t('admin.schedules.off')} onChange={() => onToggle(r)} />
+              </td>
+              <td className="row-actions">
+                <IconButton label={t('common.action.edit')} onClick={() => onEdit(r)}>
+                  <Pencil size={16} />
+                </IconButton>
+                <IconButton label={t('common.action.delete')} disabled={deleting} onClick={() => onDelete(r)}>
+                  <Trash2 size={16} />
+                </IconButton>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+export function SchedulesPage() {
+  const t = useT();
+  const toast = useToast();
+  const confirm = useConfirm();
+  const location = useLocation();
+  const { server } = useSession();
+  const tz = server?.timezone || 'UTC';
+  const rulesQ = useQuery<{ schedules: Rule[] }>('/api/v1/schedules');
+  const zonesQ = useQuery<{ zones: Zone[] }>('/api/v1/zones');
+  const playlistsQ = useQuery<{ playlists: PlaylistSummary[] }>('/api/v1/playlists');
+  const productsQ = useQuery<{ products: Product[] }>('/api/v1/products');
+  const archivedQ = useQuery<{ products: Product[] }>('/api/v1/products?archived=1');
+  const catsQ = useQuery<{ categories: Category[] }>('/api/v1/categories');
+  const tickersQ = useQuery<TickerTemplateList>('/api/v1/ticker-templates');
+  useEvents(['zones'], () => {
+    rulesQ.reload();
+    zonesQ.reload();
+  });
+  useEvents(['content'], () => playlistsQ.reload());
+  useEvents(['products'], () => {
+    productsQ.reload();
+    archivedQ.reload();
+    catsQ.reload();
+  });
+  const [editing, setEditing] = useState<Editing>(null);
+  const [toggling, setToggling] = useState<string | null>(null);
+  const close = useCallback(() => setEditing(null), []);
+
+  const toggle = useAction(async (r: Rule) => {
+    setToggling(r.id);
+    try {
+      await patch(`/api/v1/schedules/${r.id}`, { revision: r.revision, enabled: !r.enabled });
+      toast(r.enabled ? t('admin.schedules.disabledDone', { name: r.name }) : t('admin.schedules.enabledDone', { name: r.name }));
+    } catch (e) {
+      toast(errorText(e), 'error');
+    } finally {
+      setToggling(null);
+      rulesQ.reload();
+    }
+  });
+  const remove = useAction(async (r: Rule) => {
+    const ok = await confirm({ title: t('admin.schedules.delete'), message: t('admin.schedules.deleteConfirm', { name: r.name }), confirmLabel: t('common.action.delete'), danger: true });
+    if (!ok) return;
+    try {
+      await del(`/api/v1/schedules/${r.id}`);
+      toast(t('admin.schedules.deleted', { name: r.name }));
+    } catch (e) {
+      toast(errorText(e), 'error');
+    }
+    rulesQ.reload();
+  });
+
+  const rules = useMemo(() => rulesQ.data?.schedules ?? [], [rulesQ.data]);
+  const zones = useMemo(() => zonesQ.data?.zones ?? [], [zonesQ.data]);
+  const globals = rules.filter((r) => r.scope === 'global');
+  const dialogData: RuleDialogData = {
+    zones,
+    playlists: playlistsQ.data?.playlists,
+    products: productsQ.data?.products ?? [],
+    archivedProducts: archivedQ.data?.products ?? [],
+    categories: catsQ.data?.categories ?? [],
+    tickerTemplates: tickersQ.data?.tickerTemplates ?? [],
+    defaultTicker: tickersQ.data?.default,
+  };
+  const dialogReady = !!zonesQ.data && !!productsQ.data && !!catsQ.data;
+
+  // Deep link from the zone list: /schedules#zone-<id>.
+  useEffect(() => {
+    if (!location.hash || !zonesQ.data) return;
+    document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ block: 'start' });
+  }, [location.hash, zonesQ.data]);
+
+  const tableProps = {
+    playlists: playlistsQ.data?.playlists,
+    zones,
+    onEdit: (r: Rule) => setEditing({ rule: r }),
+    onToggle: (r: Rule) => void toggle.run(r),
+    onDelete: (r: Rule) => void remove.run(r),
+    busyId: toggling,
+    deleting: remove.busy,
+  };
+
+  return (
+    <div className="page">
+      <PageHeader
+        title={t('admin.schedules.title')}
+        subtitle={t('admin.schedules.subtitle')}
+        actions={
+          <Button variant="primary" icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: zones.length ? 'zone' : 'global', zoneId: zones[0]?.id } })}>
+            {t('admin.schedules.add')}
+          </Button>
+        }
+      />
+      <details className="card priority-card">
+        <summary>{t('admin.schedules.priority.title')}</summary>
+        <ol className="steps">
+          <li>{t('admin.schedules.priority.closed')}</li>
+          <li>{t('admin.schedules.priority.zone')}</li>
+          <li>{t('admin.schedules.priority.global')}</li>
+          <li>{t('admin.schedules.priority.default')}</li>
+          <li>{t('admin.schedules.priority.none')}</li>
+        </ol>
+        <p className="muted">{t('admin.schedules.priority.perItem')}</p>
+        <p className="muted">{t('admin.schedules.priority.prices')}</p>
+      </details>
+      <DataState loading={(rulesQ.loading && !rulesQ.data) || (zonesQ.loading && !zonesQ.data)} error={rulesQ.error ?? zonesQ.error} onRetry={() => (rulesQ.reload(), zonesQ.reload())}>
+        <section className="card schedule-section" id="global">
+          <div className="schedule-section-head">
+            <div>
+              <h2>{t('admin.schedules.globalTitle')}</h2>
+              <div className="muted">{t('admin.schedules.globalHint')}</div>
+            </div>
+            <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'global' } })}>
+              {t('admin.schedules.addGlobal')}
+            </Button>
+          </div>
+          <Timeline rules={globals} timeZone={tz} showZoneLane={false} onOpen={(r) => setEditing({ rule: r })} />
+          {globals.length === 0 ? <div className="state state-empty state-compact">{t('admin.schedules.emptyGlobal')}</div> : <RulesTable rules={globals} {...tableProps} />}
+        </section>
+        {zones.length === 0 && (
+          <div className="state state-empty">
+            <div>{t('admin.schedules.noZones')}</div>
+            <Link to="/zones" className="btn btn-secondary">
+              {t('admin.nav.zones')}
+            </Link>
+          </div>
+        )}
+        {zones.map((z) => {
+          const own = rules.filter((r) => r.zoneId === z.id);
+          const hasDefault = own.some((r) => r.scope === 'default');
+          return (
+            <section key={z.id} className="card schedule-section" id={`zone-${z.id}`}>
+              <div className="schedule-section-head">
+                <div>
+                  <h2>
+                    {z.name} {z.state === 'CLOSED' && <Badge tone="warning">{t('admin.zones.closed')}</Badge>}
+                  </h2>
+                  {!hasDefault && <div className="muted">{t('admin.schedules.noDefault')}</div>}
+                </div>
+                <div className="page-actions">
+                  {!hasDefault && (
+                    <Button disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'default', zoneId: z.id } })}>
+                      {t('admin.schedules.addDefault')}
+                    </Button>
+                  )}
+                  <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'zone', zoneId: z.id } })}>
+                    {t('admin.schedules.addZone')}
+                  </Button>
+                </div>
+              </div>
+              <NowPanel zoneId={z.id} rules={rules} />
+              <Timeline rules={[...own, ...globals]} timeZone={tz} showZoneLane onOpen={(r) => setEditing({ rule: r })} />
+              {own.length === 0 ? <div className="state state-empty state-compact">{t('admin.schedules.emptyZone')}</div> : <RulesTable rules={own} {...tableProps} />}
+            </section>
+          );
+        })}
+      </DataState>
+      {editing && dialogReady && (
+        <RuleDialog
+          rule={editing.rule}
+          preset={editing.preset}
+          data={dialogData}
+          onClose={close}
+          onSaved={() => {
+            setEditing(null);
+            rulesQ.reload();
+          }}
+        />
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interface web",
+  "notice.certificate": "Le certificat du serveur a changé. La connexion a été refusée par sécurité. Vérifiez le serveur dans l’interface web de cet appareil.",
+  "notice.version": "La version ne correspond pas au serveur – veuillez mettre à jour dans l’administration.",
+  "pairing.hint": "Dans l’administration, ouvrez Appareils et adoptez cet écran avec ce code PIN.",
+  "pairing.server": "Clé du serveur {fingerprint}",
+  "pairing.title": "Associer cet écran",
+  "pin": "PIN",
+  "searching.hint": "Si le serveur n’est pas trouvé automatiquement, saisissez son adresse dans l’interface web de cet appareil :",
+  "searching.title": "Recherche du serveur OpenSignage …",
+  "standby.hint": "Attribuez cet écran à une zone dans l’administration.",
+  "standby.title": "Aucune zone attribuée",
+  "updating": "Installation de la mise à jour …"
+}

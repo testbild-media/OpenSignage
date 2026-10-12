@@ -1,0 +1,14 @@
+{
+  "create": "Criar",
+  "delete": "Eliminar apresentação",
+  "deleteConfirm": "Eliminar «{name}»? Isto é recusado enquanto uma lista de reprodução a utilizar.",
+  "deleted": "Apresentação eliminada.",
+  "empty": "Ainda não há apresentações. Crie a primeira.",
+  "new": "Nova apresentação",
+  "noTemplate": "Apresentação vazia",
+  "published": "Publicado",
+  "saveTemplate": "Guardar como modelo",
+  "slides": "Diapositivos: {count}",
+  "template": "Modelo",
+  "templateSaved": "Modelo guardado."
+}

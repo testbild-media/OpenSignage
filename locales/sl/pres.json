@@ -1,0 +1,14 @@
+{
+  "create": "Ustvari",
+  "delete": "Izbriši predstavitev",
+  "deleteConfirm": "Izbrisati „{name}“? Dokler jo uporablja seznam predvajanja, brisanje ni mogoče.",
+  "deleted": "Predstavitev je izbrisana.",
+  "empty": "Predstavitev še ni. Ustvarite prvo.",
+  "new": "Nova predstavitev",
+  "noTemplate": "Prazna predstavitev",
+  "published": "Objavljeno",
+  "saveTemplate": "Shrani kot predlogo",
+  "slides": "Diapozitivi: {count}",
+  "template": "Predloga",
+  "templateSaved": "Predloga je shranjena."
+}

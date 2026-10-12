@@ -1,0 +1,19 @@
+{
+  "cancel": "Zavrzi pripravljeno obnovitev",
+  "database": "Samo zbirka podatkov",
+  "download": "Ustvari varnostno kopijo",
+  "downloadText": "Prenos poteka med delovanjem sistema. Popolna varnostna kopija vsebuje zbirko podatkov, vso predstavnost, pisave in ključe strežnika (predvajalniki po obnovitvi ostanejo seznanjeni). Shranite jo na varno mesto.",
+  "full": "Popolna varnostna kopija",
+  "media": "Vsa predstavnost kot ZIP",
+  "pending": "Obnovitev je pripravljena",
+  "pendingText": "Preverjena varnostna kopija se uveljavi ob ponovnem zagonu strežnika.",
+  "restart": "Znova zaženi strežnik",
+  "restartConfirm": "Znova zagnati strežnik zdaj? Spletni vmesnik nekaj sekund ne bo dosegljiv; zasloni predvajajo naprej.",
+  "restarting": "Strežnik se znova zaganja …",
+  "restore": "Obnovi",
+  "restoreConfirm": "Pripraviti obnovitev iz „{name}“? Do ponovnega zagona se nič ne spremeni.",
+  "restoreText": "Naložite popolno varnostno kopijo (.tar) ali varnostno kopijo zbirke podatkov (.db). Datoteka se najprej preveri, nato pa uveljavi ob nadzorovanem ponovnem zagonu. Trenutno stanje se ohrani s časovnim žigom.",
+  "restoreUpload": "Preveri in pripravi",
+  "staged": "Varnostna kopija je preverjena in pripravljena. Za uveljavitev znova zaženite strežnik.",
+  "title": "Varnostno kopiranje"
+}

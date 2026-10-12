@@ -1,0 +1,14 @@
+{
+  "create": "Skapa",
+  "delete": "Ta bort presentation",
+  "deleteConfirm": "Ta bort ”{name}”? Det nekas så länge en spellista använder den.",
+  "deleted": "Presentationen har tagits bort.",
+  "empty": "Inga presentationer ännu. Skapa den första.",
+  "new": "Ny presentation",
+  "noTemplate": "Tom presentation",
+  "published": "Publicerad",
+  "saveTemplate": "Spara som mall",
+  "slides": "Slides: {count}",
+  "template": "Mall",
+  "templateSaved": "Mallen har sparats."
+}

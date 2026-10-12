@@ -1,0 +1,16 @@
+{
+  "action.back": "Siar",
+  "action.cancel": "Cealaigh",
+  "action.close": "Dún",
+  "action.confirm": "Deimhnigh",
+  "action.delete": "Scrios",
+  "action.edit": "Cuir in eagar",
+  "action.retry": "Bain triail eile as",
+  "action.save": "Sábháil",
+  "app.name": "OpenSignage",
+  "state.error": "Chuaigh rud éigin mícheart.",
+  "state.loading": "Á lódáil…",
+  "state.offline": "Níl aon cheangal leis an bhfreastalaí. B’fhéidir nach bhfuil an t-amharc cothrom le dáta.",
+  "state.saving": "Á shábháil…",
+  "update.reloaded": "Nuashonraíodh an freastalaí go leagan {version}. Logáil isteach arís, le do thoil."
+}

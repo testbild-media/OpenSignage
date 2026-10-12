@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Spletni vmesnik",
+  "notice.certificate": "Potrdilo strežnika se je spremenilo. Povezava je bila iz varnostnih razlogov zavrnjena. Preverite strežnik v spletnem vmesniku te naprave.",
+  "notice.version": "Različica se ne ujema s strežnikom – posodobite v skrbništvu.",
+  "pairing.hint": "V skrbništvu odprite Naprave in s to kodo PIN prevzemite ta zaslon.",
+  "pairing.server": "Ključ strežnika {fingerprint}",
+  "pairing.title": "Seznani ta zaslon",
+  "pin": "PIN",
+  "searching.hint": "Če strežnik ni najden samodejno, vnesite njegov naslov v spletnem vmesniku te naprave:",
+  "searching.title": "Iskanje strežnika OpenSignage …",
+  "standby.hint": "Ta zaslon v skrbništvu dodelite coni.",
+  "standby.title": "Ni dodeljene cone",
+  "updating": "Nameščanje posodobitve …"
+}

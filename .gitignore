@@ -1,0 +1,25 @@
+# Local working material (never committed)
+/_kit/
+
+# Local agent tooling (worktrees, settings)
+/.claude/
+
+# Build output
+/dist/
+/build/
+node_modules/
+/web/**/dist/
+/internal/server/web/static/*
+/internal/agent/player/static/*
+!/internal/agent/player/static/.gitkeep
+*.test
+*.exe
+coverage/
+
+# Secrets (release signing keys etc.)
+/.secrets/
+*.key.private
+!/internal/server/web/static/.gitkeep
+*.tsbuildinfo
+__pycache__/
+/_intern/

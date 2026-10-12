@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Weboberfläche",
+  "notice.certificate": "Das Server-Zertifikat hat sich geändert. Die Verbindung wurde aus Sicherheitsgründen abgelehnt. Bitte den Server in der Weboberfläche dieses Geräts prüfen.",
+  "notice.version": "Version passt nicht zum Server – bitte in der Verwaltung aktualisieren.",
+  "pairing.hint": "In der Verwaltung unter Geräte diesen Bildschirm mit dieser PIN übernehmen.",
+  "pairing.server": "Server-Schlüssel {fingerprint}",
+  "pairing.title": "Diesen Bildschirm koppeln",
+  "pin": "PIN",
+  "searching.hint": "Wird der Server nicht automatisch gefunden, die Adresse in der Weboberfläche dieses Geräts eintragen:",
+  "searching.title": "Suche OpenSignage-Server …",
+  "standby.hint": "Diesen Bildschirm in der Verwaltung einer Zone zuweisen.",
+  "standby.title": "Keine Zone zugewiesen",
+  "updating": "Update wird installiert …"
+}

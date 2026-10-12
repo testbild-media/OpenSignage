@@ -1,0 +1,14 @@
+{
+  "create": "Loo",
+  "delete": "Kustuta esitlus",
+  "deleteConfirm": "Kas kustutada „{name}“? See ei õnnestu, kuni mõni esitusloend seda kasutab.",
+  "deleted": "Esitlus on kustutatud.",
+  "empty": "Esitlusi pole veel. Loo esimene.",
+  "new": "Uus esitlus",
+  "noTemplate": "Tühi esitlus",
+  "published": "Avaldatud",
+  "saveTemplate": "Salvesta mallina",
+  "slides": "Slaide: {count}",
+  "template": "Mall",
+  "templateSaved": "Mall on salvestatud."
+}

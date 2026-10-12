@@ -1,0 +1,14 @@
+{
+  "ip.webgui": "Interfaċċja web",
+  "notice.certificate": "Iċ-ċertifikat tas-server inbidel. Il-konnessjoni ġiet miċħuda għal raġunijiet ta’ sigurtà. Iċċekkja s-server fl-interfaċċja web ta’ dan l-apparat.",
+  "notice.version": "Il-verżjoni ma taqbilx mas-server – jekk jogħġbok aġġorna fl-amministrazzjoni.",
+  "pairing.hint": "Fl-amministrazzjoni, iftaħ Apparati u ħu f’idejk dan l-iskrin b’dan il-PIN.",
+  "pairing.server": "Ċavetta tas-server {fingerprint}",
+  "pairing.title": "Għaqqad dan l-iskrin",
+  "pin": "PIN",
+  "searching.hint": "Jekk is-server ma jinstabx awtomatikament, daħħal l-indirizz tiegħu fl-interfaċċja web ta’ dan l-apparat:",
+  "searching.title": "Qed jinstab is-server OpenSignage …",
+  "standby.hint": "Assenja dan l-iskrin lil żona fl-amministrazzjoni.",
+  "standby.title": "L-ebda żona assenjata",
+  "updating": "Qed jiġi installat l-aġġornament …"
+}
