@@ -4,6 +4,16 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.0.0 – 2026-10-13
+
+The first stable release. It contains everything listed under 1.0.0-rc.1 below, without
+functional changes. Installations on 1.0.0-rc.1 update from the web interface
+(Settings → Updates).
+
+### Documentation
+- Player hardware: x86 PCs with Intel graphics are recommended, the Raspberry Pi 4 is the
+  minimum.
+
 ## 1.0.0-rc.1 – 2026-10-12
 
 The first public release of OpenSignage, self-hosted digital signage for bars, restaurants
