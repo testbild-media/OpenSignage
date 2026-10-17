@@ -12,6 +12,8 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   product list or product.
 - Product lists: category and subcategory headings can be hidden while keeping their space
   ("Space only"), so groups stay apart without a visible heading.
+- Presentation list: while the pointer rests on a presentation, its thumbnail cycles through
+  all shown slides (every 250 ms, with a slide counter).
 
 ### Changed
 - Version history of presentations: publishes by the same person less than 60 minutes apart
@@ -26,6 +28,8 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   reopening the presentation.
 - Presentation list: the thumbnails show product lists with the presentation's own
   typography and uploaded fonts instead of a placeholder style.
+- Slide thumbnails (presentation list and editor): transparent images such as logos keep
+  their transparency instead of showing on a grey box.
 
 ## 1.0.0 – 2026-10-13
 

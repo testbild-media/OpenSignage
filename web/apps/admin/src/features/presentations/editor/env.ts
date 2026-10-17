@@ -12,7 +12,8 @@ import { useSession } from '../../../lib/session';
 export const editorAssets: AssetResolver = {
   url(id, purpose) {
     if (!id) return null;
-    const variant = purpose === 'display' ? 'display' : purpose;
+    // small: up to 512 px with transparency (the server falls back to larger variants)
+    const variant = purpose === 'small' ? 'i512' : purpose;
     return `/api/v1/media/${encodeURIComponent(id)}/file?variant=${variant}`;
   },
 };

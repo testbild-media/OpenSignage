@@ -397,7 +397,7 @@ server data and re-enters pairing.
 
 | Kind | Variants | Rule |
 | --- | --- | --- |
-| image | `orig`, `i1920` (if wider/taller than 1920), `i512` (product images), `thumb` (320 px JPEG) | originals > 3840 px are downscaled into `orig` on ingest; SVG kept as is |
+| image | `orig`, `i1920` (if wider/taller than 1920), `i512` (product images and slide thumbnails, keeps transparency), `thumb` (320 px JPEG for the media library, transparency on grey) | originals > 3840 px are downscaled into `orig` on ingest; SVG kept as is |
 | video | `v1080` (H.264, yuv420p, ≤1920×1080, the source frame rate up to 60 fps – level 4.1, 4.2 above 30 fps –, AAC, faststart; remux of the original when it already conforms), `v1080h` (≤1920×1080 at half the frame rate, 25/30 fps; made when the source is larger than 720p and faster than 30 fps), `v720` (proxy, ≤1280×720, 25/30 fps: 50 → 25, 60 → 30; made when the source is larger than 720p or faster than 30 fps), `poster` (JPEG), `thumb` | players with perf `low` (Raspberry Pi 3) use `v720`, `standard` (Raspberry Pi 4/5) `v1080h` if present, else `v1080`, `high` (x86) `v1080` (the Raspberry Pi 4 drops frames with 1080p50/60). Videos processed by a version without `v1080h` are processed again once at the next server start |
 | audio | `a` (AAC in M4A, or the original when MP3/AAC) | |
 

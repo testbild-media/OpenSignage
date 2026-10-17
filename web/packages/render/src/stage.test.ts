@@ -411,9 +411,10 @@ describe('1280×720 presentation on a 1920×1080 screen renders sharp', () => {
       ]),
     );
     expect(purposes.filter(([, p]) => p !== 'display')).toEqual([]);
-    // The editor's thumbnails use the small variant instead.
+    // The editor's thumbnails use the small variant instead (it keeps transparency, unlike
+    // the media library thumbnail on grey).
     const thumb = renderElement(elements[1]!, { ...testEnv(), mode: 'thumb' });
-    expect(thumb.el.querySelector('img')!.getAttribute('src')).toBe('/media/photo/thumb');
+    expect(thumb.el.querySelector('img')!.getAttribute('src')).toBe('/media/photo/small');
   });
 });
 

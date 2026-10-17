@@ -51,7 +51,7 @@ const playWanted = (): void => sequencer.play(wantedPlaylist, wantedAnchor, want
 
 const assets: AssetResolver = {
   url(id, purpose) {
-    const v = purpose === 'display' ? '' : `?variant=${purpose}`;
+    const v = purpose === 'display' || purpose === 'small' ? '' : `?variant=${purpose}`; // screens never draw thumbnails
     return `/assets/${encodeURIComponent(id)}${v}`;
   },
 };

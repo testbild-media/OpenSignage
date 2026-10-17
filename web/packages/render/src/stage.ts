@@ -284,7 +284,7 @@ export class Stage {
       const stops = b.stops.map((st) => `${color(st.color)} ${round(st.at * 100)}%`).join(', ');
       el.style.backgroundImage = `linear-gradient(${round(b.angle)}deg, ${stops})`;
     } else if (b.type === 'image') {
-      const url = s.env.assets.url(b.assetId, s.env.mode === 'thumb' ? 'thumb' : 'display');
+      const url = s.env.assets.url(b.assetId, s.env.mode === 'thumb' ? 'small' : 'display');
       if (url) el.style.backgroundImage = `url("${url}")`;
       el.style.backgroundSize = b.fit === 'fill' ? '100% 100%' : b.fit;
     } else if (b.type === 'video') {

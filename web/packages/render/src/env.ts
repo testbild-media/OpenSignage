@@ -3,9 +3,13 @@ import type { LiveStore } from './live';
 
 export type RenderMode = 'play' | 'edit' | 'thumb';
 
-/** Resolves asset ids to URLs. purpose "display" = best variant for the screen. */
+/**
+ * Resolves asset ids to URLs. purpose "display" = best variant for the screen, "small" = a
+ * small image that keeps its transparency (slide thumbnails), "thumb" = the media library
+ * thumbnail (transparent images on grey), "poster" = still of a video.
+ */
 export interface AssetResolver {
-  url(assetId: string, purpose: 'display' | 'poster' | 'thumb'): string | null;
+  url(assetId: string, purpose: 'display' | 'small' | 'poster' | 'thumb'): string | null;
 }
 
 export interface RenderEnv {

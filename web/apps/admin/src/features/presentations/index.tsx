@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Copy, LayoutTemplate, Plus, Presentation as PresIcon, Trash2 } from 'lucide-react';
-import type { Slide, Typography } from '@opensignage/contracts';
+import type { Presentation, Slide, Typography } from '@opensignage/contracts';
 import { renderThumbnail, type LiveStore } from '@opensignage/render';
 import type { Feature, NavChild } from '../types';
-import { del, post } from '../../lib/api';
+import { del, get, post } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { loadCustomFonts } from '../../lib/fonts';
@@ -32,20 +32,78 @@ interface PresSummary {
 const typo = { font: 'Montserrat', size: 24, color: '#ffffff', bold: false, italic: false, underline: false, strike: false, letterSpacing: 0, lineHeight: 1.2, align: 'left' as const };
 const fallbackTypography: Typography = { heading: typo, subheading: typo, item: typo, description: typo, price: typo };
 
+const CYCLE_MS = 250;
+
 /** First slide of the draft as the screen shows it: the presentation's own text styles and,
- * once loaded, the uploaded fonts. */
-function Card({ p, live, fonts }: { p: PresSummary; live: LiveStore; fonts: boolean }) {
+ * once loaded, the uploaded fonts. While the pointer rests on the card, the thumbnail cycles
+ * through all shown slides (like an animated GIF). */
+function Card({ p, live, fonts, hover }: { p: PresSummary; live: LiveStore; fonts: boolean; hover: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [slides, setSlides] = useState<{ slides: Slide[]; typography: Typography } | null>(null);
+  const [index, setIndex] = useState(0);
+  const env = (typography: Typography | null) => ({ typography: typography ?? fallbackTypography, assets: editorAssets, live, mode: 'thumb' as const });
+
+  // The whole draft is loaded when the pointer arrives (fresh each time: drafts change without events).
   useEffect(() => {
-    if (!ref.current || !p.firstSlide) return;
-    return renderThumbnail(ref.current, p.firstSlide, p.width, p.height, {
-      typography: p.typography ?? fallbackTypography,
-      assets: editorAssets,
-      live,
-      mode: 'thumb',
+    if (!hover || p.slideCount < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let alive = true;
+    void get<{ draft: Presentation }>(`/api/v1/presentations/${p.id}`)
+      .then((d) => {
+        const shown = d.draft.slides.filter((s) => !s.hidden);
+        if (alive && shown.length > 1) setSlides({ slides: shown, typography: d.draft.typography });
+      })
+      .catch(() => undefined); // the first slide stays
+    return () => {
+      alive = false;
+      setSlides(null);
+      setIndex(0);
+    };
+  }, [hover, p.id, p.slideCount]);
+
+  useEffect(() => {
+    if (!slides) return;
+    const timer = setInterval(() => setIndex((i) => (i + 1) % slides.slides.length), CYCLE_MS);
+    return () => clearInterval(timer);
+  }, [slides]);
+
+  // Static: the first slide. Cycling: every slide in its own layer (rendered once, images
+  // stay loaded), only the current one visible.
+  useEffect(() => {
+    const host = ref.current;
+    if (!host) return;
+    if (!slides) {
+      if (!p.firstSlide) return;
+      return renderThumbnail(host, p.firstSlide, p.width, p.height, env(p.typography));
+    }
+    const layers = slides.slides.map(() => {
+      const l = document.createElement('div');
+      l.className = 'pres-thumb-layer';
+      return l;
     });
-  }, [p, live, fonts]);
-  return <div className="pres-thumb" ref={ref} />;
+    host.replaceChildren(...layers);
+    const cleanups = slides.slides.map((s, i) => renderThumbnail(layers[i]!, s, p.width, p.height, env(slides.typography)));
+    return () => {
+      for (const c of cleanups) c();
+      host.replaceChildren();
+    };
+    // env() only depends on live (listed)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [p, live, fonts, slides]);
+
+  useEffect(() => {
+    ref.current?.querySelectorAll<HTMLElement>(':scope > .pres-thumb-layer').forEach((l, i) => (l.hidden = i !== index));
+  }, [index, slides]);
+
+  return (
+    <div className="pres-thumb-wrap">
+      <div className="pres-thumb" ref={ref} />
+      {slides && (
+        <span className="pres-thumb-count">
+          {index + 1} / {slides.slides.length}
+        </span>
+      )}
+    </div>
+  );
 }
 
 function NewDialog({ onClose }: { onClose: () => void }) {
@@ -124,6 +182,7 @@ function PresentationsPage() {
   useEvents(['content'], () => list.reload());
   // Uploaded fonts: the thumbnails are drawn again once their @font-face rules are installed.
   const [fonts, setFonts] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
     void loadCustomFonts(true).then(() => alive && setFonts(true));
@@ -160,8 +219,14 @@ function PresentationsPage() {
       <DataState loading={list.loading && !list.data} error={list.error} onRetry={list.reload} empty={list.data?.presentations.length === 0} emptyText={t('pres.empty')}>
         <div className="pres-grid">
           {list.data?.presentations.map((p) => (
-            <div key={p.id} className="pres-card" onClick={() => navigate(`/presentations/${p.id}`)}>
-              <Card p={p} live={live} fonts={fonts} />
+            <div
+              key={p.id}
+              className="pres-card"
+              onClick={() => navigate(`/presentations/${p.id}`)}
+              onMouseEnter={() => setHovered(p.id)}
+              onMouseLeave={() => setHovered((h) => (h === p.id ? null : h))}
+            >
+              <Card p={p} live={live} fonts={fonts} hover={hovered === p.id} />
               <div className="pres-info">
                 <div className="pres-name">{p.name}</div>
                 <div className="faint">

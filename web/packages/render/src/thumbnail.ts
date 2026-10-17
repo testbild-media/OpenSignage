@@ -31,7 +31,7 @@ export function renderThumbnail(host: HTMLElement, slide: Slide, width: number, 
   if (b.type === 'gradient') {
     bg.style.backgroundImage = `linear-gradient(${b.angle}deg, ${b.stops.map((x) => `${color(x.color)} ${x.at * 100}%`).join(', ')})`;
   } else if (b.type === 'image' || b.type === 'video') {
-    const url = env.assets.url(b.assetId, b.type === 'video' ? 'poster' : 'thumb');
+    const url = env.assets.url(b.assetId, b.type === 'video' ? 'poster' : 'small');
     if (url) bg.style.backgroundImage = `url("${url}")`;
     bg.style.backgroundSize = b.fit === 'fill' ? '100% 100%' : b.fit;
   }

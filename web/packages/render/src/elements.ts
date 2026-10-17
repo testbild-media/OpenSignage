@@ -149,7 +149,7 @@ function renderImage(e: ImageElement, env: RenderEnv): ElementHandle {
   img.decoding = 'async';
   img.draggable = false;
   img.style.objectFit = objectFit(e.fit);
-  const url = env.assets.url(e.assetId, env.mode === 'thumb' ? 'thumb' : 'display');
+  const url = env.assets.url(e.assetId, env.mode === 'thumb' ? 'small' : 'display');
   if (url) img.src = url;
   else env.report?.('warn', `image asset ${e.assetId} not available`);
   const wrap = document.createElement('div');
