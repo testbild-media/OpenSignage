@@ -33,6 +33,7 @@
   "imageScale": "Rozmiar logo",
   "items": "Pozycje",
   "kind": "Rodzaj",
+  "label": "Nazwa",
   "language": "Język",
   "license": "Licencja",
   "licenseConfirmed": "Potwierdzenie licencji",

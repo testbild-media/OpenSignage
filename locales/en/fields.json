@@ -33,6 +33,7 @@
   "imageScale": "Logo size",
   "items": "Entries",
   "kind": "Type",
+  "label": "Name",
   "language": "Language",
   "license": "License",
   "licenseConfirmed": "License confirmation",

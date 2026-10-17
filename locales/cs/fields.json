@@ -33,6 +33,7 @@
   "imageScale": "Velikost loga",
   "items": "Položky",
   "kind": "Typ",
+  "label": "Název",
   "language": "Jazyk",
   "license": "Licence",
   "licenseConfirmed": "Potvrzení licence",

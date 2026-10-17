@@ -140,6 +140,7 @@
   "timeout": "The server took too long to answer.",
   "too_large": "The data is too large.",
   "too_many_groups": "The zone already has the maximum number of display groups.",
+  "too_many_named_versions": "At most {max} named versions per presentation. Remove the name of another version first.",
   "too_many_uploads": "Too many unfinished uploads (maximum {max}). Wait until running uploads have finished.",
   "unauthorized": "Please log in again.",
   "unknown": "Something went wrong.",

@@ -140,6 +140,7 @@
   "timeout": "El servidor tardó demasiado en responder.",
   "too_large": "Los datos son demasiado grandes.",
   "too_many_groups": "La zona ya tiene el número máximo de grupos de pantallas.",
+  "too_many_named_versions": "Como máximo {max} versiones con nombre por presentación. Quite primero el nombre de otra versión.",
   "too_many_uploads": "Demasiadas subidas sin terminar (máximo {max}). Espere a que terminen las subidas en curso.",
   "unauthorized": "Vuelva a iniciar sesión.",
   "unknown": "Algo salió mal.",

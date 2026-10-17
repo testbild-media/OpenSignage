@@ -33,6 +33,7 @@
   "imageScale": "Logotipa izmērs",
   "items": "Ieraksti",
   "kind": "Veids",
+  "label": "Nosaukums",
   "language": "Valoda",
   "license": "Licence",
   "licenseConfirmed": "Licences apstiprinājums",

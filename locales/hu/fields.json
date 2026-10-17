@@ -33,6 +33,7 @@
   "imageScale": "Logó mérete",
   "items": "Elemek",
   "kind": "Típus",
+  "label": "Név",
   "language": "Nyelv",
   "license": "Licenc",
   "licenseConfirmed": "Licenc megerősítése",

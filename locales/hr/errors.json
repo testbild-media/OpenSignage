@@ -140,6 +140,7 @@
   "timeout": "Poslužitelju je trebalo predugo da odgovori.",
   "too_large": "Podaci su preveliki.",
   "too_many_groups": "Zona već ima najveći dopušteni broj grupa zaslona.",
+  "too_many_named_versions": "Najviše {max} imenovanih verzija po prezentaciji. Najprije uklonite naziv neke druge verzije.",
   "too_many_uploads": "Previše nedovršenih prijenosa (najviše {max}). Pričekajte da se tekući prijenosi završe.",
   "unauthorized": "Prijavite se ponovno.",
   "unknown": "Nešto je pošlo po zlu.",

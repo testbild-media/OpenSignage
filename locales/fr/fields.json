@@ -33,6 +33,7 @@
   "imageScale": "Taille du logo",
   "items": "Éléments",
   "kind": "Type",
+  "label": "Nom",
   "language": "Langue",
   "license": "Licence",
   "licenseConfirmed": "Confirmation de la licence",

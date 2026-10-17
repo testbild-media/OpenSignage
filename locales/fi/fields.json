@@ -33,6 +33,7 @@
   "imageScale": "Logon koko",
   "items": "Kohteet",
   "kind": "Tyyppi",
+  "label": "Nimi",
   "language": "Kieli",
   "license": "Lisenssi",
   "licenseConfirmed": "Lisenssin vahvistus",

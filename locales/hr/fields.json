@@ -33,6 +33,7 @@
   "imageScale": "Veličina logotipa",
   "items": "Stavke",
   "kind": "Vrsta",
+  "label": "Naziv",
   "language": "Jezik",
   "license": "Licencija",
   "licenseConfirmed": "Potvrda licencije",

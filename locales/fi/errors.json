@@ -140,6 +140,7 @@
   "timeout": "Palvelin vastasi liian hitaasti.",
   "too_large": "Tiedot ovat liian suuria.",
   "too_many_groups": "Vyöhykkeellä on jo enimmäismäärä näyttöryhmiä.",
+  "too_many_named_versions": "Esitykseen voi nimetä enintään {max} versiota. Poista ensin jonkin toisen version nimi.",
   "too_many_uploads": "Liian monta keskeneräistä lähetystä (enintään {max}). Odota, kunnes käynnissä olevat lähetykset ovat valmiit.",
   "unauthorized": "Kirjaudu sisään uudelleen.",
   "unknown": "Jokin meni vikaan.",

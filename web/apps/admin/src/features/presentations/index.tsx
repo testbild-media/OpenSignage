@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Copy, LayoutTemplate, Plus, Presentation as PresIcon, Trash2 } from 'lucide-react';
-import type { Slide } from '@opensignage/contracts';
+import type { Slide, Typography } from '@opensignage/contracts';
 import { renderThumbnail, type LiveStore } from '@opensignage/render';
 import type { Feature, NavChild } from '../types';
 import { del, post } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
+import { loadCustomFonts } from '../../lib/fonts';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, ErrorText, IconButton, PageHeader, Select, TextInput } from '../../components/ui';
 import { EditorPage } from './editor/Editor';
@@ -23,21 +24,27 @@ interface PresSummary {
   hasChanges: boolean;
   updatedAt: string;
   firstSlide: Slide | null;
+  /** Text styles of the draft (product lists and single products in the thumbnail). */
+  typography: Typography | null;
 }
 
+// Only for a draft without text styles (the server always stores them).
 const typo = { font: 'Montserrat', size: 24, color: '#ffffff', bold: false, italic: false, underline: false, strike: false, letterSpacing: 0, lineHeight: 1.2, align: 'left' as const };
+const fallbackTypography: Typography = { heading: typo, subheading: typo, item: typo, description: typo, price: typo };
 
-function Card({ p, live }: { p: PresSummary; live: LiveStore }) {
+/** First slide of the draft as the screen shows it: the presentation's own text styles and,
+ * once loaded, the uploaded fonts. */
+function Card({ p, live, fonts }: { p: PresSummary; live: LiveStore; fonts: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current || !p.firstSlide) return;
     return renderThumbnail(ref.current, p.firstSlide, p.width, p.height, {
-      typography: { heading: typo, subheading: typo, item: typo, description: typo, price: typo },
+      typography: p.typography ?? fallbackTypography,
       assets: editorAssets,
       live,
       mode: 'thumb',
     });
-  }, [p, live]);
+  }, [p, live, fonts]);
   return <div className="pres-thumb" ref={ref} />;
 }
 
@@ -115,6 +122,15 @@ function PresentationsPage() {
   const live = useEditorLive();
   const list = useQuery<{ presentations: PresSummary[] }>('/api/v1/presentations');
   useEvents(['content'], () => list.reload());
+  // Uploaded fonts: the thumbnails are drawn again once their @font-face rules are installed.
+  const [fonts, setFonts] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void loadCustomFonts(true).then(() => alive && setFonts(true));
+    return () => {
+      alive = false;
+    };
+  }, []);
   const duplicate = useAction(async (p: PresSummary) => {
     await post(`/api/v1/presentations/${p.id}/duplicate`);
     list.reload();
@@ -145,7 +161,7 @@ function PresentationsPage() {
         <div className="pres-grid">
           {list.data?.presentations.map((p) => (
             <div key={p.id} className="pres-card" onClick={() => navigate(`/presentations/${p.id}`)}>
-              <Card p={p} live={live} />
+              <Card p={p} live={live} fonts={fonts} />
               <div className="pres-info">
                 <div className="pres-name">{p.name}</div>
                 <div className="faint">

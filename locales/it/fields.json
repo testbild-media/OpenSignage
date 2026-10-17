@@ -33,6 +33,7 @@
   "imageScale": "Dimensione del logo",
   "items": "Voci",
   "kind": "Tipo",
+  "label": "Nome",
   "language": "Lingua",
   "license": "Licenza",
   "licenseConfirmed": "Conferma della licenza",

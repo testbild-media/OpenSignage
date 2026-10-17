@@ -140,6 +140,7 @@
   "timeout": "Strežnik se je prepočasi odzval.",
   "too_large": "Podatki so preveliki.",
   "too_many_groups": "Cona že ima največje dovoljeno število skupin zaslonov.",
+  "too_many_named_versions": "Največ {max} poimenovanih različic na predstavitev. Najprej odstranite ime druge različice.",
   "too_many_uploads": "Preveč nedokončanih nalaganj (največ {max}). Počakajte, da se tekoča nalaganja končajo.",
   "unauthorized": "Prijavite se znova.",
   "unknown": "Prišlo je do napake.",

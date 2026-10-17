@@ -140,6 +140,7 @@
   "timeout": "Le serveur a mis trop de temps à répondre.",
   "too_large": "Les données sont trop volumineuses.",
   "too_many_groups": "La zone a déjà atteint le nombre maximal de groupes d’écrans.",
+  "too_many_named_versions": "{max} versions nommées au maximum par présentation. Supprimez d’abord le nom d’une autre version.",
   "too_many_uploads": "Trop d’importations inachevées ({max} au maximum). Attendez la fin des importations en cours.",
   "unauthorized": "Veuillez vous reconnecter.",
   "unknown": "Une erreur s’est produite.",

@@ -33,6 +33,7 @@
   "imageScale": "Dimensiunea siglei",
   "items": "Elemente",
   "kind": "Tip",
+  "label": "Nume",
   "language": "Limbă",
   "license": "Licență",
   "licenseConfirmed": "Confirmarea licenței",

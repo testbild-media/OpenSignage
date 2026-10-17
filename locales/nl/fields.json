@@ -33,6 +33,7 @@
   "imageScale": "Logogrootte",
   "items": "Items",
   "kind": "Soort",
+  "label": "Naam",
   "language": "Taal",
   "license": "Licentie",
   "licenseConfirmed": "Licentiebevestiging",

@@ -140,6 +140,7 @@
   "timeout": "Serwer odpowiada zbyt długo.",
   "too_large": "Dane są zbyt duże.",
   "too_many_groups": "Strefa ma już maksymalną liczbę grup ekranów.",
+  "too_many_named_versions": "Maksymalnie {max} nazwanych wersji na prezentację. Najpierw usuń nazwę innej wersji.",
   "too_many_uploads": "Zbyt wiele niedokończonych przesyłań (maksymalnie {max}). Poczekaj, aż trwające przesyłania się zakończą.",
   "unauthorized": "Zaloguj się ponownie.",
   "unknown": "Coś poszło nie tak.",

@@ -33,6 +33,7 @@
   "imageScale": "Velikost logotipa",
   "items": "Vnosi",
   "kind": "Vrsta",
+  "label": "Ime",
   "language": "Jezik",
   "license": "Licenca",
   "licenseConfirmed": "Potrditev licence",

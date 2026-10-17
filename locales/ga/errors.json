@@ -140,6 +140,7 @@
   "timeout": "Thóg sé rófhada ar an bhfreastalaí freagairt.",
   "too_large": "Tá na sonraí rómhór.",
   "too_many_groups": "Tá an líon uasta grúpaí scáileán ag an gcrios cheana.",
+  "too_many_named_versions": "{max} leagan ainmnithe ar a mhéad in aghaidh an chur i láthair. Bain ainm leagain eile ar dtús.",
   "too_many_uploads": "An iomarca uaslódálacha neamhchríochnaithe ({max} ar a mhéad). Fan go mbeidh na huaslódálacha reatha críochnaithe.",
   "unauthorized": "Logáil isteach arís, le do thoil.",
   "unknown": "Chuaigh rud éigin mícheart.",

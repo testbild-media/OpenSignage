@@ -33,6 +33,7 @@
   "imageScale": "Logo suurus",
   "items": "Kirjed",
   "kind": "Tüüp",
+  "label": "Nimi",
   "language": "Keel",
   "license": "Litsents",
   "licenseConfirmed": "Litsentsi kinnitus",

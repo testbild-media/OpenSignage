@@ -33,6 +33,7 @@
   "imageScale": "Tamanho do logótipo",
   "items": "Entradas",
   "kind": "Tipo",
+  "label": "Nome",
   "language": "Idioma",
   "license": "Licença",
   "licenseConfirmed": "Confirmação da licença",

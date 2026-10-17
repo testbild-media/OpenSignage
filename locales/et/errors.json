@@ -140,6 +140,7 @@
   "timeout": "Server vastas liiga aeglaselt.",
   "too_large": "Andmed on liiga suured.",
   "too_many_groups": "Tsoonil on juba maksimaalne arv ekraanirühmi.",
+  "too_many_named_versions": "Esitluse kohta on lubatud kuni {max} nimega versiooni. Eemaldage esmalt mõne teise versiooni nimi.",
   "too_many_uploads": "Liiga palju lõpetamata üleslaadimisi (kuni {max}). Oota, kuni käimasolevad üleslaadimised lõpevad.",
   "unauthorized": "Palun logi uuesti sisse.",
   "unknown": "Midagi läks valesti.",

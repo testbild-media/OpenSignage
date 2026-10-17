@@ -33,6 +33,7 @@
   "imageScale": "Daqs tal-logo",
   "items": "Daħliet",
   "kind": "Tip",
+  "label": "Isem",
   "language": "Lingwa",
   "license": "Liċenzja",
   "licenseConfirmed": "Konferma tal-liċenzja",

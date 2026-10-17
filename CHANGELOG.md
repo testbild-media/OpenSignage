@@ -4,6 +4,22 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+- Version history of presentations: publishes by the same person less than 60 minutes apart
+  form one editing phase, shown as one row that can be expanded. After 10 days only the last
+  version of each phase is kept (and only the last 50 phases), so fine-tuning on the screens
+  no longer floods the history. Versions can be given a name; named versions are kept for
+  good, and a filter shows only them.
+
+### Fixed
+- Editor: changing the presentation typography (category heading, product name,
+  description, price) now updates the product lists on the canvas at once, not only after
+  reopening the presentation.
+- Presentation list: the thumbnails show product lists with the presentation's own
+  typography and uploaded fonts instead of a placeholder style.
+
 ## 1.0.0 – 2026-10-13
 
 The first stable release. It contains everything listed under 1.0.0-rc.1 below, without

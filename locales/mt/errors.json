@@ -140,6 +140,7 @@
   "timeout": "Is-server ħa wisq żmien biex wieġeb.",
   "too_large": "Id-dejta hija kbira wisq.",
   "too_many_groups": "Iż-żona diġà għandha l-għadd massimu ta’ gruppi ta’ skrins.",
+  "too_many_named_versions": "L-aktar {max} verżjonijiet bl-isem għal kull preżentazzjoni. L-ewwel neħħi l-isem ta’ verżjoni oħra.",
   "too_many_uploads": "Wisq uploads mhux lesti (massimu {max}). Stenna sakemm jintemmu l-uploads li għaddejjin.",
   "unauthorized": "Jekk jogħġbok idħol mill-ġdid.",
   "unknown": "Xi ħaġa marret ħażin.",

@@ -33,6 +33,7 @@
   "imageScale": "Logostørrelse",
   "items": "Poster",
   "kind": "Type",
+  "label": "Navn",
   "language": "Sprog",
   "license": "Licens",
   "licenseConfirmed": "Licensbekræftelse",

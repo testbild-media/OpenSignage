@@ -140,6 +140,7 @@
   "timeout": "Serverul a întârziat prea mult să răspundă.",
   "too_large": "Datele sunt prea mari.",
   "too_many_groups": "Zona are deja numărul maxim de grupuri de ecrane.",
+  "too_many_named_versions": "Cel mult {max} versiuni denumite pe prezentare. Eliminați mai întâi numele altei versiuni.",
   "too_many_uploads": "Prea multe încărcări nefinalizate (maximum {max}). Așteptați până se termină încărcările în curs.",
   "unauthorized": "Autentificați-vă din nou.",
   "unknown": "Ceva nu a funcționat.",

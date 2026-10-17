@@ -140,6 +140,7 @@
   "timeout": "Servern svarade inte i tid.",
   "too_large": "Datamängden är för stor.",
   "too_many_groups": "Zonen har redan det högsta tillåtna antalet skärmgrupper.",
+  "too_many_named_versions": "Högst {max} namngivna versioner per presentation. Ta först bort namnet på en annan version.",
   "too_many_uploads": "För många oavslutade uppladdningar (högst {max}). Vänta tills pågående uppladdningar är klara.",
   "unauthorized": "Logga in igen.",
   "unknown": "Något gick fel.",

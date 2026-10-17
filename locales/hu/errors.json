@@ -140,6 +140,7 @@
   "timeout": "A szerver túl sokáig válaszolt.",
   "too_large": "Az adatok túl nagyok.",
   "too_many_groups": "A zóna már elérte a képernyőcsoportok maximális számát.",
+  "too_many_named_versions": "Prezentációnként legfeljebb {max} elnevezett verzió lehet. Előbb távolítsa el egy másik verzió nevét.",
   "too_many_uploads": "Túl sok befejezetlen feltöltés (legfeljebb {max}). Várjon, amíg a folyamatban lévő feltöltések befejeződnek.",
   "unauthorized": "Jelentkezzen be újra.",
   "unknown": "Hiba történt.",

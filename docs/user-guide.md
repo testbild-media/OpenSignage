@@ -47,7 +47,11 @@ different resolution scale it sharply (fit, fill or 1:1 per device).
 - **Product lists** show categories and products with name, quantity, description and price
   in up to four columns; their look comes from the presentation's typography. A product can
   show its brand logo instead of the name.
-- **Version history:** every publish is kept; restore an earlier version into the draft.
+- **Version history:** every publish is a version; restore an earlier version into the draft.
+  Publishes by the same person less than 60 minutes apart form one editing phase and are
+  shown as one row (expand it to see the single versions). After 10 days only the last
+  version of each phase is kept, and only the last 50 phases. Give a version a name (e.g.
+  "Summer menu 2027") to keep it for good.
 - **Preview** shows the slides exactly as a screen will – the editor and the players use the
   same rendering engine.
 

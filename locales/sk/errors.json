@@ -140,6 +140,7 @@
   "timeout": "Server odpovedal príliš dlho.",
   "too_large": "Údaje sú príliš veľké.",
   "too_many_groups": "Zóna už má maximálny počet skupín obrazoviek.",
+  "too_many_named_versions": "Najviac {max} pomenovaných verzií na prezentáciu. Najprv odstráňte názov inej verzie.",
   "too_many_uploads": "Príliš veľa nedokončených nahrávaní (maximum {max}). Počkajte, kým sa prebiehajúce nahrávania dokončia.",
   "unauthorized": "Prihláste sa znova.",
   "unknown": "Niečo sa pokazilo.",

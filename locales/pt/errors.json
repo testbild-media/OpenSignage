@@ -140,6 +140,7 @@
   "timeout": "O servidor demorou demasiado a responder.",
   "too_large": "Os dados são demasiado grandes.",
   "too_many_groups": "A zona já tem o número máximo de grupos de ecrãs.",
+  "too_many_named_versions": "No máximo {max} versões com nome por apresentação. Remova primeiro o nome de outra versão.",
   "too_many_uploads": "Demasiados carregamentos por concluir (máximo {max}). Aguarde até os carregamentos em curso terminarem.",
   "unauthorized": "Inicie sessão novamente.",
   "unknown": "Algo correu mal.",

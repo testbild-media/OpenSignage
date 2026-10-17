@@ -33,6 +33,7 @@
   "imageScale": "Размер на логото",
   "items": "Записи",
   "kind": "Тип",
+  "label": "Име",
   "language": "Език",
   "license": "Лиценз",
   "licenseConfirmed": "Потвърждение на лиценза",

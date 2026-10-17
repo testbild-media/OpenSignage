@@ -140,6 +140,7 @@
   "timeout": "Serveren var for længe om at svare.",
   "too_large": "Dataene er for store.",
   "too_many_groups": "Zonen har allerede det maksimale antal skærmgrupper.",
+  "too_many_named_versions": "Højst {max} navngivne versioner pr. præsentation. Fjern først navnet på en anden version.",
   "too_many_uploads": "For mange ufærdige uploads (højst {max}). Vent, til de igangværende uploads er færdige.",
   "unauthorized": "Log ind igen.",
   "unknown": "Noget gik galt.",

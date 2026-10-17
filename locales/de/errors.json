@@ -140,6 +140,7 @@
   "timeout": "Der Server hat zu lange nicht geantwortet.",
   "too_large": "Die Datenmenge ist zu groß.",
   "too_many_groups": "Die Zone hat bereits die höchste Zahl an Bildschirmgruppen.",
+  "too_many_named_versions": "Höchstens {max} benannte Versionen pro Präsentation. Zuerst den Namen einer anderen Version entfernen.",
   "too_many_uploads": "Zu viele unfertige Uploads (höchstens {max}). Bitte warten, bis laufende Uploads fertig sind.",
   "unauthorized": "Bitte erneut anmelden.",
   "unknown": "Etwas ist schiefgelaufen.",

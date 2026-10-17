@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"opensignage/internal/common/ids"
 	"opensignage/internal/contracts"
@@ -78,6 +79,7 @@ type presSummary struct {
 	Archived         bool            `json:"archived"`
 	UpdatedAt        string          `json:"updatedAt"`
 	FirstSlide       json.RawMessage `json:"firstSlide"` // first slide of the draft, for thumbnails
+	Typography       json.RawMessage `json:"typography"` // text styles of the draft, for thumbnails
 }
 
 func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
@@ -99,7 +101,8 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 	}
 	rows, err := m.app.DB.R.QueryContext(r.Context(), `SELECT id, name, COALESCE(json_extract(draft, '$.width'), 0),
 		COALESCE(json_extract(draft, '$.height'), 0), COALESCE(json_array_length(draft, '$.slides'), 0),
-		json_extract(draft, '$.slides[0]'), published_version, has_changes, is_template, archived_at IS NOT NULL, updated_at
+		json_extract(draft, '$.slides[0]'), json_extract(draft, '$.typography'), published_version, has_changes, is_template,
+		archived_at IS NOT NULL, updated_at
 		FROM presentations WHERE is_template = ? AND (archived_at IS NOT NULL) = ? ORDER BY name COLLATE NOCASE, id`, tmpl, arch)
 	if err != nil {
 		return err
@@ -108,10 +111,10 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 	out := []presSummary{}
 	for rows.Next() {
 		var s presSummary
-		var first sql.NullString
+		var first, typo sql.NullString
 		var pub sql.NullInt64
 		var changes, isTmpl, archived int
-		if err := rows.Scan(&s.ID, &s.Name, &s.Width, &s.Height, &s.SlideCount, &first, &pub, &changes, &isTmpl, &archived, &s.UpdatedAt); err != nil {
+		if err := rows.Scan(&s.ID, &s.Name, &s.Width, &s.Height, &s.SlideCount, &first, &typo, &pub, &changes, &isTmpl, &archived, &s.UpdatedAt); err != nil {
 			return err
 		}
 		s.HasChanges, s.IsTemplate, s.Archived = changes == 1, isTmpl == 1, archived == 1
@@ -120,6 +123,9 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 		}
 		if first.Valid {
 			s.FirstSlide = json.RawMessage(first.String)
+		}
+		if typo.Valid {
+			s.Typography = json.RawMessage(typo.String)
 		}
 		out = append(out, s)
 	}
@@ -446,7 +452,7 @@ func (m *Module) publishPresentation(w http.ResponseWriter, r *http.Request, p *
 			VALUES (?, ?, ?, ?, ?)`, id, version, row.Draft, now, p.Username); err != nil {
 			return err
 		}
-		if _, err := tx.ExecContext(r.Context(), `DELETE FROM presentation_versions WHERE presentation_id = ? AND version <= ?`, id, version-keepVersions); err != nil {
+		if _, err := thinHistory(r.Context(), tx, id, time.Now()); err != nil {
 			return err
 		}
 		if _, err := tx.ExecContext(r.Context(), `UPDATE presentations SET published_version = ?, has_changes = 0, updated_at = ? WHERE id = ?`, version, now, id); err != nil {
@@ -540,39 +546,6 @@ func (m *Module) discardPresentation(w http.ResponseWriter, r *http.Request, p *
 		return err
 	}
 	return httpx.OK(w, out.detail())
-}
-
-type versionInfo struct {
-	Version     int64  `json:"version"`
-	PublishedAt string `json:"publishedAt"`
-	PublishedBy string `json:"publishedBy"`
-	SlideCount  int    `json:"slideCount"`
-}
-
-func (m *Module) listVersions(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
-	id := r.PathValue("id")
-	row, err := loadPresRow(r.Context(), m.app.DB.R, id)
-	if err != nil {
-		return err
-	}
-	rows, err := m.app.DB.R.QueryContext(r.Context(), `SELECT version, published_at, published_by, COALESCE(json_array_length(doc, '$.slides'), 0)
-		FROM presentation_versions WHERE presentation_id = ? ORDER BY version DESC`, id)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	out := []versionInfo{}
-	for rows.Next() {
-		var v versionInfo
-		if err := rows.Scan(&v.Version, &v.PublishedAt, &v.PublishedBy, &v.SlideCount); err != nil {
-			return err
-		}
-		out = append(out, v)
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-	return httpx.OK(w, map[string]any{"versions": out, "publishedVersion": nullInt(row.PublishedVersion)})
 }
 
 // restoreVersion copies an earlier published version into the draft. The result is not

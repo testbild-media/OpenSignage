@@ -982,3 +982,53 @@ textarea.input {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Version history of a presentation ------------------------------------------ */
+.history-rules {
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+.history-filter {
+  margin-bottom: 10px;
+}
+.history-version {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 32px;
+}
+.history-version > div {
+  line-height: 1.5;
+  padding-top: 6px;
+}
+.history-spacer {
+  flex: none;
+  width: 32px;
+}
+.history-child td {
+  background: var(--os-surface-2);
+}
+.history-child td:not(.row-actions) {
+  font-size: 13px;
+}
+.history-child .history-version {
+  padding-left: 38px;
+}
+.history-child .history-version > div {
+  padding-top: 0;
+}
+.history-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.history-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+.history-inner .history-label {
+  font-weight: 500;
+}

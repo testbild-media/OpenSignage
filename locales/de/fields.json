@@ -33,6 +33,7 @@
   "imageScale": "Logo-Größe",
   "items": "Einträge",
   "kind": "Art",
+  "label": "Name",
   "language": "Sprache",
   "license": "Lizenz",
   "licenseConfirmed": "Lizenzbestätigung",

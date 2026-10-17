@@ -23,7 +23,7 @@ const (
 	maxDraftBytes    = 8 << 20 // presentation draft request body
 	maxPlaylistBytes = 2 << 20
 	maxNameRunes     = 200
-	keepVersions     = 50 // published versions kept per presentation/playlist
+	keepVersions     = 50 // published versions kept per playlist (presentations: history.go)
 )
 
 // Module is the content module.
@@ -49,6 +49,7 @@ func (m *Module) Routes(rt *core.Router) {
 	rt.Role("POST /api/v1/presentations/{id}/discard", op, m.discardPresentation)
 	rt.Role("GET /api/v1/presentations/{id}/versions", op, m.listVersions)
 	rt.Role("POST /api/v1/presentations/{id}/versions/{v}/restore", op, m.restoreVersion)
+	rt.Role("PUT /api/v1/presentations/{id}/versions/{v}/label", op, m.labelVersion)
 	rt.Role("POST /api/v1/presentations/{id}/duplicate", op, m.duplicatePresentation)
 	rt.Role("POST /api/v1/presentations/{id}/archive", op, m.archivePresentation)
 	rt.Role("POST /api/v1/presentations/{id}/restore", op, m.restorePresentation)

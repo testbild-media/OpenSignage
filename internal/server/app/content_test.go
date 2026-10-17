@@ -1,12 +1,16 @@
 package app
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"strings"
 	"testing"
+	"time"
 
 	"opensignage/internal/common/ids"
 	"opensignage/internal/contracts"
+	"opensignage/internal/server/content"
 	"opensignage/internal/server/core"
 )
 
@@ -96,6 +100,10 @@ func TestPresentationDraftPublishDiscardCycle(t *testing.T) {
 	if item["slideCount"] != float64(1) || item["width"] != float64(1280) || item["height"] != float64(720) ||
 		item["publishedVersion"] != nil || item["hasChanges"] != true || asMap(item["firstSlide"])["id"] != doc.Slides[0].ID {
 		t.Fatalf("list item %v", item)
+	}
+	// The thumbnails draw product lists with the presentation's own text styles.
+	if ty := asMap(item["typography"]); asMap(ty["price"])["font"] != doc.Typography.Price.Font || asMap(ty["heading"])["size"] != float64(doc.Typography.Heading.Size) {
+		t.Fatalf("list item typography %v", item["typography"])
 	}
 
 	// Validation of create requests
@@ -655,7 +663,7 @@ func TestContentSearch(t *testing.T) {
 	e.expect(user, "GET", "/api/v1/content/search?q=x", nil, 403, "forbidden")
 }
 
-func TestVersionRetentionAndMonotonicNumbers(t *testing.T) {
+func TestVersionHistoryPhasesLabelsAndThinning(t *testing.T) {
 	e := catSetup(t)
 	c := e.admin
 	id, created := e.newPres("Long running", 1280, 720)
@@ -669,13 +677,81 @@ func TestVersionRetentionAndMonotonicNumbers(t *testing.T) {
 			t.Fatalf("publish %d returned %v", i, pub["publishedVersion"])
 		}
 	}
-	vs := asList(e.expect(c, "GET", "/api/v1/presentations/"+id+"/versions", nil, 200, "")["versions"])
-	if len(vs) != 50 || asMap(vs[0])["version"] != float64(55) || asMap(vs[49])["version"] != float64(6) {
-		t.Fatalf("only the newest 50 versions are kept: %d first %v last %v", len(vs), asMap(vs[0])["version"], asMap(vs[len(vs)-1])["version"])
+	// One editing phase: everything is kept for now.
+	out := e.expect(c, "GET", "/api/v1/presentations/"+id+"/versions", nil, 200, "")
+	vs := asList(out["versions"])
+	if len(vs) != 55 || asMap(vs[0])["version"] != float64(55) || asMap(vs[54])["phase"] != float64(1) || asMap(vs[0])["phase"] != float64(1) {
+		t.Fatalf("one phase of 55 versions, newest first: %d %v", len(vs), vs[0])
 	}
+	if r := asMap(out["rules"]); r["phaseGapMinutes"] != float64(60) || r["thinAfterDays"] != float64(10) {
+		t.Fatalf("rules %v", r)
+	}
+
+	// Names.
+	path := "/api/v1/presentations/" + id + "/versions/10/label"
+	if r := e.expect(c, "PUT", path, map[string]any{"label": "  Summer menu "}, 200, ""); r["label"] != "Summer menu" {
+		t.Fatalf("label is trimmed: %v", r)
+	}
+	e.expect(c, "PUT", path, map[string]any{"label": strings.Repeat("ä", 81)}, 422, "invalid_field")
+	e.expect(c, "PUT", path, map[string]any{}, 422, "invalid_field")
+	e.expect(c, "PUT", "/api/v1/presentations/"+id+"/versions/999/label", map[string]any{"label": "x"}, 404, "")
+	user := e.login("barkeeper", "user")
+	e.expect(user, "PUT", path, map[string]any{"label": "x"}, 403, "forbidden")
+	if v := asMap(asList(e.expect(c, "GET", "/api/v1/presentations/"+id+"/versions", nil, 200, "")["versions"])[45]); v["version"] != float64(10) || v["label"] != "Summer menu" {
+		t.Fatalf("named version %v", v)
+	}
+	var audits int
+	if err := e.srv.App.DB.R.QueryRow(`SELECT COUNT(*) FROM audit_log WHERE action = 'presentation.version_named' AND object_id = ?`, id).Scan(&audits); err != nil || audits != 1 {
+		t.Fatalf("audit %d %v", audits, err)
+	}
+
+	// Eleven days later only the named version and the last one of the phase are left.
+	old := time.Now().Add(-11 * 24 * time.Hour).UTC()
+	if err := e.srv.App.DB.Tx(context.Background(), func(tx *sql.Tx) error {
+		for v := 1; v <= 55; v++ {
+			at := old.Add(time.Duration(v) * time.Second).Format(time.RFC3339Nano)
+			if _, err := tx.Exec(`UPDATE presentation_versions SET published_at = ? WHERE presentation_id = ? AND version = ?`, at, id, v); err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	var mod *content.Module
+	for _, m := range e.srv.modules {
+		if cm, ok := m.(*content.Module); ok {
+			mod = cm
+		}
+	}
+	if n, err := mod.ThinHistories(context.Background(), time.Now()); err != nil || n != 53 {
+		t.Fatalf("thinned %d %v", n, err)
+	}
+	vs = asList(e.expect(c, "GET", "/api/v1/presentations/"+id+"/versions", nil, 200, "")["versions"])
+	if len(vs) != 2 || asMap(vs[0])["version"] != float64(55) || asMap(vs[1])["version"] != float64(10) {
+		t.Fatalf("left: %v", vs)
+	}
+
 	// Restoring does not reuse numbers: publishing after a restore continues at 56.
 	e.expect(c, "POST", "/api/v1/presentations/"+id+"/versions/10/restore", nil, 200, "")
 	if pub := e.expect(c, "POST", "/api/v1/presentations/"+id+"/publish", nil, 200, ""); pub["publishedVersion"] != float64(56) {
 		t.Fatalf("version numbers are never reused: %v", pub)
 	}
+
+	// At most 100 named versions per presentation; renaming a named one still works.
+	if err := e.srv.App.DB.Tx(context.Background(), func(tx *sql.Tx) error {
+		for v := 100; v < 199; v++ {
+			if _, err := tx.Exec(`INSERT INTO presentation_versions(presentation_id, version, doc, published_at, published_by, label)
+				SELECT presentation_id, ?, doc, published_at, published_by, 'kept' FROM presentation_versions WHERE presentation_id = ? AND version = 56`, v, id); err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	e.expect(c, "PUT", "/api/v1/presentations/"+id+"/versions/56/label", map[string]any{"label": "One too many"}, 409, "too_many_named_versions")
+	e.expect(c, "PUT", path, map[string]any{"label": "Summer menu 2027"}, 200, "")
+	e.expect(c, "PUT", path, map[string]any{"label": ""}, 200, "")
+	e.expect(c, "PUT", "/api/v1/presentations/"+id+"/versions/56/label", map[string]any{"label": "Now it fits"}, 200, "")
 }

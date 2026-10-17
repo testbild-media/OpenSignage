@@ -140,6 +140,7 @@
   "timeout": "Serveris atbildēja pārāk ilgi.",
   "too_large": "Dati ir pārāk lieli.",
   "too_many_groups": "Zonai jau ir maksimālais ekrānu grupu skaits.",
+  "too_many_named_versions": "Vienai prezentācijai var būt ne vairāk kā {max} nosauktas versijas. Vispirms noņemiet citas versijas nosaukumu.",
   "too_many_uploads": "Pārāk daudz nepabeigtu augšupielāžu (maksimums {max}). Uzgaidiet, līdz notiekošās augšupielādes ir pabeigtas.",
   "unauthorized": "Lūdzu, piesakieties vēlreiz.",
   "unknown": "Kaut kas nogāja greizi.",

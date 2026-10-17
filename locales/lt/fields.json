@@ -33,6 +33,7 @@
   "imageScale": "Logotipo dydis",
   "items": "Įrašai",
   "kind": "Tipas",
+  "label": "Pavadinimas",
   "language": "Kalba",
   "license": "Licencija",
   "licenseConfirmed": "Licencijos patvirtinimas",

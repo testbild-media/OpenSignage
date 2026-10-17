@@ -140,6 +140,7 @@
   "timeout": "Serveris atsakė per ilgai.",
   "too_large": "Duomenų per daug.",
   "too_many_groups": "Zona jau turi didžiausią leidžiamą ekranų grupių skaičių.",
+  "too_many_named_versions": "Vienai pateikčiai galima ne daugiau kaip {max} pavadintų versijų. Pirmiausia pašalinkite kitos versijos pavadinimą.",
   "too_many_uploads": "Per daug nebaigtų įkėlimų (daugiausia {max}). Palaukite, kol vykstantys įkėlimai baigsis.",
   "unauthorized": "Prisijunkite dar kartą.",
   "unknown": "Kažkas nepavyko.",

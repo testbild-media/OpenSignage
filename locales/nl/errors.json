@@ -140,6 +140,7 @@
   "timeout": "De server heeft te lang over het antwoord gedaan.",
   "too_large": "De gegevens zijn te groot.",
   "too_many_groups": "De zone heeft al het maximale aantal schermgroepen.",
+  "too_many_named_versions": "Maximaal {max} versies met een naam per presentatie. Verwijder eerst de naam van een andere versie.",
   "too_many_uploads": "Te veel onvoltooide uploads (maximaal {max}). Wacht tot lopende uploads zijn voltooid.",
   "unauthorized": "Log opnieuw in.",
   "unknown": "Er is iets misgegaan.",

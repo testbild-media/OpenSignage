@@ -33,6 +33,7 @@
   "imageScale": "Logotypstorlek",
   "items": "Poster",
   "kind": "Typ",
+  "label": "Namn",
   "language": "Språk",
   "license": "Licens",
   "licenseConfirmed": "Licensbekräftelse",
