@@ -158,6 +158,7 @@ Element =
 | productList { source: { kind: "all"|"categories"|"products", ids: [] },
               columns: 1..4, fields: { name, quantity, description, price: bool },
               categoryHeadings: bool, subcategoryHeadings: bool, scale: 0.25..4,
+              categorySpace?, subcategorySpace?: bool (a hidden heading keeps its space),
               rowGap, columnGap, priceAlign: "right"|"left", overrides?: {…TextStyle partials} }
 | product   { productId, fields, scale }
 | clock     { format: "HH:mm"|"HH:mm:ss"|"h:mm a"|"h:mm:ss a", date: "none"|"short"|"long",

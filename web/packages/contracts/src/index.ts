@@ -173,6 +173,10 @@ export interface ProductListElement extends ElementBase {
   fields: ProductFields;
   categoryHeadings?: boolean;
   subcategoryHeadings?: boolean;
+  /** Hidden category headings keep their space (only with categoryHeadings off). */
+  categorySpace?: boolean;
+  /** Hidden subcategory headings keep their space (only with subcategoryHeadings off). */
+  subcategorySpace?: boolean;
   scale: number;
   rowGap?: number;
   columnGap?: number;

@@ -204,6 +204,8 @@ type Element struct {
 	Fields              *ProductFields    `json:"fields,omitempty"`
 	CategoryHeadings    bool              `json:"categoryHeadings,omitempty"`
 	SubcategoryHeadings bool              `json:"subcategoryHeadings,omitempty"`
+	CategorySpace       bool              `json:"categorySpace,omitempty"`    // hidden category headings keep their space
+	SubcategorySpace    bool              `json:"subcategorySpace,omitempty"` // hidden subcategory headings keep their space
 	Scale               float64           `json:"scale,omitempty"`
 	RowGap              float64           `json:"rowGap,omitempty"`
 	ColumnGap           float64           `json:"columnGap,omitempty"`

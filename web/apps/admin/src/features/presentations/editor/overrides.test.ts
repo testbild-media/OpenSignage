@@ -32,6 +32,15 @@ describe('product typography overrides', () => {
     expect(clearRole({ price: { size: 10 } }, 'price')).toBeUndefined();
   });
 
+  it('underline per element, on top of the presentation typography', () => {
+    let o = setOverride(undefined, 'heading', 'underline', true);
+    o = setOverride(o, 'subheading', 'italic', true);
+    expect(effectiveStyle(typo, o, 'heading')).toMatchObject({ underline: true, bold: true });
+    expect(effectiveStyle(typo, o, 'subheading')).toMatchObject({ underline: false, italic: true });
+    expect(isOverridden(o, 'heading', 'underline')).toBe(true);
+    expect(setOverride(setOverride(o, 'heading', 'underline', undefined), 'subheading', 'italic', undefined)).toBeUndefined();
+  });
+
   it('keeps false as a real override (not bold although the presentation is)', () => {
     const o = setOverride(undefined, 'heading', 'bold', false);
     expect(effectiveStyle(typo, o, 'heading').bold).toBe(false);

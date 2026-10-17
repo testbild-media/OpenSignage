@@ -45,8 +45,11 @@ different resolution scale it sharply (fit, fill or 1:1 per device).
 - **Tools:** undo/redo, copy/paste (also between presentations), grouping, alignment,
   snapping, rulers and guides, layers, context menus.
 - **Product lists** show categories and products with name, quantity, description and price
-  in up to four columns; their look comes from the presentation's typography. A product can
-  show its brand logo instead of the name.
+  in up to four columns; their look comes from the presentation's typography (font, size,
+  colour, bold, italic, underline), which each list can adjust for itself.
+  Category and subcategory headings are shown, hidden, or hidden with their space kept
+  ("Space only"), so groups stay apart without a visible heading. A product can show its
+  brand logo instead of the name.
 - **Version history:** every publish is a version; restore an earlier version into the draft.
   Publishes by the same person less than 60 minutes apart form one editing phase and are
   shown as one row (expand it to see the single versions). After 10 days only the last

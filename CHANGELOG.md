@@ -6,6 +6,13 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 
 ## Unreleased
 
+### Added
+- Product typography: bold, italic and underline for category headings, subcategory
+  headings, product names, descriptions and prices – in the presentation typography and per
+  product list or product.
+- Product lists: category and subcategory headings can be hidden while keeping their space
+  ("Space only"), so groups stay apart without a visible heading.
+
 ### Changed
 - Version history of presentations: publishes by the same person less than 60 minutes apart
   form one editing phase, shown as one row that can be expanded. After 10 days only the last

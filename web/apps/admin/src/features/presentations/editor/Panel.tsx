@@ -1,7 +1,7 @@
 // Right panel, by what is selected: the presentation (nothing selected), the slide, the
 // element(s) – each with its own tab – and the layer list of the slide.
 import { useState, type ReactNode } from 'react';
-import { Bold, Eye, EyeOff, GripVertical, Italic, Layers as LayersIcon, Lock, Pin, Presentation as PresentationIcon, RectangleHorizontal, RotateCcw, SquareMousePointer, Unlock } from 'lucide-react';
+import { Bold, Eye, EyeOff, GripVertical, Italic, Layers as LayersIcon, Lock, Pin, Presentation as PresentationIcon, RectangleHorizontal, RotateCcw, SquareMousePointer, Underline, Unlock } from 'lucide-react';
 import type { Background, Marks, ProductOverrides, Slide, SlideElement, TextStyle, Typography } from '@opensignage/contracts';
 import { useT } from '../../../lib/hooks';
 import { Button, Dialog } from '../../../components/ui';
@@ -20,7 +20,29 @@ import { TextFormat, isTextLike } from './TextFormat';
 
 type Upd = (fn: (e: SlideElement) => void) => void;
 
-/** Text style rows; basics (font, size, color) only for the presentation typography –
+/** Bold, italic and underline of a text style (product typography). No strikethrough: a
+ *  struck-through product means sold out. */
+const STYLE_FLAGS = [
+  { key: 'bold', icon: Bold, label: 'editor.bold' },
+  { key: 'italic', icon: Italic, label: 'editor.italic' },
+  { key: 'underline', icon: Underline, label: 'editor.underline' },
+] as const;
+type StyleFlag = (typeof STYLE_FLAGS)[number]['key'];
+
+function StyleToggles({ value, onToggle }: { value: (k: StyleFlag) => boolean; onToggle: (k: StyleFlag) => void }) {
+  const t = useT();
+  return (
+    <>
+      {STYLE_FLAGS.map(({ key, icon: Icon, label }) => (
+        <button key={key} type="button" className={`tog ${value(key) ? 'active' : ''}`} aria-pressed={value(key)} title={t(label)} aria-label={t(label)} onClick={() => onToggle(key)}>
+          <Icon size={14} />
+        </button>
+      ))}
+    </>
+  );
+}
+
+/** Text style rows; basics (font, size, color, style) only for the presentation typography –
  *  elements have them in TextFormat, which also formats marked characters. */
 function TextStyleFields({ s, set, fonts, sample, basics = true }: { s: TextStyle; set: (fn: (s: TextStyle) => void) => void; fonts: FontOption[]; sample: string; basics?: boolean }) {
   const t = useT();
@@ -36,6 +58,9 @@ function TextStyleFields({ s, set, fonts, sample, basics = true }: { s: TextStyl
           </Row>
           <Row label={t('editor.prop.color')}>
             <ColorInput value={s.color} onChange={(v) => set((x) => (x.color = v ?? '#ffffff'))} />
+          </Row>
+          <Row label={t('editor.ovr.style')}>
+            <StyleToggles value={(k) => !!s[k]} onToggle={(k) => set((x) => (x[k] = !x[k]))} />
           </Row>
         </>
       )}
@@ -271,8 +296,8 @@ function OverrideRow({ label, overridden, resetLabel, onReset, children }: { lab
 }
 
 /**
- * Typography of one product list / product: per text role font, size, color, bold and
- * italic on top of the presentation typography. Unchanged values are inherited.
+ * Typography of one product list / product: per text role font, size, color, bold, italic
+ * and underline on top of the presentation typography. Unchanged values are inherited.
  */
 function ProductTypography({ e, upd, typo, fonts }: { e: Extract<SlideElement, { type: 'productList' | 'product' }>; upd: Upd; typo: Typography; fonts: FontOption[] }) {
   const t = useT();
@@ -310,13 +335,13 @@ function ProductTypography({ e, upd, typo, fonts }: { e: Extract<SlideElement, {
               <OverrideRow label={t('editor.prop.color')} overridden={ov('color')} resetLabel={resetLabel} onReset={() => set(role, 'color', undefined)}>
                 <ColorInput value={st.color} onChange={(v) => set(role, 'color', v ?? typo[role].color)} />
               </OverrideRow>
-              <OverrideRow label={t('editor.ovr.style')} overridden={ov('bold') || ov('italic')} resetLabel={resetLabel} onReset={() => write((o) => setOverride(setOverride(o, role, 'bold', undefined), role, 'italic', undefined))}>
-                <button type="button" className={`tog ${st.bold ? 'active' : ''}`} aria-pressed={st.bold} title={t('editor.bold')} aria-label={t('editor.bold')} onClick={() => set(role, 'bold', !st.bold)}>
-                  <Bold size={14} />
-                </button>
-                <button type="button" className={`tog ${st.italic ? 'active' : ''}`} aria-pressed={st.italic} title={t('editor.italic')} aria-label={t('editor.italic')} onClick={() => set(role, 'italic', !st.italic)}>
-                  <Italic size={14} />
-                </button>
+              <OverrideRow
+                label={t('editor.ovr.style')}
+                overridden={STYLE_FLAGS.some((f) => ov(f.key))}
+                resetLabel={resetLabel}
+                onReset={() => write((o) => STYLE_FLAGS.reduce((acc, f) => setOverride(acc, role, f.key, undefined), o))}
+              >
+                <StyleToggles value={(k) => st[k]} onToggle={(k) => set(role, k, !st[k])} />
               </OverrideRow>
               {changed && (
                 <button type="button" className="btn btn-secondary btn-sm" onClick={() => write((o) => clearRole(o, role))}>
@@ -331,6 +356,23 @@ function ProductTypography({ e, upd, typo, fonts }: { e: Extract<SlideElement, {
         {t('editor.ovr.resetAll')}
       </button>
     </>
+  );
+}
+
+/** Category or subcategory headings: shown, hidden but keeping their space, or hidden. */
+function HeadingMode({ label, show, space, onChange }: { label: string; show: boolean; space: boolean; onChange: (show: boolean, space: boolean) => void }) {
+  const t = useT();
+  const mode = show ? 'show' : space ? 'space' : 'hide';
+  return (
+    <Row label={label}>
+      <select className="input input-sm" value={mode} onChange={(ev) => onChange(ev.target.value === 'show', ev.target.value === 'space')}>
+        {(['show', 'space', 'hide'] as const).map((m) => (
+          <option key={m} value={m}>
+            {t(`editor.headingMode.${m}`)}
+          </option>
+        ))}
+      </select>
+    </Row>
   );
 }
 
@@ -353,10 +395,8 @@ function ProductProps({ e, upd }: { e: Extract<SlideElement, { type: 'productLis
           <Row label={t('editor.prop.columns')}>
             <Num integer value={e.columns} min={1} max={4} onChange={(v) => upd((x) => x.type === 'productList' && (x.columns = v))} />
           </Row>
-          <Row label={t('editor.prop.headings')}>
-            <input type="checkbox" checked={!!e.categoryHeadings} onChange={(ev) => upd((x) => x.type === 'productList' && (x.categoryHeadings = ev.target.checked))} />
-            <input type="checkbox" checked={!!e.subcategoryHeadings} onChange={(ev) => upd((x) => x.type === 'productList' && (x.subcategoryHeadings = ev.target.checked))} />
-          </Row>
+          <HeadingMode label={t('editor.typo.heading')} show={!!e.categoryHeadings} space={!!e.categorySpace} onChange={(show, space) => upd((x) => x.type === 'productList' && ((x.categoryHeadings = show), (x.categorySpace = space)))} />
+          <HeadingMode label={t('editor.typo.subheading')} show={!!e.subcategoryHeadings} space={!!e.subcategorySpace} onChange={(show, space) => upd((x) => x.type === 'productList' && ((x.subcategoryHeadings = show), (x.subcategorySpace = space)))} />
           <Row label={t('editor.prop.gaps')}>
             <Num value={e.rowGap ?? 0} min={0} onChange={(v) => upd((x) => x.type === 'productList' && (x.rowGap = v))} />
             <Num value={e.columnGap ?? 0} min={0} onChange={(v) => upd((x) => x.type === 'productList' && (x.columnGap = v))} />

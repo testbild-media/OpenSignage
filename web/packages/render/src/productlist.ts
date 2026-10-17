@@ -162,7 +162,13 @@ function buildRow(p: LiveProduct, st: Styles, fields: ProductFields, priceAlign:
 }
 
 type ListLike = Pick<ProductListElement, 'source' | 'fields' | 'scale' | 'priceAlign' | 'overrides'> &
-  Partial<Pick<ProductListElement, 'columns' | 'categoryHeadings' | 'subcategoryHeadings' | 'rowGap' | 'columnGap'>>;
+  Partial<Pick<ProductListElement, 'columns' | 'categoryHeadings' | 'subcategoryHeadings' | 'categorySpace' | 'subcategorySpace' | 'rowGap' | 'columnGap'>>;
+
+/** A heading that is not shown but keeps its space (the gap between the groups stays). */
+function hide(h: HTMLElement): void {
+  h.style.visibility = 'hidden';
+  h.setAttribute('aria-hidden', 'true');
+}
 
 /** Renders a product list (or a single product) that updates live, row by row. */
 export function renderProductList(el: ListLike, env: RenderEnv): ElementHandle {
@@ -212,9 +218,10 @@ export function renderProductList(el: ListLike, env: RenderEnv): ElementHandle {
     for (const g of groups) {
       const cat = document.createElement('div');
       cat.className = 'os-pl-cat';
-      if (el.categoryHeadings) {
+      if (el.categoryHeadings || el.categorySpace) {
         const h = text('div', 'os-pl-h', st.heading, g.cat.name);
         h.style.marginBottom = gap;
+        if (!el.categoryHeadings) hide(h);
         cat.appendChild(h);
       }
       const addRows = (list: LiveProduct[], into: HTMLElement): void => {
@@ -227,9 +234,10 @@ export function renderProductList(el: ListLike, env: RenderEnv): ElementHandle {
       };
       addRows(g.products, cat);
       for (const s of g.subs) {
-        if (el.subcategoryHeadings) {
+        if (el.subcategoryHeadings || el.subcategorySpace) {
           const sh = text('div', 'os-pl-sh', st.subheading, s.cat.name);
           sh.style.margin = `${gap} 0`;
+          if (!el.subcategoryHeadings) hide(sh);
           cat.appendChild(sh);
         }
         addRows(s.products, cat);

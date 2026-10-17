@@ -202,3 +202,36 @@ describe('UNAVAILABLE', () => {
     expect(rowIds()).toEqual(['pils', 'brand', 'weizen', 'riesling']);
   });
 });
+
+describe('heading modes', () => {
+  // Beer with the subcategory "On tap"
+  const withSub = (): LiveState => {
+    const s = state();
+    s.categories = [...s.categories, { id: 'tap', name: 'On tap', sort: 1, parentId: 'beer' }];
+    s.products = [...s.products, product('lager', 'tap', 1)];
+    return s;
+  };
+  const render = (patch: Partial<ProductListElement>): HTMLElement => {
+    store.set(withSub());
+    const el = renderElement({ ...list, ...patch }, testEnv(store)).el;
+    document.body.appendChild(el);
+    return el;
+  };
+
+  it('shows headings, keeps only their space, or leaves them out', () => {
+    const shown = render({});
+    expect([...shown.querySelectorAll<HTMLElement>('.os-pl-sh')].map((h) => [h.textContent, h.style.visibility])).toEqual([['On tap', '']]);
+
+    // space only: the heading is there (same height as shown) but invisible
+    const space = render({ categoryHeadings: false, categorySpace: true, subcategoryHeadings: false, subcategorySpace: true });
+    const sh = space.querySelector<HTMLElement>('.os-pl-sh')!;
+    expect(sh.style.visibility).toBe('hidden');
+    expect(sh.getAttribute('aria-hidden')).toBe('true');
+    expect(sh.style.margin).toBe(shown.querySelector<HTMLElement>('.os-pl-sh')!.style.margin);
+    expect([...space.querySelectorAll<HTMLElement>('.os-pl-h')].map((h) => h.style.visibility)).toEqual(['hidden', 'hidden']);
+
+    const none = render({ categoryHeadings: false, subcategoryHeadings: false });
+    expect(none.querySelectorAll('.os-pl-h, .os-pl-sh').length).toBe(0);
+    expect(none.querySelectorAll('.os-row').length).toBe(shown.querySelectorAll('.os-row').length);
+  });
+});

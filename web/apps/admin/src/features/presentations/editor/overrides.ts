@@ -4,7 +4,7 @@ import type { Marks, ProductOverrides, TextStyle, Typography } from '@opensignag
 import { mergeStyle } from '@opensignage/render';
 
 export type OverrideRole = keyof ProductOverrides;
-export type OverrideKey = 'font' | 'size' | 'color' | 'bold' | 'italic';
+export type OverrideKey = 'font' | 'size' | 'color' | 'bold' | 'italic' | 'underline';
 
 /** Text roles a product list draws (headings only with category headings). */
 export const LIST_ROLES: OverrideRole[] = ['heading', 'subheading', 'item', 'description', 'price'];
