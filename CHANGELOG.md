@@ -4,7 +4,7 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.0.2 – 2026-10-17
 
 ### Changed
 - Presentation list: the thumbnail of a presentation under the pointer changes slides every
