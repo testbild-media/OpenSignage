@@ -4,7 +4,10 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.0.1 – 2026-10-17
+
+Improvements to the editor and the presentations from the first productive use. Installations
+on 1.0.0 update from the web interface (Settings → Updates).
 
 ### Added
 - Product typography: bold, italic and underline for category headings, subcategory
