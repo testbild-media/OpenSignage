@@ -53,7 +53,7 @@ export function Canvas({ store, env }: { store: EditorStore; env: RenderEnv }) {
   const bgRef = useRef<HTMLDivElement>(null);
   const rulerXRef = useRef<HTMLCanvasElement>(null);
   const rulerYRef = useRef<HTMLCanvasElement>(null);
-  const handles = useRef(new Map<string, { json: string; h: ElementHandle }>());
+  const handles = useRef(new Map<string, { json: string; env: RenderEnv; h: ElementHandle }>());
   const [box, setBox] = useState({ w: 800, h: 450 });
   const [drag, setDrag] = useState<Drag | null>(null);
   const [snapLines, setSnapLines] = useState<SnapLine[]>([]);
@@ -76,7 +76,8 @@ export function Canvas({ store, env }: { store: EditorStore; env: RenderEnv }) {
     return view.zoom;
   }, [view.zoom, box, doc.width, doc.height]);
 
-  // Render elements; only elements whose JSON changed are rebuilt.
+  // Render elements; only elements whose JSON or render environment (presentation text styles)
+  // changed are rebuilt.
   useEffect(() => {
     const layer = layerRef.current;
     if (!layer || !slide) return;
@@ -86,12 +87,12 @@ export function Canvas({ store, env }: { store: EditorStore; env: RenderEnv }) {
       seen.add(e.id);
       const json = JSON.stringify(e);
       let entry = handles.current.get(e.id);
-      if (!entry || entry.json !== json) {
+      if (!entry || entry.json !== json || entry.env !== env) {
         entry?.h.destroy();
         const h = renderElement(e, env);
         h.el.style.pointerEvents = 'none';
         if (entry) entry.h.el.replaceWith(h.el);
-        entry = { json, h };
+        entry = { json, env, h };
         handles.current.set(e.id, entry);
         h.start();
       }

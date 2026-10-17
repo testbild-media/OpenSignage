@@ -1,7 +1,7 @@
 // Render environment of the editor: assets from the server, live product data with the
 // global status (what the screens show without zone overrides), bundled + custom fonts.
 import { useEffect, useMemo, useState } from 'react';
-import type { FontManifest, LiveState, Presentation } from '@opensignage/contracts';
+import type { FontManifest, LiveState, Presentation, Typography } from '@opensignage/contracts';
 import { LiveStore, type AssetResolver, type RenderEnv } from '@opensignage/render';
 import { getLanguage } from '@opensignage/i18n';
 import { get } from '../../../lib/api';
@@ -111,6 +111,10 @@ export function useFonts(): FontOption[] {
   return fonts;
 }
 
+/** Render environment of the editor. The store clones the whole document on every change, so
+ * the environment is keyed on the typography's content: it changes exactly when the
+ * presentation text styles do, and the canvas rebuilds its elements then (and only then). */
 export function useRenderEnv(doc: Presentation, live: LiveStore): RenderEnv {
-  return useMemo(() => ({ typography: doc.typography, assets: editorAssets, live, mode: 'edit' as const }), [doc.typography, live]);
+  const typography = JSON.stringify(doc.typography);
+  return useMemo(() => ({ typography: JSON.parse(typography) as Typography, assets: editorAssets, live, mode: 'edit' as const }), [typography, live]);
 }
