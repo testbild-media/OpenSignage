@@ -32,7 +32,7 @@ interface PresSummary {
 const typo = { font: 'Montserrat', size: 24, color: '#ffffff', bold: false, italic: false, underline: false, strike: false, letterSpacing: 0, lineHeight: 1.2, align: 'left' as const };
 const fallbackTypography: Typography = { heading: typo, subheading: typo, item: typo, description: typo, price: typo };
 
-const CYCLE_MS = 250;
+const CYCLE_MS = 750;
 
 /** First slide of the draft as the screen shows it: the presentation's own text styles and,
  * once loaded, the uploaded fonts. While the pointer rests on the card, the thumbnail cycles

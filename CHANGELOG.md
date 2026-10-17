@@ -4,6 +4,12 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+- Presentation list: the thumbnail of a presentation under the pointer changes slides every
+  750 ms instead of every 250 ms.
+
 ## 1.0.1 – 2026-10-17
 
 Improvements to the editor and the presentations from the first productive use. Installations
