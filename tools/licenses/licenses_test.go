@@ -224,7 +224,7 @@ func TestThirdPartyLicenses(t *testing.T) {
 		return false
 	}
 	images := map[string]bool{".png": true, ".jpg": true, ".jpeg": true, ".gif": true, ".svg": true, ".ico": true, ".webp": true, ".avif": true, ".bmp": true}
-	skip := map[string]bool{"node_modules": true, "dist": true, "build": true, "coverage": true, "testdata": true, "docs": true, "_kit": true, "fonts": true}
+	skip := map[string]bool{"node_modules": true, "dist": true, "build": true, "coverage": true, "testdata": true, "docs": true, "_kit": true, "_intern": true, "fonts": true}
 	found := 0
 	err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
