@@ -4,7 +4,10 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.1.0 – 2026-10-18
+
+User rights: operators can be responsible for selected zones only. Installations on 1.0.x update
+from the web interface (Settings → Updates); existing operators keep access to all zones.
 
 ### Added
 - User rights: operators can be limited to selected zones, each with view or edit access.
