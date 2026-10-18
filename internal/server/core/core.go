@@ -46,27 +46,18 @@ type Principal struct {
 	DisplayName string
 	Role        string
 	Language    string
-	ZoneIDs     []string
+	ZoneIDs     []string // zones of users and restricted operators (any access), sorted
 	SessionHash string
 	CSRF        string
+
+	// Rights (rights.go). Zones holds the access per zone for users and restricted operators.
+	Scope     string
+	Zones     map[string]string
+	CanCreate bool
+	Media     string
+	Products  string
+	Devices   bool
 }
 
 // Is reports whether the principal has at least the given role.
 func (p *Principal) Is(min string) bool { return p != nil && AtLeast(p.Role, min) }
-
-// CanZone reports whether the principal may act on a zone (admins and operators on all
-// zones, users only on assigned zones).
-func (p *Principal) CanZone(zoneID string) bool {
-	if p == nil {
-		return false
-	}
-	if AtLeast(p.Role, RoleOperator) {
-		return true
-	}
-	for _, z := range p.ZoneIDs {
-		if z == zoneID {
-			return true
-		}
-	}
-	return false
-}

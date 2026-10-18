@@ -37,7 +37,8 @@ type User struct {
 	Role        string   `json:"role"`
 	Active      bool     `json:"active"`
 	Language    string   `json:"language"`
-	ZoneIDs     []string `json:"zoneIds"`
+	ZoneIDs     []string `json:"zoneIds"` // all zones of Rights.Zones
+	Rights      Rights   `json:"rights"`
 	CreatedAt   string   `json:"createdAt"`
 	UpdatedAt   string   `json:"updatedAt"`
 }
@@ -320,7 +321,7 @@ func (m *Module) session(rt *core.Router) httpx.HandlerFunc {
 		}
 		if p != nil {
 			out["user"] = map[string]any{"id": p.UserID, "username": p.Username, "displayName": p.DisplayName,
-				"role": p.Role, "language": p.Language, "zoneIds": nonNil(p.ZoneIDs)}
+				"role": p.Role, "language": p.Language, "zoneIds": nonNil(p.ZoneIDs), "rights": sessionRights(p)}
 			out["csrf"] = p.CSRF
 		}
 		return httpx.OK(w, out)
@@ -396,27 +397,31 @@ func (m *Module) updateProfile(w http.ResponseWriter, r *http.Request, p *core.P
 func (m *Module) loadUsers(ctx context.Context, q interface {
 	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
 }, where string, args ...any) ([]User, error) {
-	rows, err := q.QueryContext(ctx, `SELECT id, username, display_name, role, active, COALESCE(language, ''), created_at, updated_at FROM users `+where+` ORDER BY username COLLATE NOCASE`, args...)
+	rows, err := q.QueryContext(ctx, `SELECT id, username, display_name, role, active, COALESCE(language, ''), created_at, updated_at,
+		scope, can_create, media_right, products_right, devices_right FROM users `+where+` ORDER BY username COLLATE NOCASE`, args...)
 	if err != nil {
 		return nil, err
 	}
 	var out []User
 	for rows.Next() {
 		var u User
-		var active int
-		if err := rows.Scan(&u.ID, &u.Username, &u.DisplayName, &u.Role, &active, &u.Language, &u.CreatedAt, &u.UpdatedAt); err != nil {
+		var active, create, devices int
+		if err := rows.Scan(&u.ID, &u.Username, &u.DisplayName, &u.Role, &active, &u.Language, &u.CreatedAt, &u.UpdatedAt,
+			&u.Rights.Scope, &create, &u.Rights.Media, &u.Rights.Products, &devices); err != nil {
 			rows.Close()
 			return nil, err
 		}
 		u.Active = active == 1
+		u.Rights.CreateContent, u.Rights.Devices = create == 1, devices == 1
 		u.ZoneIDs = []string{}
+		u.Rights.Zones = []ZoneAccess{}
 		out = append(out, u)
 	}
 	rows.Close()
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	zr, err := q.QueryContext(ctx, `SELECT user_id, zone_id FROM user_zones ORDER BY zone_id`)
+	zr, err := q.QueryContext(ctx, `SELECT user_id, zone_id, access FROM user_zones ORDER BY zone_id`)
 	if err != nil {
 		return nil, err
 	}
@@ -426,12 +431,13 @@ func (m *Module) loadUsers(ctx context.Context, q interface {
 		idx[u.ID] = i
 	}
 	for zr.Next() {
-		var uid, zid string
-		if err := zr.Scan(&uid, &zid); err != nil {
+		var uid, zid, access string
+		if err := zr.Scan(&uid, &zid, &access); err != nil {
 			return nil, err
 		}
 		if i, ok := idx[uid]; ok {
 			out[i].ZoneIDs = append(out[i].ZoneIDs, zid)
+			out[i].Rights.Zones = append(out[i].Rights.Zones, ZoneAccess{ZoneID: zid, Access: access})
 		}
 	}
 	return out, zr.Err()
@@ -455,7 +461,8 @@ type createReq struct {
 	Password        string   `json:"password"`
 	PasswordConfirm string   `json:"passwordConfirm"`
 	Active          bool     `json:"active"`
-	ZoneIDs         []string `json:"zoneIds"`
+	ZoneIDs         []string `json:"zoneIds"` // edit access (older clients); rights.zones wins
+	Rights          *Rights  `json:"rights"`
 	Language        string   `json:"language"`
 }
 
@@ -470,6 +477,13 @@ func (m *Module) create(w http.ResponseWriter, r *http.Request, p *core.Principa
 	if !core.ValidRole(req.Role) {
 		return httpx.Invalid("role", "invalid")
 	}
+	rights := fromZoneIDs(defaultRights(), req.ZoneIDs)
+	if req.Rights != nil {
+		rights = *req.Rights
+	}
+	if err := rights.validate(req.Role); err != nil {
+		return err
+	}
 	hash, err := passwords.Hash(req.Password)
 	if err != nil {
 		return err
@@ -479,11 +493,11 @@ func (m *Module) create(w http.ResponseWriter, r *http.Request, p *core.Principa
 		if err := insertUser(r.Context(), tx, id, req.Username, req.DisplayName, hash, req.Role, req.Active, req.Language); err != nil {
 			return err
 		}
-		if err := setZones(r.Context(), tx, id, req.ZoneIDs); err != nil {
+		if err := saveRights(r.Context(), tx, id, rights); err != nil {
 			return err
 		}
 		return core.Audit(r.Context(), tx, p, httpx.ClientIP(r), core.AuditEntry{Action: "user.created", ObjectType: "user",
-			ObjectID: id, ObjectName: req.Username, New: map[string]any{"role": req.Role, "active": req.Active, "zoneIds": req.ZoneIDs}})
+			ObjectID: id, ObjectName: req.Username, New: map[string]any{"role": req.Role, "active": req.Active, "rights": rights}})
 	})
 	if err != nil {
 		return err
@@ -494,26 +508,6 @@ func (m *Module) create(w http.ResponseWriter, r *http.Request, p *core.Principa
 		return httpx.ErrInternal.Wrap(err)
 	}
 	return httpx.OK(w, users[0])
-}
-
-func setZones(ctx context.Context, tx *sql.Tx, userID string, zoneIDs []string) error {
-	if _, err := tx.ExecContext(ctx, `DELETE FROM user_zones WHERE user_id = ?`, userID); err != nil {
-		return err
-	}
-	seen := map[string]bool{}
-	for _, z := range zoneIDs {
-		if seen[z] {
-			continue
-		}
-		seen[z] = true
-		if _, err := tx.ExecContext(ctx, `INSERT INTO user_zones(user_id, zone_id) VALUES (?, ?)`, userID, z); err != nil {
-			if strings.Contains(err.Error(), "FOREIGN KEY") {
-				return httpx.Invalid("zoneIds", "unknown_zone")
-			}
-			return err
-		}
-	}
-	return nil
 }
 
 // errLastAdmin is returned when an action would leave no active admin.
@@ -535,7 +529,8 @@ type updateReq struct {
 	DisplayName *string   `json:"displayName"`
 	Role        *string   `json:"role"`
 	Active      *bool     `json:"active"`
-	ZoneIDs     *[]string `json:"zoneIds"`
+	ZoneIDs     *[]string `json:"zoneIds"` // edit access (older clients); rights wins
+	Rights      *Rights   `json:"rights"`
 	Language    *string   `json:"language"`
 }
 
@@ -579,8 +574,21 @@ func (m *Module) update(w http.ResponseWriter, r *http.Request, p *core.Principa
 		if _, err := tx.ExecContext(r.Context(), `UPDATE users SET `+strings.Join(set, ", ")+` WHERE id = ?`, args...); err != nil {
 			return err
 		}
-		if req.ZoneIDs != nil {
-			if err := setZones(r.Context(), tx, id, *req.ZoneIDs); err != nil {
+		if req.ZoneIDs != nil || req.Rights != nil || req.Role != nil {
+			role, rights := old.Role, old.Rights
+			if req.Role != nil {
+				role = *req.Role
+			}
+			if req.ZoneIDs != nil {
+				rights = fromZoneIDs(rights, *req.ZoneIDs)
+			}
+			if req.Rights != nil {
+				rights = *req.Rights
+			}
+			if err := rights.validate(role); err != nil {
+				return err
+			}
+			if err := saveRights(r.Context(), tx, id, rights); err != nil {
 				return err
 			}
 		}

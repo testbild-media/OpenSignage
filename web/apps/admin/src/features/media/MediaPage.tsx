@@ -16,6 +16,7 @@ import { ApiError, del, patch, post } from '../../lib/api';
 import { useT } from '../../lib/hooks';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Button, DataState, IconButton, PageHeader } from '../../components/ui';
+import { useMediaRights } from './rights';
 import {
   AssetStatus,
   AssetTile,
@@ -71,6 +72,7 @@ const hasType = (e: DragEvent, type: string): boolean => Array.from(e.dataTransf
 export function MediaPage() {
   const t = useT();
   const toast = useToast();
+  const mr = useMediaRights();
   const confirm = useConfirm();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -167,7 +169,7 @@ export function MediaPage() {
   };
 
   const upload = (files: File[], target: string | null): void => {
-    if (!files.length) return;
+    if (!files.length || !mr.upload) return;
     enqueueUploads(files, target);
   };
 
@@ -339,34 +341,36 @@ export function MediaPage() {
         title={t('media.title')}
         subtitle={subtitle}
         actions={
-          <>
-            <Button
-              icon={<FolderPlus size={16} />}
-              onClick={() => setNaming({ type: 'create' })}
-              disabled={notFound}
-            >
-              {t('media.folder.new')}
-            </Button>
-            <input
-              ref={input}
-              type="file"
-              multiple
-              hidden
-              accept={ACCEPT.all}
-              onChange={(e) => {
-                upload(Array.from(e.target.files ?? []), folderId);
-                e.target.value = '';
-              }}
-            />
-            <Button
-              variant="primary"
-              icon={<Upload size={16} />}
-              onClick={() => input.current?.click()}
-              disabled={notFound}
-            >
-              {t('media.upload.button')}
-            </Button>
-          </>
+          mr.upload && (
+            <>
+              <Button
+                icon={<FolderPlus size={16} />}
+                onClick={() => setNaming({ type: 'create' })}
+                disabled={notFound}
+              >
+                {t('media.folder.new')}
+              </Button>
+              <input
+                ref={input}
+                type="file"
+                multiple
+                hidden
+                accept={ACCEPT.all}
+                onChange={(e) => {
+                  upload(Array.from(e.target.files ?? []), folderId);
+                  e.target.value = '';
+                }}
+              />
+              <Button
+                variant="primary"
+                icon={<Upload size={16} />}
+                onClick={() => input.current?.click()}
+                disabled={notFound}
+              >
+                {t('media.upload.button')}
+              </Button>
+            </>
+          )
         }
       />
       <div className="mm-toolbar">
@@ -424,23 +428,27 @@ export function MediaPage() {
           >
             {t('media.selectAll')}
           </Button>
-          <Button
-            className="btn-sm"
-            icon={<FolderInput size={14} />}
-            busy={busy === 'move'}
-            onClick={() => setChooser({ type: 'assets', ids: [...sel], source: uniformFolder(selected) })}
-          >
-            {t('media.move.button')}
-          </Button>
-          <Button
-            className="btn-sm"
-            variant="danger"
-            icon={<Trash2 size={14} />}
-            busy={busy === 'trash'}
-            onClick={() => void trashAssets([...sel])}
-          >
-            {t('media.trash.action')}
-          </Button>
+          {selected.every(mr.ownAsset) && (
+            <Button
+              className="btn-sm"
+              icon={<FolderInput size={14} />}
+              busy={busy === 'move'}
+              onClick={() => setChooser({ type: 'assets', ids: [...sel], source: uniformFolder(selected) })}
+            >
+              {t('media.move.button')}
+            </Button>
+          )}
+          {mr.manage && (
+            <Button
+              className="btn-sm"
+              variant="danger"
+              icon={<Trash2 size={14} />}
+              busy={busy === 'trash'}
+              onClick={() => void trashAssets([...sel])}
+            >
+              {t('media.trash.action')}
+            </Button>
+          )}
           <Button className="btn-sm" variant="ghost" icon={<X size={14} />} onClick={clearSel}>
             {t('media.clearSelection')}
           </Button>
@@ -485,25 +493,31 @@ export function MediaPage() {
                     }}
                     actions={
                       <>
-                        <IconButton
-                          label={t('media.folder.rename')}
-                          onClick={() => setNaming({ type: 'rename', folder: f })}
-                        >
-                          <Pencil size={15} />
-                        </IconButton>
-                        <IconButton
-                          label={t('media.move.button')}
-                          onClick={() => setChooser({ type: 'folder', folder: f })}
-                        >
-                          <FolderInput size={15} />
-                        </IconButton>
-                        <IconButton
-                          label={t('media.trash.action')}
-                          disabled={busy === `folder:${f.id}`}
-                          onClick={() => void trashFolder(f)}
-                        >
-                          <Trash2 size={15} />
-                        </IconButton>
+                        {mr.ownFolder(f) && (
+                          <IconButton
+                            label={t('media.folder.rename')}
+                            onClick={() => setNaming({ type: 'rename', folder: f })}
+                          >
+                            <Pencil size={15} />
+                          </IconButton>
+                        )}
+                        {mr.ownFolder(f) && (
+                          <IconButton
+                            label={t('media.move.button')}
+                            onClick={() => setChooser({ type: 'folder', folder: f })}
+                          >
+                            <FolderInput size={15} />
+                          </IconButton>
+                        )}
+                        {mr.manage && (
+                          <IconButton
+                            label={t('media.trash.action')}
+                            disabled={busy === `folder:${f.id}`}
+                            onClick={() => void trashFolder(f)}
+                          >
+                            <Trash2 size={15} />
+                          </IconButton>
+                        )}
                       </>
                     }
                   />

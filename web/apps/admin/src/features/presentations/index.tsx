@@ -8,6 +8,7 @@ import { del, get, post } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { loadCustomFonts } from '../../lib/fonts';
+import { FULL_ACCESS, useRights, type ContentAccess } from '../../lib/rights';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, ErrorText, IconButton, PageHeader, Select, TextInput } from '../../components/ui';
 import { EditorPage } from './editor/Editor';
@@ -26,6 +27,8 @@ interface PresSummary {
   firstSlide: Slide | null;
   /** Text styles of the draft (product lists and single products in the thumbnail). */
   typography: Typography | null;
+  /** Rights of the user (missing on older servers = full access). */
+  access?: ContentAccess;
 }
 
 // Only for a draft without text styles (the server always stores them).
@@ -178,6 +181,7 @@ function PresentationsPage() {
   const toast = useToast();
   const [creating, setCreating] = useState(false);
   const live = useEditorLive();
+  const rights = useRights();
   const list = useQuery<{ presentations: PresSummary[] }>('/api/v1/presentations');
   useEvents(['content'], () => list.reload());
   // Uploaded fonts: the thumbnails are drawn again once their @font-face rules are installed.
@@ -210,15 +214,19 @@ function PresentationsPage() {
       <PageHeader
         title={t('admin.nav.presentations')}
         actions={
-          <Button variant="primary" icon={<Plus size={16} />} onClick={() => setCreating(true)}>
-            {t('pres.new')}
-          </Button>
+          rights.canCreateContent && (
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => setCreating(true)}>
+              {t('pres.new')}
+            </Button>
+          )
         }
       />
       <ErrorText error={remove.error ?? duplicate.error ?? template.error} />
       <DataState loading={list.loading && !list.data} error={list.error} onRetry={list.reload} empty={list.data?.presentations.length === 0} emptyText={t('pres.empty')}>
         <div className="pres-grid">
-          {list.data?.presentations.map((p) => (
+          {list.data?.presentations.map((p) => {
+            const access = p.access ?? FULL_ACCESS;
+            return (
             <div
               key={p.id}
               className="pres-card"
@@ -232,21 +240,31 @@ function PresentationsPage() {
                 <div className="faint">
                   {p.width}×{p.height} · {t('pres.slides', { count: p.slideCount })}
                 </div>
-                <div>{p.publishedVersion ? p.hasChanges ? <Badge tone="warning">{t('editor.changesNotPublished')}</Badge> : <Badge tone="success">{t('pres.published')}</Badge> : <Badge>{t('editor.neverPublished')}</Badge>}</div>
+                <div className="pres-badges">
+                  {p.publishedVersion ? p.hasChanges ? <Badge tone="warning">{t('editor.changesNotPublished')}</Badge> : <Badge tone="success">{t('pres.published')}</Badge> : <Badge>{t('editor.neverPublished')}</Badge>}
+                  {!access.edit && <Badge>{t('admin.readOnly.badge')}</Badge>}
+                </div>
               </div>
               <div className="pres-actions" onClick={(e) => e.stopPropagation()}>
-                <IconButton label={t('editor.duplicate')} onClick={() => void duplicate.run(p)}>
-                  <Copy size={16} />
-                </IconButton>
-                <IconButton label={t('pres.saveTemplate')} onClick={() => void template.run(p)}>
-                  <LayoutTemplate size={16} />
-                </IconButton>
-                <IconButton label={t('common.action.delete')} onClick={() => void remove.run(p)}>
-                  <Trash2 size={16} />
-                </IconButton>
+                {rights.canCreateContent && (
+                  <IconButton label={t('editor.duplicate')} onClick={() => void duplicate.run(p)}>
+                    <Copy size={16} />
+                  </IconButton>
+                )}
+                {rights.canManageGlobal && (
+                  <IconButton label={t('pres.saveTemplate')} onClick={() => void template.run(p)}>
+                    <LayoutTemplate size={16} />
+                  </IconButton>
+                )}
+                {access.edit && (
+                  <IconButton label={t('common.action.delete')} onClick={() => void remove.run(p)}>
+                    <Trash2 size={16} />
+                  </IconButton>
+                )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </DataState>
       {creating && <NewDialog onClose={() => setCreating(false)} />}

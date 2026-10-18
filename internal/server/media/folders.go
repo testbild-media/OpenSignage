@@ -17,9 +17,10 @@ type folderView struct {
 	ID          string  `json:"id"`
 	ParentID    *string `json:"parentId"`
 	Name        string  `json:"name"`
-	ItemCount   int     `json:"itemCount"`   // assets in this folder and all sub folders
-	FolderCount int     `json:"folderCount"` // direct sub folders
-	TotalSize   int64   `json:"totalSize"`   // bytes of the originals in the whole subtree
+	CreatedBy   string  `json:"createdBy,omitempty"` // user id
+	ItemCount   int     `json:"itemCount"`           // assets in this folder and all sub folders
+	FolderCount int     `json:"folderCount"`         // direct sub folders
+	TotalSize   int64   `json:"totalSize"`           // bytes of the originals in the whole subtree
 	CreatedAt   string  `json:"createdAt"`
 	UpdatedAt   string  `json:"updatedAt"`
 }
@@ -30,11 +31,13 @@ type folderRec struct {
 	Name      string
 	CreatedAt string
 	UpdatedAt string
+	CreatedBy string
 }
 
 // liveFolders loads all folders that are not in the trash.
 func liveFolders(ctx context.Context, q queryer) ([]folderRec, error) {
-	rows, err := q.QueryContext(ctx, `SELECT id, parent_id, name, created_at, updated_at FROM media_folders WHERE trashed_at IS NULL ORDER BY name COLLATE NOCASE, id`)
+	rows, err := q.QueryContext(ctx, `SELECT id, parent_id, name, created_at, updated_at, COALESCE(created_by, '') FROM media_folders
+		WHERE trashed_at IS NULL ORDER BY name COLLATE NOCASE, id`)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +46,7 @@ func liveFolders(ctx context.Context, q queryer) ([]folderRec, error) {
 	for rows.Next() {
 		var f folderRec
 		var parent sql.NullString
-		if err := rows.Scan(&f.ID, &parent, &f.Name, &f.CreatedAt, &f.UpdatedAt); err != nil {
+		if err := rows.Scan(&f.ID, &parent, &f.Name, &f.CreatedAt, &f.UpdatedAt, &f.CreatedBy); err != nil {
 			return nil, err
 		}
 		f.ParentID = nullStr(parent)
@@ -107,7 +110,7 @@ func folderViews(folders []folderRec, count map[string]int, size map[string]int6
 	out := make([]folderView, 0, len(folders))
 	for _, f := range folders {
 		out = append(out, folderView{ID: f.ID, ParentID: f.ParentID, Name: f.Name, ItemCount: count[f.ID],
-			FolderCount: sub[f.ID], TotalSize: size[f.ID], CreatedAt: f.CreatedAt, UpdatedAt: f.UpdatedAt})
+			FolderCount: sub[f.ID], TotalSize: size[f.ID], CreatedAt: f.CreatedAt, UpdatedAt: f.UpdatedAt, CreatedBy: f.CreatedBy})
 	}
 	return out
 }
@@ -231,8 +234,8 @@ func (m *Module) createFolder(w http.ResponseWriter, r *http.Request, p *core.Pr
 			return err
 		}
 		now := db.Now()
-		if _, err := tx.ExecContext(r.Context(), `INSERT INTO media_folders(id, parent_id, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-			id, req.ParentID, name, now, now); err != nil {
+		if _, err := tx.ExecContext(r.Context(), `INSERT INTO media_folders(id, parent_id, name, created_at, updated_at, created_by) VALUES (?, ?, ?, ?, ?, ?)`,
+			id, req.ParentID, name, now, now, p.UserID); err != nil {
 			return err
 		}
 		return core.Audit(r.Context(), tx, p, httpx.ClientIP(r), core.AuditEntry{Action: "media.folder_created", ObjectType: "media_folder",
@@ -242,7 +245,7 @@ func (m *Module) createFolder(w http.ResponseWriter, r *http.Request, p *core.Pr
 		return err
 	}
 	m.publishMedia("folder", id, nil)
-	return httpx.OK(w, folderView{ID: id, ParentID: req.ParentID, Name: name})
+	return httpx.OK(w, folderView{ID: id, ParentID: req.ParentID, Name: name, CreatedBy: p.UserID})
 }
 
 // requireLiveFolder returns invalid_field/unknown_folder when the folder is missing or trashed.

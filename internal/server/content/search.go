@@ -41,7 +41,7 @@ type searchPlaylist struct {
 // search feeds the playlist editor sidebar: presentations, slides (by slide name) and
 // playlists whose name contains q (case-insensitive). An empty q lists presentations and
 // playlists but no slides (use GET /presentations/{id} for the slides of one presentation).
-func (m *Module) search(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) search(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
 	if utf8.RuneCountInString(q) > maxQueryRune {
 		return httpx.Invalid("q", "too_long")
@@ -49,6 +49,14 @@ func (m *Module) search(w http.ResponseWriter, r *http.Request, _ *core.Principa
 	needle := strings.ToLower(q)
 	match := func(s string) bool { return needle == "" || strings.Contains(strings.ToLower(s), needle) }
 	ctx := r.Context()
+	lp, err := m.newLister(ctx, p, kindPres)
+	if err != nil {
+		return err
+	}
+	ll, err := m.newLister(ctx, p, kindPl)
+	if err != nil {
+		return err
+	}
 
 	prows, err := m.app.DB.R.QueryContext(ctx, `SELECT id, name, COALESCE(json_extract(draft, '$.width'), 0), COALESCE(json_extract(draft, '$.height'), 0),
 		COALESCE(json_array_length(draft, '$.slides'), 0), published_version FROM presentations
@@ -64,7 +72,7 @@ func (m *Module) search(w http.ResponseWriter, r *http.Request, _ *core.Principa
 			prows.Close()
 			return err
 		}
-		if match(s.Name) && len(pres) < searchLimit {
+		if match(s.Name) && len(pres) < searchLimit && lp.rights(kindPres, s.ID, false).View {
 			s.PublishedVersion = pub
 			pres = append(pres, s)
 		}
@@ -88,7 +96,7 @@ func (m *Module) search(w http.ResponseWriter, r *http.Request, _ *core.Principa
 				srows.Close()
 				return err
 			}
-			if s.Name != "" && match(s.Name) && len(slides) < searchLimit {
+			if s.Name != "" && match(s.Name) && len(slides) < searchLimit && lp.rights(kindPres, s.PresentationID, false).View {
 				slides = append(slides, s)
 			}
 		}
@@ -111,7 +119,7 @@ func (m *Module) search(w http.ResponseWriter, r *http.Request, _ *core.Principa
 		if err := lrows.Scan(&s.ID, &s.Name, &s.ItemCount, &pub); err != nil {
 			return err
 		}
-		if match(s.Name) && len(lists) < searchLimit {
+		if match(s.Name) && len(lists) < searchLimit && ll.rights(kindPl, s.ID, false).View {
 			s.PublishedVersion = pub
 			lists = append(lists, s)
 		}

@@ -7,6 +7,7 @@ import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Button, DataState, ErrorText, IconButton, PageHeader } from '../../components/ui';
+import { useRights } from '../../lib/rights';
 import { useSortable } from '../../components/sortable';
 import { CategoryDialog } from './CategoryDialog';
 import { ProductDialog } from './ProductDialog';
@@ -81,6 +82,7 @@ export function CategoriesPage() {
   const navigate = useNavigate();
   const q = useQuery<{ categories: Category[] }>('/api/v1/categories');
   useEvents(['products'], () => q.reload());
+  const edit = useRights().canEditProducts;
   const [editing, setEditing] = useState<Editing>(null);
   const [newProduct, setNewProduct] = useState(false);
   const cats = q.data?.categories ?? [];
@@ -116,12 +118,16 @@ export function CategoriesPage() {
               <Archive size={16} />
               <span>{t('admin.products.archive.title')}</span>
             </Link>
-            <Button icon={<FolderPlus size={16} />} onClick={() => setEditing({ category: null })}>
-              {t('admin.products.category.add')}
-            </Button>
-            <Button variant="primary" icon={<Plus size={16} />} disabled={cats.length === 0} onClick={() => setNewProduct(true)}>
-              {t('admin.products.add')}
-            </Button>
+            {edit && (
+              <>
+                <Button icon={<FolderPlus size={16} />} onClick={() => setEditing({ category: null })}>
+                  {t('admin.products.category.add')}
+                </Button>
+                <Button variant="primary" icon={<Plus size={16} />} disabled={cats.length === 0} onClick={() => setNewProduct(true)}>
+                  {t('admin.products.add')}
+                </Button>
+              </>
+            )}
           </>
         }
       />
@@ -137,9 +143,11 @@ export function CategoriesPage() {
               return (
                 <div className="cat-card">
                   <div className="cat-row cat-row-top">
-                    <button type="button" {...handle}>
-                      <GripVertical size={16} />
-                    </button>
+                    {edit && (
+                      <button type="button" {...handle}>
+                        <GripVertical size={16} />
+                      </button>
+                    )}
                     <Link to={`/products/category/${node.id}`} className="cat-name">
                       {node.name}
                     </Link>
@@ -147,17 +155,19 @@ export function CategoriesPage() {
                       {t('admin.products.count', { count: total(node) })}
                       {node.children.length > 0 && <span className="faint"> · {t('admin.products.subCount', { count: node.children.length })}</span>}
                     </span>
-                    <span className="row-actions">
-                      <IconButton label={t('admin.products.category.addSub')} onClick={() => setEditing({ category: null, parentId: node.id })}>
-                        <FolderPlus size={16} />
-                      </IconButton>
-                      <IconButton label={t('common.action.edit')} onClick={() => setEditing({ category: node })}>
-                        <Pencil size={16} />
-                      </IconButton>
-                      <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(node, cats)}>
-                        <Trash2 size={16} />
-                      </IconButton>
-                    </span>
+                    {edit && (
+                      <span className="row-actions">
+                        <IconButton label={t('admin.products.category.addSub')} onClick={() => setEditing({ category: null, parentId: node.id })}>
+                          <FolderPlus size={16} />
+                        </IconButton>
+                        <IconButton label={t('common.action.edit')} onClick={() => setEditing({ category: node })}>
+                          <Pencil size={16} />
+                        </IconButton>
+                        <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(node, cats)}>
+                          <Trash2 size={16} />
+                        </IconButton>
+                      </span>
+                    )}
                   </div>
                   {node.children.length > 0 && (
                     <div className="cat-children">
@@ -167,21 +177,25 @@ export function CategoriesPage() {
                         onReorder={(ids) => void reorder.run(ids)}
                         render={(ch, h) => (
                           <div className="cat-row">
-                            <button type="button" {...h}>
-                              <GripVertical size={14} />
-                            </button>
+                            {edit && (
+                              <button type="button" {...h}>
+                                <GripVertical size={14} />
+                              </button>
+                            )}
                             <Link to={`/products/category/${ch.id}`} className="cat-name">
                               {ch.name}
                             </Link>
                             <span className="cat-count">{t('admin.products.count', { count: ch.productCount })}</span>
-                            <span className="row-actions">
-                              <IconButton label={t('common.action.edit')} onClick={() => setEditing({ category: ch })}>
-                                <Pencil size={16} />
-                              </IconButton>
-                              <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(ch, cats)}>
-                                <Trash2 size={16} />
-                              </IconButton>
-                            </span>
+                            {edit && (
+                              <span className="row-actions">
+                                <IconButton label={t('common.action.edit')} onClick={() => setEditing({ category: ch })}>
+                                  <Pencil size={16} />
+                                </IconButton>
+                                <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(ch, cats)}>
+                                  <Trash2 size={16} />
+                                </IconButton>
+                              </span>
+                            )}
                           </div>
                         )}
                       />

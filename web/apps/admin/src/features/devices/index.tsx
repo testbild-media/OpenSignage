@@ -26,6 +26,7 @@ import { DisplayPicker } from './DisplayPicker';
 import { MonitorCard, StatusBadge, StorageCard, SyncCell } from './Monitor';
 import { MAX_PLACE } from '../zones/ZoneScreens';
 import { customModeValid, openAlerts, sameDisplay, type Device, type DeviceConfig } from './model';
+import { useRights } from '../../lib/rights';
 import './devices.css';
 
 interface Pairing {
@@ -135,7 +136,9 @@ function DevicesPage() {
   const t = useT();
   const navigate = useNavigate();
   const list = useQuery<{ devices: Device[] }>('/api/v1/devices');
-  const pairing = useQuery<{ pairingRequests: Pairing[]; fingerprint: string }>('/api/v1/devices/pairing');
+  // Pairing new screens stays with admins and operators of all zones.
+  const manage = useRights().canManageGlobal;
+  const pairing = useQuery<{ pairingRequests: Pairing[]; fingerprint: string }>(manage ? '/api/v1/devices/pairing' : null);
   const zones = useQuery<{ zones: Zone[] }>('/api/v1/zones');
   const [claim, setClaim] = useState<Pairing | null>(null);
   const toast = useToast();
@@ -150,9 +153,10 @@ function DevicesPage() {
     pairing.reload();
   });
   useEffect(() => {
+    if (!manage) return;
     const id = window.setInterval(() => pairing.reload(), 10000);
     return () => clearInterval(id);
-  }, [pairing]);
+  }, [pairing, manage]);
   const pending = pairing.data?.pairingRequests ?? [];
   return (
     <div className="page">
@@ -259,6 +263,7 @@ type Form = { name: string; zoneId: string; groupId: string; position: string; c
 
 function DeviceDetail() {
   const t = useT();
+  const rights = useRights();
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -362,8 +367,10 @@ function DeviceDetail() {
         {d && form && disp && (
           <div className="device-grid">
             <MonitorCard d={d} />
-            <ActionsCard d={d} onChanged={q.reload} onScreenshot={() => setShot(Date.now())} shot={shot} />
-            <StorageCard d={d} onChanged={q.reload} />
+            <ActionsCard d={d} onChanged={q.reload} onScreenshot={() => setShot(Date.now())} shot={shot} control={rights.canControlDevice(d.zoneId)} />
+            <StorageCard d={d} onChanged={q.reload} control={rights.canControlDevice(d.zoneId)} />
+            {rights.canManageGlobal && (
+            <>
             <div className="card form">
               <h2>{t('devices.settings')}</h2>
               <TextInput
@@ -489,6 +496,8 @@ function DeviceDetail() {
               </div>
               <ErrorText error={repair.error ?? remove.error} />
             </div>
+            </>
+            )}
           </div>
         )}
       </DataState>

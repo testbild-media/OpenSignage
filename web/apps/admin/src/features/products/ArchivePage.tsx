@@ -8,6 +8,7 @@ import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { useConfirm, useToast } from '../../components/feedback';
 import { DataState, IconButton, PageHeader } from '../../components/ui';
+import { useRights } from '../../lib/rights';
 import { MediaThumb } from '../../components/MediaPicker';
 import { categoryPath, type Category, type Product } from './types';
 
@@ -28,6 +29,7 @@ export function ArchivePage() {
   const toast = useToast();
   const confirm = useConfirm();
   const lang = getLanguage();
+  const edit = useRights().canEditProducts;
   const q = useQuery<{ products: Product[] }>('/api/v1/products?archived=1');
   const cats = useQuery<{ categories: Category[] }>('/api/v1/categories');
   useEvents(['products'], () => {
@@ -96,12 +98,16 @@ export function ArchivePage() {
                 <td className="muted">{categoryPath(all, p.categoryId) || '—'}</td>
                 <td className="nowrap num">{formatMoney(p.price.amount, p.price.currency, lang)}</td>
                 <td className="row-actions">
-                  <IconButton label={t('admin.products.archive.restore')} disabled={busy} onClick={() => void restore.run(p)}>
-                    <ArchiveRestore size={16} />
-                  </IconButton>
-                  <IconButton label={t('admin.products.archive.delete')} disabled={busy} onClick={() => void remove.run(p)}>
-                    <Trash2 size={16} />
-                  </IconButton>
+                  {edit && (
+                    <>
+                      <IconButton label={t('admin.products.archive.restore')} disabled={busy} onClick={() => void restore.run(p)}>
+                        <ArchiveRestore size={16} />
+                      </IconButton>
+                      <IconButton label={t('admin.products.archive.delete')} disabled={busy} onClick={() => void remove.run(p)}>
+                        <Trash2 size={16} />
+                      </IconButton>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}

@@ -46,6 +46,7 @@ import {
 } from '../features/media/model';
 import { enqueueUploads, useUploadDone } from '../features/media/queue';
 import { UploadList } from '../features/media/UploadPanel';
+import { useRights } from '../lib/rights';
 import './controls.css';
 import './media-picker.css';
 import '../features/media/media.css';
@@ -571,6 +572,7 @@ export function MediaPickerDialog({
   const [folder, setFolder] = useState(ROOT);
   const [selected, setSelected] = useState<MediaAsset | null>(null);
   const [keys, setKeys] = useState<number[]>([]);
+  const canUpload = useRights().canMedia('upload');
   const ref = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const closeRef = useRef(onClose);
@@ -639,9 +641,15 @@ export function MediaPickerDialog({
                     }
                   }}
                 />
-                <Button className="btn-sm" icon={<Upload size={14} />} onClick={() => input.current?.click()}>
-                  {t('media.upload.here')}
-                </Button>
+                {canUpload && (
+                  <Button
+                    className="btn-sm"
+                    icon={<Upload size={14} />}
+                    onClick={() => input.current?.click()}
+                  >
+                    {t('media.upload.here')}
+                  </Button>
+                )}
               </>
             }
           />

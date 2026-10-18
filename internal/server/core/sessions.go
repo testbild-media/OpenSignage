@@ -70,10 +70,12 @@ func (s *Sessions) Lookup(ctx context.Context, cookie string) (*Principal, error
 	var p Principal
 	var lastSeen, expires string
 	var language sql.NullString
-	var active int
-	err := s.db.R.QueryRowContext(ctx, `SELECT s.csrf, s.last_seen_at, s.expires_at, u.id, u.username, u.display_name, u.role, u.language, u.active
+	var active, canCreate, devices int
+	err := s.db.R.QueryRowContext(ctx, `SELECT s.csrf, s.last_seen_at, s.expires_at, u.id, u.username, u.display_name, u.role, u.language, u.active,
+		u.scope, u.can_create, u.media_right, u.products_right, u.devices_right
 		FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id_hash = ?`, h).
-		Scan(&p.CSRF, &lastSeen, &expires, &p.UserID, &p.Username, &p.DisplayName, &p.Role, &language, &active)
+		Scan(&p.CSRF, &lastSeen, &expires, &p.UserID, &p.Username, &p.DisplayName, &p.Role, &language, &active,
+			&p.Scope, &canCreate, &p.Media, &p.Products, &devices)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
@@ -89,18 +91,21 @@ func (s *Sessions) Lookup(ctx context.Context, cookie string) (*Principal, error
 	}
 	p.SessionHash = h
 	p.Language = language.String
-	if p.Role == RoleUser {
-		rows, err := s.db.R.QueryContext(ctx, `SELECT zone_id FROM user_zones WHERE user_id = ? ORDER BY zone_id`, p.UserID)
+	p.CanCreate, p.Devices = canCreate == 1, devices == 1
+	if p.Role == RoleUser || p.Restricted() {
+		rows, err := s.db.R.QueryContext(ctx, `SELECT zone_id, access FROM user_zones WHERE user_id = ? ORDER BY zone_id`, p.UserID)
 		if err != nil {
 			return nil, err
 		}
 		defer rows.Close()
+		p.Zones = map[string]string{}
 		for rows.Next() {
-			var z string
-			if err := rows.Scan(&z); err != nil {
+			var z, access string
+			if err := rows.Scan(&z, &access); err != nil {
 				return nil, err
 			}
 			p.ZoneIDs = append(p.ZoneIDs, z)
+			p.Zones[z] = access
 		}
 		if err := rows.Err(); err != nil {
 			return nil, err

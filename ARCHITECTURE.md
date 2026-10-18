@@ -376,6 +376,18 @@ optimistic concurrency via `revision` (409 `conflict` when stale), validation er
 `invalid_field {field, reason}`, all handlers via `core.Router.Role(pattern, minRole, h)`.
 Role `user` may only touch zones in `Principal.ZoneIDs` (`p.CanZone`).
 
+Rights (`core/rights.go`, `access`): an operator has scope `all` (everything) or `zones`
+(user_zones with `view`|`edit` per zone, plus `can_create`, `media_right`
+`use`|`upload`|`manage`, `products_right` `view`|`edit`, `devices_right`). Routes registered
+with `Router.Role` refuse operators limited to zones (default deny); `Router.Scoped` lets them
+through to handlers that check their rights. Content rights follow usage: a playlist runs in
+the zones of its zone/default rules, display group playlists and closed playlists (a global
+rule: everywhere), a presentation where its playlists run (draft or published); it is
+editable when it runs only in zones the operator may edit, or was created by the operator
+(`created_by`) and runs nowhere. `POST /api/v1/{presentations|playlists}/{id}/copy-for-zone
+{zoneId}` gives a zone its own copy (published content, the zone's rules repointed).
+Media: `uploaded_by`/`created_by` decide what `upload` may rename, move or replace.
+
 ### 7.1 Device channel REST (port 7443)
 
 | Endpoint | Auth | Purpose |

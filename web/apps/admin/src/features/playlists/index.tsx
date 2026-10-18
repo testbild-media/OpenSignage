@@ -10,6 +10,8 @@ import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, ErrorText, IconButton, PageHeader, Select, TextInput } from '../../components/ui';
 import { newId } from '../presentations/editor/store';
 import { MediaBrowser } from '../../components/MediaPicker';
+import { CopyForZoneButton } from '../../components/CopyForZone';
+import { FULL_ACCESS, useRights, type ContentAccess } from '../../lib/rights';
 import { isUsable } from '../media/model';
 import { allowedModes, clampCount, clampMs, defaultPlay, fmtDuration, type ItemPass, normalizeItem, repeatHints, switchMode, toStep } from './itemRules';
 import './playlists.css';
@@ -20,6 +22,7 @@ interface Summary {
   itemCount: number;
   publishedVersion: number | null;
   hasChanges: boolean;
+  access?: ContentAccess;
 }
 interface Detail {
   id: string;
@@ -32,6 +35,10 @@ interface Detail {
   runtimeExact: boolean;
   /** Length of one pass per item id (server estimate from the published content). */
   itemPasses?: Record<string, ItemPass>;
+  /** Rights of the user (GET only; missing on older servers = full access). */
+  access?: ContentAccess;
+  /** Zones the user may give an own copy of this playlist. */
+  copyZones?: string[];
 }
 interface Defaults {
   defaults: { mode: 'duration' | 'repeat'; durationMs: number; repeat: number; fit: 'contain' | 'cover' | 'fill' };
@@ -55,6 +62,7 @@ function PlaylistsPage() {
   const toast = useToast();
   const list = useQuery<{ playlists: Summary[] }>('/api/v1/playlists');
   useEvents(['content'], () => list.reload());
+  const rights = useRights();
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
   const create = useAction(async () => {
@@ -76,9 +84,11 @@ function PlaylistsPage() {
       <PageHeader
         title={t('admin.nav.playlists')}
         actions={
-          <Button variant="primary" icon={<Plus size={16} />} onClick={() => setCreating(true)}>
-            {t('playlists.new')}
-          </Button>
+          rights.canCreateContent && (
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => setCreating(true)}>
+              {t('playlists.new')}
+            </Button>
+          )
         }
       />
       <ErrorText error={remove.error ?? duplicate.error} />
@@ -93,24 +103,34 @@ function PlaylistsPage() {
             </tr>
           </thead>
           <tbody>
-            {list.data?.playlists.map((p) => (
-              <tr key={p.id} className="clickable" onClick={() => navigate(`/playlists/${p.id}`)}>
-                <td>{p.name}</td>
-                <td>{p.itemCount}</td>
-                <td>{p.publishedVersion ? p.hasChanges ? <Badge tone="warning">{t('editor.changesNotPublished')}</Badge> : <Badge tone="success">{t('pres.published')}</Badge> : <Badge>{t('editor.neverPublished')}</Badge>}</td>
-                <td className="row-actions" onClick={(e) => e.stopPropagation()}>
-                  <IconButton label={t('common.action.edit')} onClick={() => navigate(`/playlists/${p.id}`)}>
-                    <Pencil size={16} />
-                  </IconButton>
-                  <IconButton label={t('editor.duplicate')} onClick={() => void duplicate.run(p)}>
-                    <Copy size={16} />
-                  </IconButton>
-                  <IconButton label={t('common.action.delete')} onClick={() => void remove.run(p)}>
-                    <Trash2 size={16} />
-                  </IconButton>
-                </td>
-              </tr>
-            ))}
+            {list.data?.playlists.map((p) => {
+              const access = p.access ?? FULL_ACCESS;
+              return (
+                <tr key={p.id} className="clickable" onClick={() => navigate(`/playlists/${p.id}`)}>
+                  <td>{p.name}</td>
+                  <td>{p.itemCount}</td>
+                  <td>
+                    {p.publishedVersion ? p.hasChanges ? <Badge tone="warning">{t('editor.changesNotPublished')}</Badge> : <Badge tone="success">{t('pres.published')}</Badge> : <Badge>{t('editor.neverPublished')}</Badge>}{' '}
+                    {!access.edit && <Badge>{t('admin.readOnly.badge')}</Badge>}
+                  </td>
+                  <td className="row-actions" onClick={(e) => e.stopPropagation()}>
+                    <IconButton label={t(access.edit ? 'common.action.edit' : 'admin.readOnly.open')} onClick={() => navigate(`/playlists/${p.id}`)}>
+                      <Pencil size={16} />
+                    </IconButton>
+                    {rights.canCreateContent && (
+                      <IconButton label={t('editor.duplicate')} onClick={() => void duplicate.run(p)}>
+                        <Copy size={16} />
+                      </IconButton>
+                    )}
+                    {access.edit && (
+                      <IconButton label={t('common.action.delete')} onClick={() => void remove.run(p)}>
+                        <Trash2 size={16} />
+                      </IconButton>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </DataState>
@@ -328,6 +348,7 @@ function ItemDialog({
 
 function PlaylistEditor() {
   const t = useT();
+  const navigate = useNavigate();
   const { id = '' } = useParams();
   const toast = useToast();
   const confirm = useConfirm();
@@ -408,8 +429,10 @@ function PlaylistEditor() {
     return () => clearTimeout(timer);
   }, [dirty, save]);
 
+  // Playlists that also run in zones the user may not change open read only.
+  const readOnly = detail?.access ? !detail.access.edit : false;
   const update = (fn: (p: Playlist) => void): void => {
-    if (!doc) return;
+    if (!doc || readOnly) return;
     const next = structuredClone(doc);
     fn(next);
     setDoc(next);
@@ -514,22 +537,22 @@ function PlaylistEditor() {
     load();
   });
   const rename = async (name: string): Promise<void> => {
-    if (!detail || name.trim() === detail.name || !name.trim()) return;
+    if (!detail || readOnly || name.trim() === detail.name || !name.trim()) return;
     await patch(`/api/v1/playlists/${id}`, { name: name.trim() });
     load();
   };
   if (loadError) return <DataState loading={false} error={loadError} onRetry={load}>{null}</DataState>;
   if (!detail || !doc) return <DataState loading error={null}>{null}</DataState>;
   return (
-    <div className="pl-editor">
-      <Sidebar onAdd={(p) => add(p)} />
+    <div className={`pl-editor ${readOnly ? 'read-only' : ''}`}>
+      {readOnly ? <div /> : <Sidebar onAdd={(p) => add(p)} />}
       <div className="pl-main">
         <div className="page-header">
           <div>
-            <input className="input pl-title" defaultValue={detail.name} onBlur={(e) => void rename(e.target.value)} />
+            <input className="input pl-title" defaultValue={detail.name} readOnly={readOnly} onBlur={(e) => void rename(e.target.value)} />
             <label className="pl-screens">
               <span>{t('playlists.tracks.screens')}</span>
-              <select className="input input-sm" value={tracks} onChange={(e) => setScreens(Number(e.target.value))}>
+              <select className="input input-sm" value={tracks} disabled={readOnly} onChange={(e) => setScreens(Number(e.target.value))}>
                 {Array.from({ length: MAX_PLAYLIST_SCREENS }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
                     {n === 1 ? t('playlists.tracks.one') : t('playlists.tracks.n', { n })}
@@ -548,27 +571,35 @@ function PlaylistEditor() {
                 )
               ) : (
                 <Badge>{t('editor.neverPublished')}</Badge>
-              )}
+              )}{' '}
+              {readOnly && <Badge>{t('admin.readOnly.badge')}</Badge>}
             </div>
           </div>
           <div className="page-actions">
             <Link className="btn btn-secondary" to="/playlists">
               {t('common.action.back')}
             </Link>
-            <Button disabled={!detail.publishedVersion || (!detail.hasChanges && !dirty)} busy={discard.busy} onClick={() => void discard.run()}>
-              {t('editor.discard')}
-            </Button>
-            <Button
-              variant="primary"
-              icon={<Upload size={16} />}
-              busy={publish.busy}
-              disabled={!!detail.publishedVersion && !detail.hasChanges && !dirty}
-              onClick={() => void publish.run()}
-            >
-              {t('editor.publish')}
-            </Button>
+            {readOnly ? (
+              <CopyForZoneButton kind="playlists" id={detail.id} zoneIds={detail.copyZones ?? []} onCopied={(newId) => void navigate(`/playlists/${newId}`)} />
+            ) : (
+              <>
+                <Button disabled={!detail.publishedVersion || (!detail.hasChanges && !dirty)} busy={discard.busy} onClick={() => void discard.run()}>
+                  {t('editor.discard')}
+                </Button>
+                <Button
+                  variant="primary"
+                  icon={<Upload size={16} />}
+                  busy={publish.busy}
+                  disabled={!!detail.publishedVersion && !detail.hasChanges && !dirty}
+                  onClick={() => void publish.run()}
+                >
+                  {t('editor.publish')}
+                </Button>
+              </>
+            )}
           </div>
         </div>
+        {readOnly && <p className="muted pl-readonly">{t(detail.copyZones?.length ? 'admin.readOnly.sharedCopy' : 'admin.readOnly.shared')}</p>}
         {saveError && <div className="form-error">{saveError}</div>}
         <ErrorText error={publish.error ?? discard.error} />
         {tracks > 1 && <p className="faint pl-tracks-hint">{t('playlists.tracks.hint')}</p>}

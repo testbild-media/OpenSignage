@@ -217,12 +217,33 @@ func (m *Module) writeDevice(w http.ResponseWriter, r *http.Request, id string) 
 	return httpx.OK(w, vs[0])
 }
 
-// visible reports whether p may see the device (users: only devices of their zones).
+// deviceAccess wraps handlers for /devices/{id}/…: operators limited to zones reach only
+// the displays of their zones; control needs the displays right and edit access to the zone.
+func (m *Module) deviceAccess(control bool, h core.AuthedHandler) core.AuthedHandler {
+	return func(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
+		if !p.Unrestricted() {
+			row, err := m.loadDevice(r.Context(), m.app.DB.R, r.PathValue("id"))
+			if err != nil {
+				return err
+			}
+			if row == nil || !visible(p, row.ZoneID) {
+				return errDeviceNotFound
+			}
+			if control && !p.CanControlDevice(row.ZoneID) {
+				return httpx.ErrForbidden
+			}
+		}
+		return h(w, r, p)
+	}
+}
+
+// visible reports whether p may see the device (users and operators limited to zones: only
+// devices of their zones).
 func visible(p *core.Principal, zoneID string) bool {
-	if p.Is(core.RoleOperator) {
+	if p.Unrestricted() {
 		return true
 	}
-	return zoneID != "" && p.CanZone(zoneID)
+	return p.CanViewZone(zoneID)
 }
 
 func (m *Module) list(w http.ResponseWriter, r *http.Request, p *core.Principal) error {

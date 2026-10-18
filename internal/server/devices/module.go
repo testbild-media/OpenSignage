@@ -199,10 +199,12 @@ func (m *Module) Routes(rt *core.Router) {
 	rt.Role("PATCH /api/v1/devices/{id}", core.RoleOperator, m.patch)
 	rt.Role("POST /api/v1/devices/{id}/repair", core.RoleOperator, m.repair)
 	rt.Role("DELETE /api/v1/devices/{id}", core.RoleOperator, m.delete)
-	rt.Role("POST /api/v1/devices/{id}/actions", core.RoleOperator, m.postAction)
-	rt.Role("GET /api/v1/devices/{id}/actions/{requestId}", core.RoleOperator, m.getAction)
-	rt.Role("GET /api/v1/devices/{id}/screenshot", core.RoleOperator, m.screenshot)
-	rt.Role("POST /api/v1/devices/{id}/blackout", core.RoleOperator, m.blackout)
+	// Operators limited to zones: displays of their zones only (screenshots with view access,
+	// everything else with the displays right and edit access, see deviceAccess and postAction).
+	rt.Scoped("POST /api/v1/devices/{id}/actions", core.RoleOperator, m.deviceAccess(false, m.postAction))
+	rt.Scoped("GET /api/v1/devices/{id}/actions/{requestId}", core.RoleOperator, m.deviceAccess(false, m.getAction))
+	rt.Scoped("GET /api/v1/devices/{id}/screenshot", core.RoleOperator, m.deviceAccess(false, m.screenshot))
+	rt.Scoped("POST /api/v1/devices/{id}/blackout", core.RoleOperator, m.deviceAccess(true, m.blackout))
 	rt.Role("GET /api/v1/alerts", core.RoleUser, m.alerts)
 	rt.Role("POST /api/v1/alerts/ack", core.RoleUser, m.ackAlert)
 	rt.Role("POST /api/v1/alerts/unack", core.RoleUser, m.unackAlert)

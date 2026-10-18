@@ -4,6 +4,7 @@ import { AlertTriangle, ChevronDown, ChevronRight, LogOut, MonitorSmartphone, Us
 import type { NavDef } from '../features/types';
 import { useStoredState, useT, useQuery } from '../lib/hooks';
 import { roleAtLeast, useSession } from '../lib/session';
+import { useRights } from '../lib/rights';
 import { useConnected, useEvents } from '../lib/events';
 import iconUrl from '../../../../../branding/Icon.png';
 import logoUrl from '../../../../../branding/logo_horizontal.svg';
@@ -31,9 +32,10 @@ function isActive(item: NavDef, pathname: string): boolean {
 function NavGroup({ item, collapsed, open, onToggle }: { item: NavDef; collapsed: boolean; open: boolean; onToggle: () => void }) {
   const t = useT();
   const { user } = useSession();
+  const rights = useRights();
   const location = useLocation();
   const children = item.useChildren ? item.useChildren() : [];
-  const subs = (item.sub ?? []).filter((s) => roleAtLeast(user?.role, s.minRole));
+  const subs = (item.sub ?? []).filter((s) => roleAtLeast(user?.role, s.minRole) && (!s.visible || s.visible(rights)));
   const active = isActive(item, location.pathname);
   const hasKids = children.length > 0 || subs.length > 0;
   const Icon = item.icon;
@@ -86,7 +88,8 @@ export function Shell({ nav, fullscreen, children }: { nav: NavDef[]; fullscreen
       window.removeEventListener('offline', on);
     };
   }, []);
-  const allowed = nav.filter((n) => roleAtLeast(user?.role, n.minRole)).sort((a, b) => a.order - b.order);
+  const rights = useRights();
+  const allowed = nav.filter((n) => roleAtLeast(user?.role, n.minRole) && (!n.visible || n.visible(rights))).sort((a, b) => a.order - b.order);
   const items = allowed.filter((n) => !n.pinBottom);
   const pinned = allowed.filter((n) => n.pinBottom);
   // At most one group is open (settings at the bottom included): opening one closes the

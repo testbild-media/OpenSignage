@@ -76,3 +76,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Read only (the playlist also runs in zones the user may not change): no editing controls */
+.pl-editor.read-only .pl-items .icon-btn,
+.pl-editor.read-only .pl-items [draggable='true'] .grip {
+  display: none;
+}
+.pl-readonly {
+  margin: 0 0 12px;
+}

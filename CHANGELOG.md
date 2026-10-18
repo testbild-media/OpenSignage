@@ -4,6 +4,17 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added
+- User rights: operators can be limited to selected zones, each with view or edit access.
+  The content of a zone (its playlists and their presentations) follows automatically;
+  content that also runs in other zones is read only and can be copied for the own zone
+  ("Copy for my zone"). Separate rights per user for creating presentations and playlists,
+  media (view and use, upload, manage), products (view, edit) and controlling the devices
+  of the own zones. The server checks every request; the web interface shows only what
+  the user may do. Existing operators keep access to all zones.
+
 ## 1.0.2 – 2026-10-17
 
 ### Changed

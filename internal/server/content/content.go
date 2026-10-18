@@ -37,38 +37,44 @@ func New(app *core.App) *Module {
 	return &Module{app: app, fonts: modkit.NewFonts(app.Cfg.ShareDir)}
 }
 
-// Routes registers the WebGUI API (operators and admins).
+// Routes registers the WebGUI API (operators and admins). Operators limited to zones get
+// the routes registered with Scoped; guard and creating check their rights (rights.go).
 func (m *Module) Routes(rt *core.Router) {
 	op := core.RoleOperator
-	rt.Role("GET /api/v1/presentations", op, m.listPresentations)
-	rt.Role("POST /api/v1/presentations", op, m.createPresentation)
-	rt.Role("GET /api/v1/presentations/{id}", op, m.getPresentation)
-	rt.Role("PATCH /api/v1/presentations/{id}", op, m.renamePresentation)
-	rt.Role("PUT /api/v1/presentations/{id}/draft", op, m.saveDraft)
-	rt.Role("POST /api/v1/presentations/{id}/publish", op, m.publishPresentation)
-	rt.Role("POST /api/v1/presentations/{id}/discard", op, m.discardPresentation)
-	rt.Role("GET /api/v1/presentations/{id}/versions", op, m.listVersions)
-	rt.Role("POST /api/v1/presentations/{id}/versions/{v}/restore", op, m.restoreVersion)
-	rt.Role("PUT /api/v1/presentations/{id}/versions/{v}/label", op, m.labelVersion)
-	rt.Role("POST /api/v1/presentations/{id}/duplicate", op, m.duplicatePresentation)
-	rt.Role("POST /api/v1/presentations/{id}/archive", op, m.archivePresentation)
-	rt.Role("POST /api/v1/presentations/{id}/restore", op, m.restorePresentation)
-	rt.Role("DELETE /api/v1/presentations/{id}", op, m.archivePresentation)
-	rt.Role("POST /api/v1/presentations/{id}/save-as-template", op, m.saveAsTemplate)
-	rt.Role("POST /api/v1/presentations/{id}/resize", op, m.resizePresentation)
+	view := func(k contentKind, h core.AuthedHandler) core.AuthedHandler { return m.guard(k, false, h) }
+	edit := func(k contentKind, h core.AuthedHandler) core.AuthedHandler { return m.guard(k, true, h) }
+	pres, pl := kindPres, kindPl
+	rt.Scoped("GET /api/v1/presentations", op, m.listPresentations)
+	rt.Scoped("POST /api/v1/presentations", op, creating(m.createPresentation))
+	rt.Scoped("GET /api/v1/presentations/{id}", op, view(pres, m.getPresentation))
+	rt.Scoped("PATCH /api/v1/presentations/{id}", op, edit(pres, m.renamePresentation))
+	rt.Scoped("PUT /api/v1/presentations/{id}/draft", op, edit(pres, m.saveDraft))
+	rt.Scoped("POST /api/v1/presentations/{id}/publish", op, edit(pres, m.publishPresentation))
+	rt.Scoped("POST /api/v1/presentations/{id}/discard", op, edit(pres, m.discardPresentation))
+	rt.Scoped("GET /api/v1/presentations/{id}/versions", op, view(pres, m.listVersions))
+	rt.Scoped("POST /api/v1/presentations/{id}/versions/{v}/restore", op, edit(pres, m.restoreVersion))
+	rt.Scoped("PUT /api/v1/presentations/{id}/versions/{v}/label", op, edit(pres, m.labelVersion))
+	rt.Scoped("POST /api/v1/presentations/{id}/duplicate", op, view(pres, creating(m.duplicatePresentation)))
+	rt.Scoped("POST /api/v1/presentations/{id}/copy-for-zone", op, m.copyPresentationForZone)
+	rt.Scoped("POST /api/v1/presentations/{id}/archive", op, edit(pres, m.archivePresentation))
+	rt.Scoped("POST /api/v1/presentations/{id}/restore", op, edit(pres, m.restorePresentation))
+	rt.Scoped("DELETE /api/v1/presentations/{id}", op, edit(pres, m.archivePresentation))
+	rt.Role("POST /api/v1/presentations/{id}/save-as-template", op, m.saveAsTemplate) // templates serve every zone
+	rt.Scoped("POST /api/v1/presentations/{id}/resize", op, edit(pres, m.resizePresentation))
 
-	rt.Role("GET /api/v1/playlists", op, m.listPlaylists)
-	rt.Role("POST /api/v1/playlists", op, m.createPlaylist)
-	rt.Role("GET /api/v1/playlists/{id}", op, m.getPlaylist)
-	rt.Role("PATCH /api/v1/playlists/{id}", op, m.renamePlaylist)
-	rt.Role("PUT /api/v1/playlists/{id}/draft", op, m.savePlaylistDraft)
-	rt.Role("POST /api/v1/playlists/{id}/publish", op, m.publishPlaylist)
-	rt.Role("POST /api/v1/playlists/{id}/discard", op, m.discardPlaylist)
-	rt.Role("POST /api/v1/playlists/{id}/duplicate", op, m.duplicatePlaylist)
-	rt.Role("POST /api/v1/playlists/{id}/restore", op, m.restorePlaylist)
-	rt.Role("DELETE /api/v1/playlists/{id}", op, m.archivePlaylist)
+	rt.Scoped("GET /api/v1/playlists", op, m.listPlaylists)
+	rt.Scoped("POST /api/v1/playlists", op, creating(m.createPlaylist))
+	rt.Scoped("GET /api/v1/playlists/{id}", op, view(pl, m.getPlaylist))
+	rt.Scoped("PATCH /api/v1/playlists/{id}", op, edit(pl, m.renamePlaylist))
+	rt.Scoped("PUT /api/v1/playlists/{id}/draft", op, edit(pl, m.savePlaylistDraft))
+	rt.Scoped("POST /api/v1/playlists/{id}/publish", op, edit(pl, m.publishPlaylist))
+	rt.Scoped("POST /api/v1/playlists/{id}/discard", op, edit(pl, m.discardPlaylist))
+	rt.Scoped("POST /api/v1/playlists/{id}/duplicate", op, view(pl, creating(m.duplicatePlaylist)))
+	rt.Scoped("POST /api/v1/playlists/{id}/copy-for-zone", op, m.copyPlaylistForZone)
+	rt.Scoped("POST /api/v1/playlists/{id}/restore", op, edit(pl, m.restorePlaylist))
+	rt.Scoped("DELETE /api/v1/playlists/{id}", op, edit(pl, m.archivePlaylist))
 
-	rt.Role("GET /api/v1/content/search", op, m.search)
+	rt.Scoped("GET /api/v1/content/search", op, m.search)
 }
 
 // Stable error constructors (the UI translates `errors.<code>`).

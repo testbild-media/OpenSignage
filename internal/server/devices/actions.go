@@ -238,6 +238,9 @@ func (m *Module) postAction(w http.ResponseWriter, r *http.Request, p *core.Prin
 	if row == nil {
 		return errDeviceNotFound
 	}
+	if req.Name != "screenshot" && !p.CanControlDevice(row.ZoneID) { // a screenshot only looks
+		return httpx.ErrForbidden
+	}
 	if req.Name == "clean_cache" && params != nil {
 		var cp struct {
 			DryRun *bool `json:"dryRun"`

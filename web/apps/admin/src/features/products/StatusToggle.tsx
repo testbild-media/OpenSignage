@@ -17,15 +17,18 @@ export function StatusToggle({
   onChange,
   label,
   canHide = true,
+  readOnly = false,
 }: {
   value: ProductStatus;
   busy: boolean;
   onChange: (s: ProductStatus) => void;
   label: string;
   canHide?: boolean;
+  /** Shows the status only (operators limited to zones without the products right). */
+  readOnly?: boolean;
 }) {
   const t = useT();
-  const locked = !canHide && value === 'UNAVAILABLE';
+  const locked = readOnly || (!canHide && value === 'UNAVAILABLE');
   return (
     <div className="status-toggle" role="group" aria-label={label} aria-busy={busy || undefined} title={!canHide ? t('admin.products.status.adminOnly') : undefined}>
       {STATUSES.map((s) => (

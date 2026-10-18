@@ -68,6 +68,8 @@ export class EditorStore {
   private snapshot: EditorSnapshot;
   private version = 0;
   dirty = false;
+  /** Read only (content the user may only view): every change is refused. */
+  readOnly = false;
   view: ViewState = { zoom: 'fit', grid: false, gridSize: 20, snap: true, rulers: true };
   guides: Guides;
   /** Called when a change is refused because of a media limit (the UI shows why). */
@@ -127,6 +129,7 @@ export class EditorStore {
   // ---- document mutations -----------------------------------------------------
   /** One undoable change. mutate works on a deep clone of the document. */
   apply(mutate: (doc: Presentation) => void): void {
+    if (this.readOnly) return;
     const before = this.pending ?? this.doc;
     const next = clone(this.pending ? this.doc : this.doc);
     mutate(next);
@@ -142,11 +145,13 @@ export class EditorStore {
 
   /** Starts a continuous interaction (drag, resize, slider). */
   begin(): void {
+    if (this.readOnly) return;
     if (!this.pending) this.pending = this.doc;
   }
 
   /** Live preview during an interaction (no history entry). */
   preview(mutate: (doc: Presentation) => void): void {
+    if (this.readOnly) return;
     if (!this.pending) this.begin();
     const next = clone(this.doc);
     mutate(next);
@@ -175,6 +180,7 @@ export class EditorStore {
   }
 
   undo(): void {
+    if (this.readOnly) return;
     const prev = this.undoStack.pop();
     if (!prev) return;
     this.redoStack.push(this.doc);
@@ -185,6 +191,7 @@ export class EditorStore {
   }
 
   redo(): void {
+    if (this.readOnly) return;
     const next = this.redoStack.pop();
     if (!next) return;
     this.undoStack.push(this.doc);

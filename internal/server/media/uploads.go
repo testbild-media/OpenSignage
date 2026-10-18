@@ -170,6 +170,14 @@ func (m *Module) createUpload(w http.ResponseWriter, r *http.Request, p *core.Pr
 			return httpx.Invalid("folderId", "unknown_folder")
 		}
 	}
+	if req.ReplaceAssetID != nil && !p.CanMedia(core.MediaManage) {
+		// Replacing a file changes it everywhere: with the upload right only for own files.
+		if ok, err := m.ownsAsset(r.Context(), p, *req.ReplaceAssetID); err != nil {
+			return err
+		} else if !ok {
+			return errMediaNotOwn
+		}
+	}
 	if req.ReplaceAssetID != nil {
 		var n int
 		if err := m.app.DB.R.QueryRowContext(r.Context(), `SELECT COUNT(*) FROM media_assets WHERE id = ? AND trashed_at IS NULL`, *req.ReplaceAssetID).Scan(&n); err != nil {
@@ -473,8 +481,8 @@ func (m *Module) finalizeUpload(ctx context.Context, up *uploadRow, p *core.Prin
 			}
 		}
 		assetID = ids.New()
-		if _, err := tx.ExecContext(ctx, `INSERT INTO media_assets(id, folder_id, name, kind, revision, blob_sha256, status, error, meta, created_at, updated_at)
-			VALUES (?, ?, ?, ?, 1, ?, 'processing', '', ?, ?, ?)`, assetID, folder, up.Filename, ti.Kind, sha, metaJSON, now, now); err != nil {
+		if _, err := tx.ExecContext(ctx, `INSERT INTO media_assets(id, folder_id, name, kind, revision, blob_sha256, status, error, meta, created_at, updated_at, uploaded_by)
+			VALUES (?, ?, ?, ?, 1, ?, 'processing', '', ?, ?, ?, NULLIF(?, ''))`, assetID, folder, up.Filename, ti.Kind, sha, metaJSON, now, now, up.UserID); err != nil {
 			return err
 		}
 		if _, err := tx.ExecContext(ctx, `INSERT INTO media_revisions(asset_id, revision, blob_sha256, meta, created_at) VALUES (?, 1, ?, ?, ?)`,

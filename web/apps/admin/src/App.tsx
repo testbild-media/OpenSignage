@@ -7,19 +7,25 @@ import { roleAtLeast, SessionProvider, useSession } from './lib/session';
 import { ErrorBoundary, FeedbackProvider } from './components/feedback';
 import { Spinner } from './components/ui';
 import { useT } from './lib/hooks';
-import { startEvents, stopEvents } from './lib/events';
+import { startEvents, stopEvents, useEvents } from './lib/events';
+import { useRights } from './lib/rights';
 
 const routes = features.flatMap((f) => f.routes);
 const nav = features.flatMap((f) => f.nav);
 
 function Routed() {
   const t = useT();
-  const { ready, needsSetup, user } = useSession();
+  const { ready, needsSetup, user, refresh } = useSession();
+  const rights = useRights();
   const location = useLocation();
   useEffect(() => {
     if (user) startEvents();
     else stopEvents();
   }, [user]);
+  // Changed own role or rights: load them again (pages and navigation follow).
+  useEvents(['users'], (e) => {
+    if (user && e.id === user.id) void refresh().catch(() => undefined);
+  });
   if (!ready) return <Spinner label={t('common.state.loading')} />;
   if (needsSetup) return <SetupPage />;
   if (!user) return <LoginPage />;
@@ -28,7 +34,7 @@ function Routed() {
     window.location.replace('/control');
     return <Spinner />;
   }
-  const allowed = routes.filter((r) => roleAtLeast(user.role, r.minRole));
+  const allowed = routes.filter((r) => roleAtLeast(user.role, r.minRole) && (!r.visible || r.visible(rights)));
   const current = allowed.find((r) => r.fullscreen && matchPath(r.path, location.pathname));
   return (
     <Shell nav={nav} fullscreen={!!current}>

@@ -12,6 +12,7 @@ import (
 
 	"opensignage/internal/common/ids"
 	"opensignage/internal/contracts"
+	"opensignage/internal/server/access"
 	"opensignage/internal/server/core"
 	"opensignage/internal/server/db"
 	"opensignage/internal/server/httpx"
@@ -55,6 +56,9 @@ type presDetail struct {
 	IsTemplate       bool            `json:"isTemplate"`
 	Archived         bool            `json:"archived"`
 	UpdatedAt        string          `json:"updatedAt"`
+	// Access and CopyZones are sent with GET only (the editor keeps them for the session).
+	Access    *access.Rights `json:"access,omitempty"`
+	CopyZones []string       `json:"copyZones,omitempty"`
 }
 
 func (r presRow) detail() presDetail {
@@ -80,9 +84,10 @@ type presSummary struct {
 	UpdatedAt        string          `json:"updatedAt"`
 	FirstSlide       json.RawMessage `json:"firstSlide"` // first slide of the draft, for thumbnails
 	Typography       json.RawMessage `json:"typography"` // text styles of the draft, for thumbnails
+	Access           access.Rights   `json:"access"`
 }
 
-func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	q := r.URL.Query()
 	tmpl, arch := 0, 0
 	switch q.Get("templates") {
@@ -108,6 +113,10 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 		return err
 	}
 	defer rows.Close()
+	l, err := m.newLister(r.Context(), p, kindPres)
+	if err != nil {
+		return err
+	}
 	out := []presSummary{}
 	for rows.Next() {
 		var s presSummary
@@ -127,6 +136,9 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 		if typo.Valid {
 			s.Typography = json.RawMessage(typo.String)
 		}
+		if s.Access = l.rights(kindPres, s.ID, s.IsTemplate); !s.Access.View {
+			continue
+		}
 		out = append(out, s)
 	}
 	if err := rows.Err(); err != nil {
@@ -135,12 +147,24 @@ func (m *Module) listPresentations(w http.ResponseWriter, r *http.Request, _ *co
 	return httpx.OK(w, map[string]any{"presentations": out})
 }
 
-func (m *Module) getPresentation(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
-	row, err := loadPresRow(r.Context(), m.app.DB.R, r.PathValue("id"))
+func (m *Module) getPresentation(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
+	ctx := r.Context()
+	row, err := loadPresRow(ctx, m.app.DB.R, r.PathValue("id"))
 	if err != nil {
 		return err
 	}
-	return httpx.OK(w, row.detail())
+	d := row.detail()
+	rt, err := rightsOn(ctx, m.app.DB.R, p, kindPres, row.ID)
+	if err != nil {
+		return err
+	}
+	d.Access = &rt
+	if !row.IsTemplate {
+		if d.CopyZones, err = copyZones(ctx, m.app.DB.R, p, kindPres, row.ID); err != nil {
+			return err
+		}
+	}
+	return httpx.OK(w, d)
 }
 
 // insertPresentation stores a new presentation row (draft revision 1, never published).
@@ -230,6 +254,9 @@ func (m *Module) createPresentation(w http.ResponseWriter, r *http.Request, p *c
 			return err
 		}
 		if err := insertPresentation(r.Context(), tx, doc, false); err != nil {
+			return err
+		}
+		if err := setCreator(r.Context(), tx, "presentations", id, p); err != nil {
 			return err
 		}
 		var err error
@@ -641,7 +668,13 @@ func (m *Module) copyPresentation(w http.ResponseWriter, r *http.Request, p *cor
 			return err
 		}
 		isTemplate := asTemplate || row.IsTemplate
+		if isTemplate && !p.Unrestricted() {
+			return httpx.ErrForbidden // templates serve every zone
+		}
 		if err := insertPresentation(r.Context(), tx, doc, isTemplate); err != nil {
+			return err
+		}
+		if err := setCreator(r.Context(), tx, "presentations", newID, p); err != nil {
 			return err
 		}
 		if out, err = loadPresRow(r.Context(), tx, newID); err != nil {

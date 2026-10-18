@@ -44,7 +44,7 @@ func (m *Module) setProductStatus(w http.ResponseWriter, r *http.Request, p *cor
 		return err
 	}
 	zone := req.ZoneID
-	if zone == "" && !p.Is(core.RoleOperator) {
+	if zone == "" && !p.CanEditProducts() { // the global status applies to every zone
 		return httpx.ErrForbidden
 	}
 	if zone != "" && !p.CanZone(zone) {

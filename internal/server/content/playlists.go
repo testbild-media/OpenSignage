@@ -10,6 +10,7 @@ import (
 
 	"opensignage/internal/common/ids"
 	"opensignage/internal/contracts"
+	"opensignage/internal/server/access"
 	"opensignage/internal/server/core"
 	"opensignage/internal/server/db"
 	"opensignage/internal/server/httpx"
@@ -54,6 +55,9 @@ type plDetail struct {
 	// ItemPasses is the length of one pass per item id: the editor shows the slide's own
 	// duration and the total of repetitions.
 	ItemPasses map[string]itemPass `json:"itemPasses"`
+	// Access and CopyZones are sent with GET only (the editor keeps them for the session).
+	Access    *access.Rights `json:"access,omitempty"`
+	CopyZones []string       `json:"copyZones,omitempty"`
 }
 
 // itemPass is the length of one pass of a playlist item; MS 0 means unknown. Exact is false
@@ -80,16 +84,17 @@ func (m *Module) plDetail(ctx context.Context, q modkit.Queryer, r plRow) (plDet
 }
 
 type plSummary struct {
-	ID               string `json:"id"`
-	Name             string `json:"name"`
-	ItemCount        int    `json:"itemCount"`
-	PublishedVersion *int64 `json:"publishedVersion"`
-	HasChanges       bool   `json:"hasChanges"`
-	Archived         bool   `json:"archived"`
-	UpdatedAt        string `json:"updatedAt"`
+	ID               string        `json:"id"`
+	Name             string        `json:"name"`
+	ItemCount        int           `json:"itemCount"`
+	PublishedVersion *int64        `json:"publishedVersion"`
+	HasChanges       bool          `json:"hasChanges"`
+	Archived         bool          `json:"archived"`
+	UpdatedAt        string        `json:"updatedAt"`
+	Access           access.Rights `json:"access"`
 }
 
-func (m *Module) listPlaylists(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) listPlaylists(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	arch := 0
 	switch r.URL.Query().Get("archived") {
 	case "", "0":
@@ -104,6 +109,10 @@ func (m *Module) listPlaylists(w http.ResponseWriter, r *http.Request, _ *core.P
 		return err
 	}
 	defer rows.Close()
+	l, err := m.newLister(r.Context(), p, kindPl)
+	if err != nil {
+		return err
+	}
 	out := []plSummary{}
 	for rows.Next() {
 		var s plSummary
@@ -116,6 +125,9 @@ func (m *Module) listPlaylists(w http.ResponseWriter, r *http.Request, _ *core.P
 		if pub.Valid {
 			s.PublishedVersion = &pub.Int64
 		}
+		if s.Access = l.rights(kindPl, s.ID, false); !s.Access.View {
+			continue
+		}
 		out = append(out, s)
 	}
 	if err := rows.Err(); err != nil {
@@ -124,13 +136,22 @@ func (m *Module) listPlaylists(w http.ResponseWriter, r *http.Request, _ *core.P
 	return httpx.OK(w, map[string]any{"playlists": out})
 }
 
-func (m *Module) getPlaylist(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
-	row, err := loadPlRow(r.Context(), m.app.DB.R, r.PathValue("id"))
+func (m *Module) getPlaylist(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
+	ctx := r.Context()
+	row, err := loadPlRow(ctx, m.app.DB.R, r.PathValue("id"))
 	if err != nil {
 		return err
 	}
-	d, err := m.plDetail(r.Context(), m.app.DB.R, row)
+	d, err := m.plDetail(ctx, m.app.DB.R, row)
 	if err != nil {
+		return err
+	}
+	rt, err := rightsOn(ctx, m.app.DB.R, p, kindPl, row.ID)
+	if err != nil {
+		return err
+	}
+	d.Access = &rt
+	if d.CopyZones, err = copyZones(ctx, m.app.DB.R, p, kindPl, row.ID); err != nil {
 		return err
 	}
 	return httpx.OK(w, d)
@@ -217,6 +238,9 @@ func (m *Module) createPlaylist(w http.ResponseWriter, r *http.Request, p *core.
 		if err := insertPlaylist(r.Context(), tx, contracts.Playlist{ID: id, Name: name}); err != nil {
 			return err
 		}
+		if err := setCreator(r.Context(), tx, "playlists", id, p); err != nil {
+			return err
+		}
 		var err error
 		if out, err = loadPlRow(r.Context(), tx, id); err != nil {
 			return err
@@ -295,7 +319,7 @@ type playlistDraftReq struct {
 
 // savePlaylistDraft stores the playlist draft (optimistic concurrency, full validation).
 // Editing never distributes anything; only publishing does.
-func (m *Module) savePlaylistDraft(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) savePlaylistDraft(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	id := r.PathValue("id")
 	var req playlistDraftReq
 	if err := httpx.Decode(w, r, maxPlaylistBytes, &req); err != nil {
@@ -322,6 +346,15 @@ func (m *Module) savePlaylistDraft(w http.ResponseWriter, r *http.Request, _ *co
 			if c != nil && c.Kind == contracts.ItemMedia && c.Fit == "" {
 				c.Fit = defaultFit
 			}
+		}
+	}
+	if !p.Unrestricted() {
+		raw, err := json.Marshal(doc)
+		if err != nil {
+			return err
+		}
+		if err := referencesVisible(r.Context(), m.app.DB.R, p, string(raw)); err != nil {
+			return err
 		}
 	}
 	var res map[string]any
@@ -554,6 +587,9 @@ func (m *Module) duplicatePlaylist(w http.ResponseWriter, r *http.Request, p *co
 		}
 		doc.ID, doc.Name = newID, name
 		if err := insertPlaylist(r.Context(), tx, doc); err != nil {
+			return err
+		}
+		if err := setCreator(r.Context(), tx, "playlists", newID, p); err != nil {
 			return err
 		}
 		if out, err = loadPlRow(r.Context(), tx, newID); err != nil {

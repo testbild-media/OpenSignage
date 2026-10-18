@@ -8,6 +8,7 @@ import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, ErrorText, IconButton, PageHeader, Select, TextInput } from '../../components/ui';
+import { useRights } from '../../lib/rights';
 import { playlistOptions, type PlaylistSummary, type TickerTemplateList, type Zone, type ZoneUsage } from './types';
 import { ZoneScreensDialog } from './ZoneScreens';
 
@@ -26,6 +27,8 @@ function ZoneDialog({
 }) {
   const t = useT();
   const toast = useToast();
+  // Operators limited to zones set the closed playlist and the ticker template, not the name.
+  const nameLocked = !useRights().canManageGlobal;
   const [name, setName] = useState(zone?.name ?? '');
   const [closed, setClosed] = useState(zone?.closedPlaylistId ?? '');
   const [ticker, setTicker] = useState(zone?.tickerTemplateId ?? '');
@@ -62,7 +65,7 @@ function ZoneDialog({
           if (name.trim()) void save.run();
         }}
       >
-        <TextInput label={t('admin.zones.name')} value={name} maxLength={200} placeholder={t('admin.zones.namePlaceholder')} onChange={(e) => setName(e.target.value)} />
+        <TextInput label={t('admin.zones.name')} value={name} maxLength={200} disabled={nameLocked} placeholder={t('admin.zones.namePlaceholder')} onChange={(e) => setName(e.target.value)} />
         <Select
           label={t('admin.zones.closedPlaylist')}
           value={closed}
@@ -81,6 +84,7 @@ export function ZonesPage() {
   const t = useT();
   const toast = useToast();
   const confirm = useConfirm();
+  const rights = useRights();
   const zones = useQuery<{ zones: Zone[] }>('/api/v1/zones');
   const playlists = useQuery<{ playlists: PlaylistSummary[] }>('/api/v1/playlists');
   const templates = useQuery<TickerTemplateList>('/api/v1/ticker-templates');
@@ -122,9 +126,11 @@ export function ZonesPage() {
         title={t('admin.zones.title')}
         subtitle={t('admin.zones.subtitle')}
         actions={
-          <Button variant="primary" icon={<Plus size={16} />} onClick={() => setEditing('new')}>
-            {t('admin.zones.add')}
-          </Button>
+          rights.canManageGlobal && (
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => setEditing('new')}>
+              {t('admin.zones.add')}
+            </Button>
+          )
         }
       />
       <ErrorText error={remove.error} />
@@ -151,18 +157,25 @@ export function ZonesPage() {
                 <td className="muted">{playlistName(z.closedPlaylistId)}</td>
                 <td className="muted">{templateName(z.tickerTemplateId)}</td>
                 <td className="row-actions">
-                  <IconButton label={t('admin.zones.screens')} onClick={() => setScreensOf(z.id)}>
-                    <MonitorSmartphone size={16} />
-                  </IconButton>
+                  {!rights.canEditZone(z.id) && <Badge>{t('admin.readOnly.badge')}</Badge>}
+                  {rights.canManageGlobal && (
+                    <IconButton label={t('admin.zones.screens')} onClick={() => setScreensOf(z.id)}>
+                      <MonitorSmartphone size={16} />
+                    </IconButton>
+                  )}
                   <Link to={`/schedules#zone-${z.id}`} className="icon-btn" title={t('admin.zones.schedules')} aria-label={t('admin.zones.schedules')}>
                     <CalendarClock size={16} />
                   </Link>
-                  <IconButton label={t('common.action.edit')} onClick={() => setEditing(z)}>
-                    <Pencil size={16} />
-                  </IconButton>
-                  <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(z)}>
-                    <Trash2 size={16} />
-                  </IconButton>
+                  {rights.canEditZone(z.id) && (
+                    <IconButton label={t('common.action.edit')} onClick={() => setEditing(z)}>
+                      <Pencil size={16} />
+                    </IconButton>
+                  )}
+                  {rights.canManageGlobal && (
+                    <IconButton label={t('common.action.delete')} disabled={remove.busy} onClick={() => void remove.run(z)}>
+                      <Trash2 size={16} />
+                    </IconButton>
+                  )}
                 </td>
               </tr>
             ))}

@@ -26,23 +26,25 @@ func New(app *core.App) *Module {
 	return &Module{app: app, fonts: modkit.NewFonts(app.Cfg.ShareDir)}
 }
 
-// Routes registers the WebGUI API.
+// Routes registers the WebGUI API. Operators limited to zones get the routes registered with
+// Scoped; the handlers check their rights (rights.go).
 func (m *Module) Routes(rt *core.Router) {
+	op := core.RoleOperator
 	// Categories
 	rt.Role("GET /api/v1/categories", core.RoleUser, m.listCategories)
-	rt.Role("POST /api/v1/categories", core.RoleOperator, m.createCategory)
-	rt.Role("POST /api/v1/categories/reorder", core.RoleOperator, m.reorderCategories)
-	rt.Role("PATCH /api/v1/categories/{id}", core.RoleOperator, m.updateCategory)
-	rt.Role("DELETE /api/v1/categories/{id}", core.RoleOperator, m.deleteCategory)
+	rt.Scoped("POST /api/v1/categories", op, productsEdit(m.createCategory))
+	rt.Scoped("POST /api/v1/categories/reorder", op, productsEdit(m.reorderCategories))
+	rt.Scoped("PATCH /api/v1/categories/{id}", op, productsEdit(m.updateCategory))
+	rt.Scoped("DELETE /api/v1/categories/{id}", op, productsEdit(m.deleteCategory))
 
 	// Products
 	rt.Role("GET /api/v1/products", core.RoleUser, m.listProducts)
-	rt.Role("POST /api/v1/products", core.RoleOperator, m.createProduct)
-	rt.Role("POST /api/v1/products/reorder", core.RoleOperator, m.reorderProducts)
-	rt.Role("PATCH /api/v1/products/{id}", core.RoleOperator, m.updateProduct)
-	rt.Role("POST /api/v1/products/{id}/archive", core.RoleOperator, m.archiveProduct)
-	rt.Role("POST /api/v1/products/{id}/restore", core.RoleOperator, m.restoreProduct)
-	rt.Role("DELETE /api/v1/products/{id}", core.RoleOperator, m.deleteProduct)
+	rt.Scoped("POST /api/v1/products", op, productsEdit(m.createProduct))
+	rt.Scoped("POST /api/v1/products/reorder", op, productsEdit(m.reorderProducts))
+	rt.Scoped("PATCH /api/v1/products/{id}", op, productsEdit(m.updateProduct))
+	rt.Scoped("POST /api/v1/products/{id}/archive", op, productsEdit(m.archiveProduct))
+	rt.Scoped("POST /api/v1/products/{id}/restore", op, productsEdit(m.restoreProduct))
+	rt.Scoped("DELETE /api/v1/products/{id}", op, productsEdit(m.deleteProduct))
 
 	// Live operation (operator UI /control)
 	rt.Role("GET /api/v1/live/zones", core.RoleUser, m.liveZones)
@@ -52,7 +54,7 @@ func (m *Module) Routes(rt *core.Router) {
 	// Zones
 	rt.Role("GET /api/v1/zones", core.RoleUser, m.listZones)
 	rt.Role("POST /api/v1/zones", core.RoleOperator, m.createZone)
-	rt.Role("PATCH /api/v1/zones/{id}", core.RoleOperator, m.updateZone)
+	rt.Scoped("PATCH /api/v1/zones/{id}", op, m.updateZone)
 	rt.Role("DELETE /api/v1/zones/{id}", core.RoleOperator, m.deleteZone)
 	rt.Role("GET /api/v1/zones/{id}/usage", core.RoleOperator, m.zoneUsage)
 	rt.Role("POST /api/v1/zones/{id}/groups", core.RoleOperator, m.createGroup)
@@ -66,11 +68,11 @@ func (m *Module) Routes(rt *core.Router) {
 	rt.Role("DELETE /api/v1/ticker-templates/{id}", core.RoleOperator, m.deleteTickerTemplate)
 
 	// Time schedules
-	rt.Role("GET /api/v1/schedules", core.RoleOperator, m.listSchedules)
-	rt.Role("GET /api/v1/schedules/now", core.RoleOperator, m.schedulesNow)
-	rt.Role("POST /api/v1/schedules", core.RoleOperator, m.createSchedule)
-	rt.Role("PATCH /api/v1/schedules/{id}", core.RoleOperator, m.updateSchedule)
-	rt.Role("DELETE /api/v1/schedules/{id}", core.RoleOperator, m.deleteSchedule)
+	rt.Scoped("GET /api/v1/schedules", op, m.listSchedules)
+	rt.Scoped("GET /api/v1/schedules/now", op, m.schedulesNow)
+	rt.Scoped("POST /api/v1/schedules", op, m.createSchedule)
+	rt.Scoped("PATCH /api/v1/schedules/{id}", op, m.updateSchedule)
+	rt.Scoped("DELETE /api/v1/schedules/{id}", op, m.deleteSchedule)
 }
 
 // emit publishes an event; callers invoke it only after the transaction committed.

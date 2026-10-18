@@ -343,7 +343,15 @@ function LevelBadge({ level }: { level: DiskLevel }) {
 }
 
 /** Storage of the device with "Clean cache" (preview first). */
-export function StorageCard({ d, onChanged }: { d: Device; onChanged: () => void }) {
+export function StorageCard({
+  d,
+  onChanged,
+  control = true,
+}: {
+  d: Device;
+  onChanged: () => void;
+  control?: boolean;
+}) {
   const t = useT();
   const toast = useToast();
   const [cleaning, setCleaning] = useState(false);
@@ -413,7 +421,11 @@ export function StorageCard({ d, onChanged }: { d: Device; onChanged: () => void
         </>
       )}
       <div className="form-actions">
-        <Button icon={<Eraser size={16} />} disabled={!d.online} onClick={() => setCleaning(true)}>
+        <Button
+          icon={<Eraser size={16} />}
+          disabled={!d.online || !control}
+          onClick={() => setCleaning(true)}
+        >
           {t('devices.action.clean_cache')}
         </Button>
       </div>

@@ -38,8 +38,15 @@ func (rt *Router) Public(pattern string, h httpx.HandlerFunc) {
 	rt.Mux.Handle(pattern, httpx.Adapt(h))
 }
 
-// Role registers a handler that requires at least role min.
-func (rt *Router) Role(pattern, min string, h AuthedHandler) {
+// Role registers a handler that requires at least role min. Routes that need the operator
+// role refuse operators limited to selected zones (default deny); see Scoped.
+func (rt *Router) Role(pattern, min string, h AuthedHandler) { rt.handle(pattern, min, false, h) }
+
+// Scoped registers like Role, but lets operators limited to selected zones through: the
+// handler checks their zone and content rights itself (core.Principal, rights.go).
+func (rt *Router) Scoped(pattern, min string, h AuthedHandler) { rt.handle(pattern, min, true, h) }
+
+func (rt *Router) handle(pattern, min string, scoped bool, h AuthedHandler) {
 	rt.Mux.Handle(pattern, httpx.Adapt(func(w http.ResponseWriter, r *http.Request) error {
 		p, err := rt.Authenticate(r)
 		if err != nil {
@@ -49,6 +56,9 @@ func (rt *Router) Role(pattern, min string, h AuthedHandler) {
 			return httpx.ErrUnauthorized
 		}
 		if !p.Is(min) {
+			return httpx.ErrForbidden
+		}
+		if p.Restricted() && !scoped && AtLeast(min, RoleOperator) {
 			return httpx.ErrForbidden
 		}
 		if !safeMethod(r.Method) {

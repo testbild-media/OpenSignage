@@ -91,7 +91,7 @@ func (m *Module) listZones(w http.ResponseWriter, r *http.Request, p *core.Princ
 	}
 	out := make([]Zone, 0, len(all))
 	for _, z := range all {
-		if p.CanZone(z.ID) {
+		if p.CanViewZone(z.ID) {
 			out = append(out, z)
 		}
 	}
@@ -220,6 +220,23 @@ func (m *Module) updateZone(w http.ResponseWriter, r *http.Request, p *core.Prin
 		next := old
 		if err := req.apply(&next); err != nil {
 			return err
+		}
+		if !p.Unrestricted() {
+			// Operators limited to zones set the closed playlist and the ticker template of
+			// zones they may edit; names and order stay with admins and operators of all zones.
+			if !p.CanEditZone(id) {
+				return httpx.ErrForbidden
+			}
+			if next.Name != old.Name || next.Sort != old.Sort {
+				return httpx.ErrForbidden
+			}
+			if next.ClosedPlaylistID != old.ClosedPlaylistID {
+				if ok, err := playlistVisible(r.Context(), tx, p, next.ClosedPlaylistID); err != nil {
+					return err
+				} else if !ok {
+					return httpx.Invalid("closedPlaylistId", "no_access")
+				}
+			}
 		}
 		if err := checkZoneRefs(r.Context(), tx, &next); err != nil {
 			return err

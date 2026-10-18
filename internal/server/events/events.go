@@ -139,7 +139,7 @@ func (m *Module) pump(c *websocket.Conn, p *core.Principal) {
 			if e.Topic == core.TopicUsers && e.ID == p.UserID && !sessionOK() {
 				return
 			}
-			if e.ZoneID != "" && !p.CanZone(e.ZoneID) {
+			if e.ZoneID != "" && !p.CanViewZone(e.ZoneID) {
 				continue
 			}
 			if p.Role == core.RoleUser && e.Topic != core.TopicLive && e.Topic != core.TopicZones && e.Topic != core.TopicDevices {

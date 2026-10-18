@@ -128,7 +128,7 @@ func loadRule(ctx context.Context, q modkit.Queryer, id string) (contracts.Rule,
 	return rs[0], nil
 }
 
-func (m *Module) listSchedules(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) listSchedules(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	where, args := "", []any{}
 	if z := r.URL.Query().Get("zone"); z != "" {
 		where, args = `WHERE scope = 'global' OR zone_id = ?`, []any{z}
@@ -137,7 +137,13 @@ func (m *Module) listSchedules(w http.ResponseWriter, r *http.Request, _ *core.P
 	if err != nil {
 		return err
 	}
-	return httpx.OK(w, map[string]any{"schedules": rs})
+	out := make([]contracts.Rule, 0, len(rs))
+	for i := range rs {
+		if ruleVisible(p, &rs[i]) {
+			out = append(out, rs[i])
+		}
+	}
+	return httpx.OK(w, map[string]any{"schedules": out})
 }
 
 type ruleReq struct {
@@ -417,6 +423,9 @@ func (m *Module) createSchedule(w http.ResponseWriter, r *http.Request, p *core.
 	}
 	var out contracts.Rule
 	err := m.app.DB.Tx(r.Context(), func(tx *sql.Tx) error {
+		if err := checkRuleRights(r.Context(), tx, p, nil, &rule); err != nil {
+			return err
+		}
 		if err := validateRule(r.Context(), tx, &rule); err != nil {
 			return err
 		}
@@ -477,6 +486,9 @@ func (m *Module) updateSchedule(w http.ResponseWriter, r *http.Request, p *core.
 			next.Ticker = &t
 		}
 		if err := req.apply(&next); err != nil {
+			return err
+		}
+		if err := checkRuleRights(r.Context(), tx, p, &old, &next); err != nil {
 			return err
 		}
 		if err := validateRule(r.Context(), tx, &next); err != nil {
@@ -541,6 +553,9 @@ func (m *Module) deleteSchedule(w http.ResponseWriter, r *http.Request, p *core.
 		if old, err = loadRule(r.Context(), tx, id); err != nil {
 			return err
 		}
+		if !ruleEditable(p, &old) {
+			return httpx.ErrForbidden
+		}
 		if _, err := tx.ExecContext(r.Context(), `DELETE FROM schedule_rules WHERE id = ?`, id); err != nil {
 			return err
 		}
@@ -600,11 +615,14 @@ type nowTicker struct {
 
 // schedulesNow answers "what is running in this zone": the same evaluation the clients run.
 // The optional `at` (RFC 3339) previews another moment.
-func (m *Module) schedulesNow(w http.ResponseWriter, r *http.Request, _ *core.Principal) error {
+func (m *Module) schedulesNow(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
 	q := r.URL.Query()
 	zoneID := q.Get("zone")
 	if zoneID == "" {
 		return httpx.Invalid("zone", "required")
+	}
+	if !p.CanViewZone(zoneID) {
+		return httpx.ErrNotFound
 	}
 	at := time.Now()
 	if v := q.Get("at"); v != "" {

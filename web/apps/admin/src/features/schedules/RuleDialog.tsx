@@ -27,7 +27,10 @@ interface PriceRow {
 }
 
 export interface RuleDialogData {
+  /** Zones the user may write rules for. */
   zones: Zone[];
+  /** Global rules (admins and operators of all zones). */
+  globalAllowed: boolean;
   playlists: PlaylistSummary[] | undefined;
   products: Product[];
   archivedProducts: Product[];
@@ -186,7 +189,7 @@ export function RuleDialog({
                 value={scope}
                 label={t('admin.schedules.field.scope')}
                 onChange={setScope}
-                options={(['zone', 'global', 'default'] as Scope[]).map((s) => ({ value: s, label: t(`admin.schedules.scope.${s}`) }))}
+                options={(['zone', 'global', 'default'] as Scope[]).filter((s) => s !== 'global' || data.globalAllowed || scope === 'global').map((s) => ({ value: s, label: t(`admin.schedules.scope.${s}`) }))}
               />
             </div>
           </Field>

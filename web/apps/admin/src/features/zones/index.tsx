@@ -8,7 +8,7 @@ import './zones.css';
 export const zonesFeature: Feature = {
   routes: [
     { path: '/zones', element: <ZonesPage />, minRole: 'operator' },
-    { path: '/zones/tickers', element: <TickerTemplatesPage />, minRole: 'operator' },
+    { path: '/zones/tickers', element: <TickerTemplatesPage />, minRole: 'operator', visible: (r) => r.canManageGlobal },
   ],
   nav: [
     {
@@ -18,7 +18,7 @@ export const zonesFeature: Feature = {
       path: '/zones',
       minRole: 'operator',
       order: 60,
-      sub: [{ key: 'tickers', label: 'admin.zones.tickers.title', path: '/zones/tickers', minRole: 'operator' }],
+      sub: [{ key: 'tickers', label: 'admin.zones.tickers.title', path: '/zones/tickers', minRole: 'operator', visible: (r) => r.canManageGlobal }],
     },
   ],
 };

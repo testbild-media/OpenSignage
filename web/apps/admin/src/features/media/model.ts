@@ -53,6 +53,8 @@ export interface MediaAsset {
   createdAt: string;
   updatedAt: string;
   trashedAt?: string;
+  /** User id of the uploader (operators limited to zones change only their own files). */
+  uploadedBy?: string;
 }
 
 export interface MediaFolder {
@@ -64,6 +66,8 @@ export interface MediaFolder {
   totalSize: number;
   createdAt: string;
   updatedAt: string;
+  /** User id of the creator (operators limited to zones change only their own folders). */
+  createdBy?: string;
 }
 
 export interface Crumb {

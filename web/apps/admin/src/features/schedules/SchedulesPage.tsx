@@ -11,6 +11,7 @@ import { useEvents } from '../../lib/events';
 import { useSession } from '../../lib/session';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, IconButton, PageHeader } from '../../components/ui';
+import { useRights } from '../../lib/rights';
 import { Switch } from '../../components/controls';
 import type { Category, Product } from '../products/types';
 import { playablePlaylists, type PlaylistSummary, type Zone, type TickerTemplateList } from '../zones/types';
@@ -30,6 +31,7 @@ function RulesTable({
   onDelete,
   busyId,
   deleting,
+  canEdit,
 }: {
   rules: Rule[];
   playlists: PlaylistSummary[] | undefined;
@@ -39,6 +41,8 @@ function RulesTable({
   onDelete: (r: Rule) => void;
   busyId: string | null;
   deleting: boolean;
+  /** Rules the user may change (operators limited to zones: rules of their zones). */
+  canEdit: (r: Rule) => boolean;
 }) {
   const t = useT();
   const lang = getLanguage();
@@ -66,9 +70,13 @@ function RulesTable({
           return (
             <tr key={r.id} className={r.enabled ? '' : 'rule-disabled'}>
               <td>
-                <button type="button" className="link-btn strong" onClick={() => onEdit(r)}>
-                  {r.name}
-                </button>
+                {canEdit(r) ? (
+                  <button type="button" className="link-btn strong" onClick={() => onEdit(r)}>
+                    {r.name}
+                  </button>
+                ) : (
+                  <strong>{r.name}</strong>
+                )}
                 {r.scope === 'default' && (
                   <div>
                     <Badge tone="primary">{t('admin.schedules.scope.default')}</Badge>
@@ -114,15 +122,23 @@ function RulesTable({
               </td>
               <td className="num">{r.prices.length || '—'}</td>
               <td>
-                <Switch checked={r.enabled} busy={busyId === r.id} label={r.enabled ? t('admin.schedules.on') : t('admin.schedules.off')} onChange={() => onToggle(r)} />
+                {canEdit(r) ? (
+                  <Switch checked={r.enabled} busy={busyId === r.id} label={r.enabled ? t('admin.schedules.on') : t('admin.schedules.off')} onChange={() => onToggle(r)} />
+                ) : (
+                  <span className="muted">{r.enabled ? t('admin.schedules.on') : t('admin.schedules.off')}</span>
+                )}
               </td>
               <td className="row-actions">
-                <IconButton label={t('common.action.edit')} onClick={() => onEdit(r)}>
-                  <Pencil size={16} />
-                </IconButton>
-                <IconButton label={t('common.action.delete')} disabled={deleting} onClick={() => onDelete(r)}>
-                  <Trash2 size={16} />
-                </IconButton>
+                {canEdit(r) && (
+                  <>
+                    <IconButton label={t('common.action.edit')} onClick={() => onEdit(r)}>
+                      <Pencil size={16} />
+                    </IconButton>
+                    <IconButton label={t('common.action.delete')} disabled={deleting} onClick={() => onDelete(r)}>
+                      <Trash2 size={16} />
+                    </IconButton>
+                  </>
+                )}
               </td>
             </tr>
           );
@@ -184,11 +200,19 @@ export function SchedulesPage() {
     rulesQ.reload();
   });
 
+  const rights = useRights();
   const rules = useMemo(() => rulesQ.data?.schedules ?? [], [rulesQ.data]);
   const zones = useMemo(() => zonesQ.data?.zones ?? [], [zonesQ.data]);
   const globals = rules.filter((r) => r.scope === 'global');
+  // Operators limited to zones change the zone and default rules of zones they may edit.
+  const canEdit = (r: Rule): boolean => rights.unrestricted || (r.scope !== 'global' && rights.canEditZone(r.zoneId));
+  const editZones = zones.filter((z) => rights.canEditZone(z.id));
+  const open = (r: Rule): void => {
+    if (canEdit(r)) setEditing({ rule: r });
+  };
   const dialogData: RuleDialogData = {
-    zones,
+    zones: rights.unrestricted ? zones : editZones,
+    globalAllowed: rights.canManageGlobal,
     playlists: playlistsQ.data?.playlists,
     products: productsQ.data?.products ?? [],
     archivedProducts: archivedQ.data?.products ?? [],
@@ -207,7 +231,8 @@ export function SchedulesPage() {
   const tableProps = {
     playlists: playlistsQ.data?.playlists,
     zones,
-    onEdit: (r: Rule) => setEditing({ rule: r }),
+    onEdit: open,
+    canEdit,
     onToggle: (r: Rule) => void toggle.run(r),
     onDelete: (r: Rule) => void remove.run(r),
     busyId: toggling,
@@ -220,9 +245,16 @@ export function SchedulesPage() {
         title={t('admin.schedules.title')}
         subtitle={t('admin.schedules.subtitle')}
         actions={
-          <Button variant="primary" icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: zones.length ? 'zone' : 'global', zoneId: zones[0]?.id } })}>
-            {t('admin.schedules.add')}
-          </Button>
+          (rights.canManageGlobal || editZones.length > 0) && (
+            <Button
+              variant="primary"
+              icon={<Plus size={16} />}
+              disabled={!dialogReady}
+              onClick={() => setEditing({ rule: null, preset: { scope: editZones.length ? 'zone' : 'global', zoneId: editZones[0]?.id } })}
+            >
+              {t('admin.schedules.add')}
+            </Button>
+          )
         }
       />
       <details className="card priority-card">
@@ -244,11 +276,13 @@ export function SchedulesPage() {
               <h2>{t('admin.schedules.globalTitle')}</h2>
               <div className="muted">{t('admin.schedules.globalHint')}</div>
             </div>
-            <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'global' } })}>
-              {t('admin.schedules.addGlobal')}
-            </Button>
+            {rights.canManageGlobal && (
+              <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'global' } })}>
+                {t('admin.schedules.addGlobal')}
+              </Button>
+            )}
           </div>
-          <Timeline rules={globals} timeZone={tz} showZoneLane={false} onOpen={(r) => setEditing({ rule: r })} />
+          <Timeline rules={globals} timeZone={tz} showZoneLane={false} onOpen={open} />
           {globals.length === 0 ? <div className="state state-empty state-compact">{t('admin.schedules.emptyGlobal')}</div> : <RulesTable rules={globals} {...tableProps} />}
         </section>
         {zones.length === 0 && (
@@ -271,19 +305,23 @@ export function SchedulesPage() {
                   </h2>
                   {!hasDefault && <div className="muted">{t('admin.schedules.noDefault')}</div>}
                 </div>
-                <div className="page-actions">
-                  {!hasDefault && (
-                    <Button disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'default', zoneId: z.id } })}>
-                      {t('admin.schedules.addDefault')}
+                {rights.canEditZone(z.id) ? (
+                  <div className="page-actions">
+                    {!hasDefault && (
+                      <Button disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'default', zoneId: z.id } })}>
+                        {t('admin.schedules.addDefault')}
+                      </Button>
+                    )}
+                    <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'zone', zoneId: z.id } })}>
+                      {t('admin.schedules.addZone')}
                     </Button>
-                  )}
-                  <Button icon={<Plus size={16} />} disabled={!dialogReady} onClick={() => setEditing({ rule: null, preset: { scope: 'zone', zoneId: z.id } })}>
-                    {t('admin.schedules.addZone')}
-                  </Button>
-                </div>
+                  </div>
+                ) : (
+                  <Badge>{t('admin.readOnly.badge')}</Badge>
+                )}
               </div>
               <NowPanel zoneId={z.id} rules={rules} />
-              <Timeline rules={[...own, ...globals]} timeZone={tz} showZoneLane onOpen={(r) => setEditing({ rule: r })} />
+              <Timeline rules={[...own, ...globals]} timeZone={tz} showZoneLane onOpen={open} />
               {own.length === 0 ? <div className="state state-empty state-compact">{t('admin.schedules.emptyZone')}</div> : <RulesTable rules={own} {...tableProps} />}
             </section>
           );

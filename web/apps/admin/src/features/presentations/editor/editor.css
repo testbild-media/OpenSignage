@@ -792,3 +792,11 @@
   color: #fff;
   cursor: pointer;
 }
+
+/* Read only (content that also runs in zones the user may not change) */
+.editor .editor-lock {
+  display: contents;
+}
+.editor.read-only .rail-add {
+  display: none;
+}

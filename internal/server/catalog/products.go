@@ -142,11 +142,11 @@ func (m *Module) listProducts(w http.ResponseWriter, r *http.Request, p *core.Pr
 	if ps == nil {
 		ps = []Product{}
 	}
-	if !p.Is(core.RoleOperator) {
-		// Role user sees the overrides of its assigned zones only (ARCHITECTURE §7).
+	if !p.Unrestricted() {
+		// Users and operators limited to zones see the overrides of their zones only (ARCHITECTURE §7).
 		for i := range ps {
 			for zone := range ps[i].ZoneStatus {
-				if !p.CanZone(zone) {
+				if !p.CanViewZone(zone) {
 					delete(ps[i].ZoneStatus, zone)
 				}
 			}

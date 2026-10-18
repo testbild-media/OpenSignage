@@ -1,7 +1,7 @@
 // The presentation editor page (/presentations/:id).
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBlocker, useNavigate, useParams } from 'react-router';
-import { ArrowLeft, History, Play, RotateCcw, Upload } from 'lucide-react';
+import { ArrowLeft, Eye, History, Play, RotateCcw, Upload } from 'lucide-react';
 import type { Presentation } from '@opensignage/contracts';
 import { ApiError, api, errorText, get, post } from '../../../lib/api';
 import { useT } from '../../../lib/hooks';
@@ -17,6 +17,8 @@ import { Preview } from './Preview';
 import { useEditorLive, useFonts, useRenderEnv } from './env';
 import { textSession } from './TextEditor';
 import { HistoryDialog } from './History';
+import { CopyForZoneButton } from '../../../components/CopyForZone';
+import type { ContentAccess } from '../../../lib/rights';
 import './editor.css';
 
 interface Detail {
@@ -26,6 +28,10 @@ interface Detail {
   draftRevision: number;
   publishedVersion: number | null;
   hasChanges: boolean;
+  /** Rights of the user (GET only; missing on older servers = full access). */
+  access?: ContentAccess;
+  /** Zones the user may give an own copy of this presentation. */
+  copyZones?: string[];
 }
 
 type SaveState = 'saved' | 'saving' | 'unsaved' | 'error';
@@ -53,7 +59,13 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
   const toast = useToast();
   const confirm = useConfirm();
   const navigate = useNavigate();
-  const store = useMemo(() => new EditorStore(detail.draft, detail.id), [detail]);
+  // Content that also runs in zones the user may not change opens read only.
+  const readOnly = detail.access ? !detail.access.edit : false;
+  const store = useMemo(() => {
+    const s = new EditorStore(detail.draft, detail.id);
+    s.readOnly = readOnly;
+    return s;
+  }, [detail, readOnly]);
   const snap = useEditor(store);
   const live = useEditorLive();
   const fonts = useFonts();
@@ -232,7 +244,7 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
 
   return (
     <div
-      className="editor"
+      className={`editor ${readOnly ? 'read-only' : ''}`}
       onContextMenu={(e) => {
         // Never the browser menu in the editor; text fields keep theirs (spelling, clipboard).
         if (!(e.target as HTMLElement).closest('input, textarea, [contenteditable=true]')) e.preventDefault();
@@ -249,7 +261,13 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
         <span className="faint">
           {snap.doc.width}×{snap.doc.height}
         </span>
-        {statusBadge}
+        {readOnly ? (
+          <Badge>
+            <Eye size={12} /> {t('admin.readOnly.badge')}
+          </Badge>
+        ) : (
+          statusBadge
+        )}
         {meta.published ? meta.hasChanges ? <Badge tone="warning">{t('editor.changesNotPublished')}</Badge> : <Badge tone="primary">{t('editor.publishedVersion', { v: meta.published })}</Badge> : <Badge>{t('editor.neverPublished')}</Badge>}
         <div className="spacer" />
         <Button icon={<History size={16} />} onClick={() => setHistory(true)}>
@@ -258,23 +276,33 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
         <Button icon={<Play size={16} />} onClick={() => setPreview(true)}>
           {t('editor.preview')}
         </Button>
-        <Button icon={<RotateCcw size={16} />} disabled={!meta.published || unchanged || busy} onClick={() => void discard()}>
-          {t('editor.discard')}
-        </Button>
-        <Button variant="primary" icon={<Upload size={16} />} busy={busy} disabled={!!meta.published && unchanged} onClick={() => void publish()}>
-          {t('editor.publish')}
-        </Button>
+        {readOnly ? (
+          <CopyForZoneButton kind="presentations" id={detail.id} zoneIds={detail.copyZones ?? []} onCopied={(newId) => void navigate(`/presentations/${newId}`)} />
+        ) : (
+          <>
+            <Button icon={<RotateCcw size={16} />} disabled={!meta.published || unchanged || busy} onClick={() => void discard()}>
+              {t('editor.discard')}
+            </Button>
+            <Button variant="primary" icon={<Upload size={16} />} busy={busy} disabled={!!meta.published && unchanged} onClick={() => void publish()}>
+              {t('editor.publish')}
+            </Button>
+          </>
+        )}
       </div>
       {save === 'error' && saveError && <div className="banner banner-warning">{saveError}</div>}
-      <Toolbar store={store} />
+      {readOnly && <div className="banner banner-info">{t(detail.copyZones?.length ? 'admin.readOnly.sharedCopy' : 'admin.readOnly.shared')}</div>}
+      {!readOnly && <Toolbar store={store} />}
       <div className="editor-body">
         <SlideRail store={store} env={{ ...env, mode: 'thumb' }} defaultSlideMs={10000} />
         <Canvas store={store} env={env} />
-        <Panel store={store} fonts={fonts} />
+        <fieldset className="editor-lock" disabled={readOnly}>
+          <Panel store={store} fonts={fonts} />
+        </fieldset>
       </div>
       {history && (
         <HistoryDialog
           id={detail.id}
+          readOnly={readOnly}
           onClose={() => setHistory(false)}
           onRestored={(d) => {
             store.reset(d.draft);

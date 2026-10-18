@@ -212,6 +212,11 @@ h2 {
   border-bottom: 1px solid var(--os-warning);
   color: #f0c060;
 }
+.banner-info {
+  background: var(--os-primary-soft);
+  border-bottom: 1px solid var(--os-border);
+  color: var(--os-text);
+}
 
 /* Pages ------------------------------------------------------------------ */
 .page {
@@ -1058,4 +1063,30 @@ textarea.input {
 }
 .history-inner .history-label {
   font-weight: 500;
+}
+
+/* User rights (operators limited to zones) ---------------------------------- */
+.rights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius-m);
+}
+.rights-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rights-zone {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  align-items: center;
+  gap: 10px;
+}
+.pres-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }

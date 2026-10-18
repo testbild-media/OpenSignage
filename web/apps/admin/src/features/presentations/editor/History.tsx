@@ -18,7 +18,7 @@ export interface RestoredDetail {
   warnings?: string[];
 }
 
-export function HistoryDialog({ id, onRestored, onClose }: { id: string; onRestored: (d: RestoredDetail) => void; onClose: () => void }) {
+export function HistoryDialog({ id, readOnly, onRestored, onClose }: { id: string; readOnly?: boolean; onRestored: (d: RestoredDetail) => void; onClose: () => void }) {
   const t = useT();
   const confirm = useConfirm();
   const q = useQuery<{ versions: Version[]; publishedVersion: number | null; rules: HistoryRules }>(`/api/v1/presentations/${id}/versions`);
@@ -83,12 +83,16 @@ export function HistoryDialog({ id, onRestored, onClose }: { id: string; onResto
         <td>{v.publishedBy || '—'}</td>
         <td>{v.slideCount}</td>
         <td className="row-actions">
-          <IconButton label={t(v.label ? 'editor.history.rename' : 'editor.history.name')} onClick={() => setNaming(v)}>
-            <Bookmark size={16} fill={v.label ? 'currentColor' : 'none'} />
-          </IconButton>
-          <Button busy={restore.busy} onClick={() => void restore.run(v)}>
-            {t('editor.history.restore')}
-          </Button>
+          {!readOnly && (
+            <>
+              <IconButton label={t(v.label ? 'editor.history.rename' : 'editor.history.name')} onClick={() => setNaming(v)}>
+                <Bookmark size={16} fill={v.label ? 'currentColor' : 'none'} />
+              </IconButton>
+              <Button busy={restore.busy} onClick={() => void restore.run(v)}>
+                {t('editor.history.restore')}
+              </Button>
+            </>
+          )}
         </td>
       </tr>
     );

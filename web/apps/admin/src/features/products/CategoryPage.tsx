@@ -17,6 +17,7 @@ import type { Zone } from '../zones/types';
 import { CategoryDialog } from './CategoryDialog';
 import { ProductDialog } from './ProductDialog';
 import { StatusToggle, useStatusChange } from './StatusToggle';
+import { useRights } from '../../lib/rights';
 import { decimalSeparator, formatQuantityValue } from './money';
 import type { Category, Product, StatusResult } from './types';
 import { filterByType, isTypeFilter, mergeFilteredOrder, TYPE_FILTER_LABELS, type TypeFilter, typeChips } from './typeFilter';
@@ -52,6 +53,8 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
   const t = useT();
   // "Not available" (= not carried) is the administrators' decision.
   const isAdmin = useSession().user?.role === 'admin';
+  const rights = useRights();
+  const edit = rights.canEditProducts;
   const lang = getLanguage();
   const ids = products.map((p) => p.id);
   const sort = useSortable(ids, onReorder);
@@ -75,9 +78,11 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
           return (
             <tr key={p.id} {...sort.itemProps(p.id)} className={`status-row-${p.status.toLowerCase()}`}>
               <td className="col-handle">
-                <button type="button" {...sort.handleProps(p.id, t('admin.products.dragToSort'))}>
-                  <GripVertical size={16} />
-                </button>
+                {edit && (
+                  <button type="button" {...sort.handleProps(p.id, t('admin.products.dragToSort'))}>
+                    <GripVertical size={16} />
+                  </button>
+                )}
               </td>
               <td>
                 <div className="product-cell">
@@ -94,7 +99,7 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
               <td className="nowrap muted">{quantityText(p, t, lang)}</td>
               <td className="nowrap num">{formatMoney(p.price.amount, p.price.currency, lang)}</td>
               <td>
-                <StatusToggle value={p.status} busy={busy} canHide={isAdmin} label={t('admin.products.statusOf', { name: p.name })} onChange={(s) => h.setStatus(p.id, s)} />
+                <StatusToggle value={p.status} busy={busy} canHide={isAdmin} readOnly={!edit} label={t('admin.products.statusOf', { name: p.name })} onChange={(s) => h.setStatus(p.id, s)} />
                 {overrides.length > 0 && (
                   <div className="override-list" aria-label={t('admin.products.overrides')}>
                     {overrides.map(([zoneId, st]) => (
@@ -102,7 +107,7 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
                         <span className="ellipsis">
                           {zoneName(zoneId)}: {t(`admin.products.status.${st}`)}
                         </span>
-                        <button type="button" disabled={busy} aria-label={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} title={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} onClick={() => h.setStatus(p.id, null, zoneId)}>
+                        <button type="button" disabled={busy || !rights.canEditZone(zoneId)} aria-label={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} title={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} onClick={() => h.setStatus(p.id, null, zoneId)}>
                           <X size={12} />
                         </button>
                       </span>
@@ -111,15 +116,19 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
                 )}
               </td>
               <td className="row-actions">
-                <IconButton label={t('common.action.edit')} onClick={() => h.onEdit(p)}>
-                  <Pencil size={16} />
-                </IconButton>
-                <IconButton label={t('admin.products.duplicate')} onClick={() => h.onDuplicate(p)}>
-                  <CopyPlus size={16} />
-                </IconButton>
-                <IconButton label={t('admin.products.archive.action')} disabled={h.archiving} onClick={() => h.onArchive(p)}>
-                  <Archive size={16} />
-                </IconButton>
+                {edit && (
+                  <>
+                    <IconButton label={t('common.action.edit')} onClick={() => h.onEdit(p)}>
+                      <Pencil size={16} />
+                    </IconButton>
+                    <IconButton label={t('admin.products.duplicate')} onClick={() => h.onDuplicate(p)}>
+                      <CopyPlus size={16} />
+                    </IconButton>
+                    <IconButton label={t('admin.products.archive.action')} disabled={h.archiving} onClick={() => h.onArchive(p)}>
+                      <Archive size={16} />
+                    </IconButton>
+                  </>
+                )}
               </td>
             </tr>
           );
@@ -164,6 +173,7 @@ export function CategoryPage() {
     if (e.topic === '*' || e.topic === 'zones' || e.kind?.startsWith('zone.')) zones.reload();
     if (e.topic === '*' || e.kind === 'product.status') prods.reload();
   });
+  const canEditProducts = useRights().canEditProducts;
   const [editing, setEditing] = useState<Product | 'new' | { copyOf: Product } | null>(null);
   const [catEdit, setCatEdit] = useState<{ category: Category | null; parentId?: string } | null>(null);
   // Remembered per browser and kept across categories: whoever looks for drinks keeps
@@ -246,7 +256,8 @@ export function CategoryPage() {
         title={category?.name ?? (notFound ? t('admin.products.category.notFound') : '')}
         subtitle={category ? t('admin.products.count', { count: list.length }) : undefined}
         actions={
-          category && (
+          category &&
+          canEditProducts && (
             <>
               {!category.parentId && (
                 <Button icon={<FolderPlus size={16} />} onClick={() => setCatEdit({ category: null, parentId: category.id })}>
@@ -283,9 +294,11 @@ export function CategoryPage() {
                   {own.length === 0 ? (
                     <div className="state state-empty">
                       <div>{t('admin.products.emptyCategory')}</div>
-                      <Button variant="primary" icon={<Plus size={16} />} onClick={() => setEditing('new')}>
-                        {t('admin.products.add')}
-                      </Button>
+                      {canEditProducts && (
+                        <Button variant="primary" icon={<Plus size={16} />} onClick={() => setEditing('new')}>
+                          {t('admin.products.add')}
+                        </Button>
+                      )}
                     </div>
                   ) : (
                     <ProductTable products={ownShown} h={handlers} onReorder={sortIn(category.id)} />

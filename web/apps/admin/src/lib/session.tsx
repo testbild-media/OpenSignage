@@ -3,6 +3,7 @@ import { isLanguage, setLanguage } from '@opensignage/i18n';
 import type { Role } from '@opensignage/contracts';
 import { get, post, setCsrf, setUnauthorizedHandler } from './api';
 import { clearUpdated, reloadForUpdate, watchServerVersion } from './serverWatch';
+import type { SessionRights } from './rights';
 
 export interface SessionUser {
   id: string;
@@ -11,6 +12,8 @@ export interface SessionUser {
   role: Role;
   language: string;
   zoneIds: string[];
+  /** Effective rights (lib/rights.ts); missing on servers before 1.1. */
+  rights?: SessionRights;
 }
 
 export interface ServerInfo {

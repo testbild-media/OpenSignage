@@ -138,34 +138,39 @@ func orDefault(v, def string) string {
 
 // Routes registers the WebGUI API.
 func (m *Module) Routes(rt *core.Router) {
+	// Operators limited to zones: media right "use" browses and uses media, "upload" adds
+	// files and folders and renames/moves own ones, "manage" (as operators of all zones) also
+	// deletes and cleans up (core/rights.go).
+	op, use, upload, manage := core.RoleOperator, core.MediaUse, core.MediaUpload, core.MediaManage
+
 	// uploads
-	rt.Role("POST /api/v1/media/uploads", core.RoleOperator, m.createUpload)
-	rt.Role("PUT /api/v1/media/uploads/{id}", core.RoleOperator, m.putChunk)
-	rt.Role("DELETE /api/v1/media/uploads/{id}", core.RoleOperator, m.abortUpload)
+	rt.Scoped("POST /api/v1/media/uploads", op, mediaRight(upload, m.createUpload))
+	rt.Scoped("PUT /api/v1/media/uploads/{id}", op, mediaRight(upload, m.putChunk))
+	rt.Scoped("DELETE /api/v1/media/uploads/{id}", op, mediaRight(upload, m.abortUpload))
 	// GET /media/uploads/{id} and GET /media/{id}/file would conflict in the mux, so one
 	// route dispatches both. Both need operator rights: media files are not for everybody.
-	rt.Role("GET /api/v1/media/{a}/{b}", core.RoleOperator, m.getTwoSegments)
+	rt.Scoped("GET /api/v1/media/{a}/{b}", op, mediaRight(use, m.getTwoSegments))
 
 	// browse and details
-	rt.Role("GET /api/v1/media", core.RoleOperator, m.list)
-	rt.Role("GET /api/v1/media/trash", core.RoleOperator, m.trashList)
-	rt.Role("GET /api/v1/media/unused", core.RoleOperator, m.unusedList)
-	rt.Role("GET /api/v1/media/{id}", core.RoleOperator, m.details)
-	rt.Role("PATCH /api/v1/media/{id}", core.RoleOperator, m.patchAsset)
-	rt.Role("DELETE /api/v1/media/{id}", core.RoleOperator, m.trashAsset)
-	rt.Role("POST /api/v1/media/{id}/reprocess", core.RoleOperator, m.reprocess)
+	rt.Scoped("GET /api/v1/media", op, mediaRight(use, m.list))
+	rt.Scoped("GET /api/v1/media/trash", op, mediaRight(manage, m.trashList))
+	rt.Scoped("GET /api/v1/media/unused", op, mediaRight(manage, m.unusedList))
+	rt.Scoped("GET /api/v1/media/{id}", op, mediaRight(use, m.details))
+	rt.Scoped("PATCH /api/v1/media/{id}", op, mediaRight(upload, m.ownAsset(m.patchAsset)))
+	rt.Scoped("DELETE /api/v1/media/{id}", op, mediaRight(manage, m.trashAsset))
+	rt.Scoped("POST /api/v1/media/{id}/reprocess", op, mediaRight(manage, m.reprocess))
 
 	// folders
-	rt.Role("POST /api/v1/media/folders", core.RoleOperator, m.createFolder)
-	rt.Role("PATCH /api/v1/media/folders/{id}", core.RoleOperator, m.patchFolder)
-	rt.Role("DELETE /api/v1/media/folders/{id}", core.RoleOperator, m.trashFolder)
+	rt.Scoped("POST /api/v1/media/folders", op, mediaRight(upload, m.createFolder))
+	rt.Scoped("PATCH /api/v1/media/folders/{id}", op, mediaRight(upload, m.ownFolder(m.patchFolder)))
+	rt.Scoped("DELETE /api/v1/media/folders/{id}", op, mediaRight(manage, m.trashFolder))
 
 	// trash and cleanup
-	rt.Role("POST /api/v1/media/trash", core.RoleOperator, m.trashBulk)
-	rt.Role("POST /api/v1/media/trash/restore", core.RoleOperator, m.trashRestore)
-	rt.Role("POST /api/v1/media/trash/purge", core.RoleOperator, m.trashPurge)
-	rt.Role("POST /api/v1/media/unused/variants/delete", core.RoleOperator, m.deleteVariants)
-	rt.Role("POST /api/v1/media/old-revisions/delete", core.RoleOperator, m.deleteOldRevisions)
+	rt.Scoped("POST /api/v1/media/trash", op, mediaRight(manage, m.trashBulk))
+	rt.Scoped("POST /api/v1/media/trash/restore", op, mediaRight(manage, m.trashRestore))
+	rt.Scoped("POST /api/v1/media/trash/purge", op, mediaRight(manage, m.trashPurge))
+	rt.Scoped("POST /api/v1/media/unused/variants/delete", op, mediaRight(manage, m.deleteVariants))
+	rt.Scoped("POST /api/v1/media/old-revisions/delete", op, mediaRight(manage, m.deleteOldRevisions))
 
 	// storage dashboard
 	rt.Role("GET /api/v1/storage", core.RoleAdmin, m.storage)

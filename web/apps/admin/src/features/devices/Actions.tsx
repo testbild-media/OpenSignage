@@ -227,11 +227,14 @@ export function ActionsCard({
   onChanged,
   onScreenshot,
   shot,
+  control = true,
 }: {
   d: Device;
   onChanged: () => void;
   onScreenshot: () => void;
   shot: number;
+  /** Restart, reload, blackout …: false for operators limited to zones without the displays right (a screenshot only looks). */
+  control?: boolean;
 }) {
   const t = useT();
   const confirm = useConfirm();
@@ -277,7 +280,7 @@ export function ActionsCard({
     <div className="card">
       <h2>{t('devices.actions')}</h2>
       <div className="action-grid">
-        {ACTIONS.map((a) => (
+        {ACTIONS.filter((a) => control || a.name === 'screenshot').map((a) => (
           <Button
             key={a.name}
             icon={<a.icon size={16} />}
@@ -289,15 +292,17 @@ export function ActionsCard({
             {t(`devices.action.${a.name}`)}
           </Button>
         ))}
-        <Button
-          icon={<MonitorOff size={16} />}
-          variant={d.config.blackout ? 'primary' : 'secondary'}
-          busy={blackout.busy}
-          onClick={() => void blackout.run(!d.config.blackout)}
-        >
-          {d.config.blackout ? t('devices.blackoutOff') : t('devices.blackoutOn')}
-        </Button>
-        {canRegenerate && (
+        {control && (
+          <Button
+            icon={<MonitorOff size={16} />}
+            variant={d.config.blackout ? 'primary' : 'secondary'}
+            busy={blackout.busy}
+            onClick={() => void blackout.run(!d.config.blackout)}
+          >
+            {d.config.blackout ? t('devices.blackoutOff') : t('devices.blackoutOn')}
+          </Button>
+        )}
+        {control && canRegenerate && (
           <Button
             icon={<Sparkles size={16} />}
             variant={regenerating ? 'primary' : 'secondary'}

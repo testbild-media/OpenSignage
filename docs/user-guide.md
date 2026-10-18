@@ -166,8 +166,32 @@ Settings → Defaults.
 | Role | Can |
 | --- | --- |
 | Administrator | everything, including users, settings, backup, updates, fonts and "not available" |
-| Operator | content, playlists, schedules, zones, devices and the operator view |
+| Operator, access "All zones" | content, playlists, schedules, zones, devices and the operator view |
+| Operator, access "Selected zones" | only the zones and rights set for them (below) |
 | User | the operator view for the zones assigned to them |
+
+**Operators for selected zones** – for example someone responsible for one bar and its
+screens. Per user:
+
+- **Zones**, each with *View* or *Edit*. *View* shows the zone, its devices (status,
+  screenshot), schedule and the presentations and playlists that run there. *Edit* also
+  changes the zone and default rules of the zone, its closed playlist and ticker template,
+  operates it live (sold out, open/closed) and changes its content.
+- **Content of a zone** is what runs there: the playlists of its rules, display groups and
+  closed playlist, and the presentations in them. A presentation or playlist can be changed
+  when it runs only in zones the user may edit (or when the user created it and it runs
+  nowhere yet). Content that also runs in other zones opens read only; **Copy for my zone**
+  gives the zone its own copy (shared playlists are copied too and the zone's rules point to
+  the copy). The screens show the same until the copy is changed and published.
+- **Create presentations and playlists**: yes or no.
+- **Media**: *View and use*; *Upload* (also upload, create folders, rename, move and replace
+  own files); *Manage* (everything, including deleting and the trash).
+- **Products**: *View* or *Edit* (products, categories and base prices apply to every zone).
+- **Control devices** of the own zones: restart, reload, screen off.
+
+Global rules, creating and deleting zones, display groups, ticker and presentation templates,
+pairing and device settings stay with administrators and operators of all zones. The server
+checks every request; what a user may not do is also hidden in the web interface.
 
 Repeated failed logins lock the login for a while; the last administrator cannot be removed.
 The audit log records every change.

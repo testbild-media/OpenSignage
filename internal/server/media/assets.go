@@ -38,10 +38,11 @@ type assetView struct {
 	CreatedAt     string          `json:"createdAt"`
 	UpdatedAt     string          `json:"updatedAt"`
 	TrashedAt     *string         `json:"trashedAt,omitempty"`
+	UploadedBy    string          `json:"uploadedBy,omitempty"` // user id
 }
 
 const assetCols = `a.id, a.folder_id, a.name, a.kind, a.revision, a.ready_revision, COALESCE(a.blob_sha256, ''), a.status, a.error, a.meta,
-	a.created_at, a.updated_at, a.trashed_at, COALESCE(b.size, 0), COALESCE(b.mime, '')`
+	a.created_at, a.updated_at, a.trashed_at, COALESCE(b.size, 0), COALESCE(b.mime, ''), COALESCE(a.uploaded_by, '')`
 
 const assetFrom = ` FROM media_assets a LEFT JOIN blobs b ON b.sha256 = a.blob_sha256 `
 
@@ -58,7 +59,7 @@ func (m *Module) loadAssets(ctx context.Context, q queryer, tail string, args ..
 		var folder, trashed sql.NullString
 		var meta string
 		if err := rows.Scan(&a.ID, &folder, &a.Name, &a.Kind, &a.Revision, &a.ReadyRevision, &a.SHA256, &a.Status, &a.Error, &meta,
-			&a.CreatedAt, &a.UpdatedAt, &trashed, &a.Size, &a.Mime); err != nil {
+			&a.CreatedAt, &a.UpdatedAt, &trashed, &a.Size, &a.Mime, &a.UploadedBy); err != nil {
 			rows.Close()
 			return nil, err
 		}

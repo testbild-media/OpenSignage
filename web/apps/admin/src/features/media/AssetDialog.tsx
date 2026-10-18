@@ -18,6 +18,7 @@ import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, TextInput } from '../../components/ui';
+import { useMediaRights } from './rights';
 import { AssetStatus } from '../../components/MediaPicker';
 import {
   ACCEPT,
@@ -82,7 +83,15 @@ function Preview({ asset }: { asset: AssetDetails }) {
   );
 }
 
-function RenameField({ asset, onSaved }: { asset: AssetDetails; onSaved: () => void }) {
+function RenameField({
+  asset,
+  onSaved,
+  readOnly,
+}: {
+  asset: AssetDetails;
+  onSaved: () => void;
+  readOnly?: boolean;
+}) {
   const t = useT();
   const toast = useToast();
   const [name, setName] = useState(asset.name);
@@ -109,6 +118,7 @@ function RenameField({ asset, onSaved }: { asset: AssetDetails; onSaved: () => v
         <TextInput
           label={t('media.details.name')}
           value={name}
+          disabled={readOnly}
           maxLength={120}
           onChange={(e) => {
             setName(e.target.value);
@@ -116,14 +126,16 @@ function RenameField({ asset, onSaved }: { asset: AssetDetails; onSaved: () => v
           }}
           error={name.trim() && !valid ? t('media.nameRule') : null}
         />
-        <Button
-          type="submit"
-          variant={changed ? 'primary' : 'secondary'}
-          busy={save.busy}
-          disabled={!valid || !changed}
-        >
-          {t('common.action.save')}
-        </Button>
+        {!readOnly && (
+          <Button
+            type="submit"
+            variant={changed ? 'primary' : 'secondary'}
+            busy={save.busy}
+            disabled={!valid || !changed}
+          >
+            {t('common.action.save')}
+          </Button>
+        )}
       </div>
       {changed && valid && <div className="field-hint">{t('media.details.renameHint')}</div>}
       {!!save.error && (
@@ -156,6 +168,7 @@ export function AssetDialog({
   const t = useT();
   const toast = useToast();
   const confirm = useConfirm();
+  const mr = useMediaRights();
   const q = useQuery<AssetDetails>(`/api/v1/media/${encodeURIComponent(id)}`);
   const [progress, setProgress] = useState<MediaProgress | undefined>(undefined);
   const [moving, setMoving] = useState(false);
@@ -255,20 +268,26 @@ export function AssetDialog({
                 accept={ACCEPT[d.kind]}
                 onChange={(e) => void replace(e.target.files?.[0]).finally(() => (e.target.value = ''))}
               />
-              <Button icon={<Replace size={16} />} onClick={() => input.current?.click()}>
-                {t('media.replace.button')}
-              </Button>
-              <Button icon={<FolderInput size={16} />} onClick={() => setMoving(true)}>
-                {t('media.move.button')}
-              </Button>
-              <Button
-                variant="danger"
-                icon={<Trash2 size={16} />}
-                busy={trash.busy}
-                onClick={() => void trash.run()}
-              >
-                {t('media.trash.action')}
-              </Button>
+              {mr.ownAsset(d) && (
+                <>
+                  <Button icon={<Replace size={16} />} onClick={() => input.current?.click()}>
+                    {t('media.replace.button')}
+                  </Button>
+                  <Button icon={<FolderInput size={16} />} onClick={() => setMoving(true)}>
+                    {t('media.move.button')}
+                  </Button>
+                </>
+              )}
+              {mr.manage && (
+                <Button
+                  variant="danger"
+                  icon={<Trash2 size={16} />}
+                  busy={trash.busy}
+                  onClick={() => void trash.run()}
+                >
+                  {t('media.trash.action')}
+                </Button>
+              )}
             </>
           )
         }
@@ -281,7 +300,7 @@ export function AssetDialog({
               </div>
               <div className="mm-info">
                 <UploadList keys={replaceKeys} inline />
-                <RenameField asset={d} onSaved={changed} />
+                <RenameField asset={d} onSaved={changed} readOnly={!mr.ownAsset(d)} />
                 {!!(trash.error ?? reprocess.error) && (
                   <div className="form-error" role="alert">
                     {mediaErrorText(trash.error ?? reprocess.error)}
@@ -305,7 +324,7 @@ export function AssetDialog({
                   <div className="mm-inline-status">
                     {d.status === 'ready' && <Badge tone="success">{t('media.status.ready')}</Badge>}
                     {d.status !== 'ready' && <AssetStatus asset={d} />}
-                    {d.status !== 'processing' && (
+                    {d.status !== 'processing' && mr.manage && (
                       <Button className="btn-sm" busy={reprocess.busy} onClick={() => void reprocess.run()}>
                         {t('media.reprocess')}
                       </Button>

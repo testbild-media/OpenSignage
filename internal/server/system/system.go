@@ -44,7 +44,7 @@ func New(app *core.App, host Host) *Module { return &Module{app: app, cert: host
 
 // Routes registers the endpoints.
 func (m *Module) Routes(rt *core.Router) {
-	rt.Role("GET /api/v1/settings", core.RoleOperator, m.get)
+	rt.Scoped("GET /api/v1/settings", core.RoleOperator, m.get) // defaults for the editors (no secrets)
 	rt.Role("PATCH /api/v1/settings", core.RoleAdmin, m.patch)
 	rt.Role("POST /api/v1/settings/client-password", core.RoleAdmin, m.clientPassword)
 	rt.Role("GET /api/v1/system/network", core.RoleAdmin, m.network)
