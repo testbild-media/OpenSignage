@@ -1,7 +1,7 @@
 // Package catalog implements categories, products (master data and the live status),
 // zones, ticker templates and time schedules. It writes categories, products,
 // zone_product_status, zones, display_groups, ticker_templates, schedule_rules,
-// schedule_prices and schedule_group_playlists, and
+// schedule_prices, schedule_category_prices and schedule_group_playlists, and
 // publishes products, zones, live and content events after the transaction committed.
 package catalog
 
@@ -89,6 +89,7 @@ func audit(ctx context.Context, tx *sql.Tx, r *http.Request, p *core.Principal, 
 var (
 	errCategoryNotEmpty = httpx.E(http.StatusConflict, "category_not_empty", "the category still has products or subcategories")
 	errCategoryInUse    = httpx.E(http.StatusConflict, "category_in_use", "the category is used by product lists in presentations")
+	errCategoryInRules  = httpx.E(http.StatusConflict, "category_in_rules", "the category has prices in time schedules")
 	errProductInUse     = httpx.E(http.StatusConflict, "product_in_use", "the product is used by schedule prices or presentations")
 	errProductNotArch   = httpx.E(http.StatusConflict, "product_not_archived", "only archived products can be deleted")
 	errProductArchived  = httpx.E(http.StatusConflict, "product_archived", "the product is archived")

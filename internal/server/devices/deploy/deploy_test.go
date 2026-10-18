@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -366,5 +367,30 @@ func TestManifestGroupsAndTracks(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("the medium of track 2 must be shipped: %+v", m.Assets)
+	}
+}
+
+// Category prices reach the screens as product prices: the product's own price first, then
+// the subcategory, then the category; archived products get none.
+func TestManifestCategoryPrices(t *testing.T) {
+	b, c := setup(t)
+	now := db.Now()
+	devtest.Exec(t, b.DB, `INSERT INTO categories(id, parent_id, name, created_at, updated_at) VALUES ('sub', 'cat', 'Sub', ?, ?)`, now, now)
+	devtest.Exec(t, b.DB, `UPDATE products SET category_id = 'sub' WHERE id = 'prod-5'`)
+	devtest.Exec(t, b.DB, `INSERT INTO schedule_category_prices(rule_id, category_id, amount, currency) VALUES ('r5', 'cat', 450, 'EUR')`)
+	devtest.Exec(t, b.DB, `INSERT INTO schedule_category_prices(rule_id, category_id, amount, currency) VALUES ('r5', 'sub', 420, 'EUR')`)
+	m, err := b.Build(context.Background(), c.Z1, "Europe/Berlin", "1.2.3")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, p := range m.Rules[2].Prices {
+		if p.CategoryID != "" {
+			t.Fatalf("category price in the manifest: %+v", p)
+		}
+		got = append(got, p.ProductID+"="+strconv.FormatInt(p.Price.Amount, 10))
+	}
+	if strings.Join(got, ",") != "prod-1=300,prod-2=350,prod-3=450,prod-5=420" {
+		t.Fatalf("prices: %v", got)
 	}
 }

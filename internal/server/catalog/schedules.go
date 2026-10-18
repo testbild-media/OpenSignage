@@ -16,6 +16,7 @@ import (
 	"opensignage/internal/schedule"
 	"opensignage/internal/server/core"
 	"opensignage/internal/server/db"
+	"opensignage/internal/server/devices/deploy"
 	"opensignage/internal/server/httpx"
 	"opensignage/internal/server/modkit"
 )
@@ -92,6 +93,26 @@ func loadRules(ctx context.Context, q modkit.Queryer, where string, args ...any)
 	}
 	prows.Close()
 	if err := prows.Err(); err != nil {
+		return nil, err
+	}
+	crows, err := q.QueryContext(ctx, `SELECT rule_id, category_id, amount, currency FROM schedule_category_prices
+		WHERE rule_id IN (SELECT id FROM schedule_rules `+where+`) ORDER BY rule_id, category_id`, args...)
+	if err != nil {
+		return nil, err
+	}
+	for crows.Next() {
+		var rid string
+		var po contracts.PriceOverride
+		if err := crows.Scan(&rid, &po.CategoryID, &po.Price.Amount, &po.Price.Currency); err != nil {
+			crows.Close()
+			return nil, err
+		}
+		if i, ok := idx[rid]; ok {
+			out[i].Prices = append(out[i].Prices, po)
+		}
+	}
+	crows.Close()
+	if err := crows.Err(); err != nil {
 		return nil, err
 	}
 	// Playlists of single display groups, in the order of the zone's groups (screens
@@ -220,7 +241,8 @@ func (req *ruleReq) apply(r *contracts.Rule) error {
 
 // validateRule runs the structural checks, the reference checks and the uniqueness/overlap
 // rules. It must run inside the write transaction so concurrent saves cannot both pass.
-func validateRule(ctx context.Context, tx *sql.Tx, r *contracts.Rule) error {
+// currency is the server's currency: category prices apply to the products in it.
+func validateRule(ctx context.Context, tx *sql.Tx, r *contracts.Rule, currency string) error {
 	if len(r.Prices) > maxRulePrices {
 		return httpx.Invalid("prices", "too_many")
 	}
@@ -279,23 +301,44 @@ func validateRule(ctx context.Context, tx *sql.Tx, r *contracts.Rule) error {
 			return err
 		}
 	}
-	if len(r.Prices) > 0 {
-		args := make([]any, len(r.Prices))
-		for i, p := range r.Prices {
-			args[i] = p.ProductID
+	var products, categories []any
+	for _, p := range r.Prices {
+		if p.CategoryID != "" {
+			categories = append(categories, p.CategoryID)
+		} else {
+			products = append(products, p.ProductID)
 		}
-		currencies, err := productCurrencies(ctx, tx, args)
+	}
+	if len(products) > 0 {
+		currencies, err := productCurrencies(ctx, tx, products)
 		if err != nil {
 			return err
 		}
-		if len(currencies) != len(r.Prices) {
+		if len(currencies) != len(products) {
 			return httpx.Invalid("prices", "unknown_product")
 		}
 		// A schedule price replaces the base price, so it must be in the product's currency.
 		for i, p := range r.Prices {
-			if p.Price.Currency != currencies[p.ProductID] {
+			if p.CategoryID == "" && p.Price.Currency != currencies[p.ProductID] {
 				return httpx.Invalid(fmt.Sprintf("prices[%d].price.currency", i), "currency_mismatch").
 					With("currency", currencies[p.ProductID])
+			}
+		}
+	}
+	if len(categories) > 0 {
+		var n int
+		if err := tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM categories WHERE id IN (?`+strings.Repeat(`,?`, len(categories)-1)+`)`,
+			categories...).Scan(&n); err != nil {
+			return err
+		}
+		if n != len(categories) {
+			return httpx.Invalid("prices", "unknown_category")
+		}
+		// A category price applies to the products in the server's currency.
+		for i, p := range r.Prices {
+			if p.CategoryID != "" && p.Price.Currency != currency {
+				return httpx.Invalid(fmt.Sprintf("prices[%d].price.currency", i), "currency_mismatch").
+					With("currency", currency)
 			}
 		}
 	}
@@ -324,16 +367,38 @@ func validateRule(ctx context.Context, tx *sql.Tx, r *contracts.Rule) error {
 		if err != nil {
 			return err
 		}
+		// Prices are compared per product: a category price and the price of a product in
+		// that category change the same thing.
+		mine := []contracts.Rule{*r}
+		if hasCategoryPrices(others) || hasCategoryPrices(mine) {
+			products, err := deploy.CatalogProducts(ctx, tx)
+			if err != nil {
+				return err
+			}
+			mine = schedule.ExpandPrices(mine, products)
+			others = schedule.ExpandPrices(others, products)
+		}
 		for _, o := range others {
 			if o.Window == nil || !schedule.Overlaps(*r.Window, *o.Window) {
 				continue
 			}
-			if c := schedule.SharedChange(*r, o); c != "" {
+			if c := schedule.SharedChange(mine[0], o); c != "" {
 				return errWindowOverlap.With("rule", o.Name).With("ruleId", o.ID).With("change", c)
 			}
 		}
 	}
 	return nil
+}
+
+func hasCategoryPrices(rules []contracts.Rule) bool {
+	for _, r := range rules {
+		for _, p := range r.Prices {
+			if p.CategoryID != "" {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // productCurrencies maps the given product ids to the currency of their base price.
@@ -379,9 +444,15 @@ func writePrices(ctx context.Context, tx *sql.Tx, r *contracts.Rule) error {
 	if _, err := tx.ExecContext(ctx, `DELETE FROM schedule_prices WHERE rule_id = ?`, r.ID); err != nil {
 		return err
 	}
+	if _, err := tx.ExecContext(ctx, `DELETE FROM schedule_category_prices WHERE rule_id = ?`, r.ID); err != nil {
+		return err
+	}
 	for _, p := range r.Prices {
-		if _, err := tx.ExecContext(ctx, `INSERT INTO schedule_prices(rule_id, product_id, amount, currency) VALUES (?, ?, ?, ?)`,
-			r.ID, p.ProductID, p.Price.Amount, p.Price.Currency); err != nil {
+		query, ref := `INSERT INTO schedule_prices(rule_id, product_id, amount, currency) VALUES (?, ?, ?, ?)`, p.ProductID
+		if p.CategoryID != "" {
+			query, ref = `INSERT INTO schedule_category_prices(rule_id, category_id, amount, currency) VALUES (?, ?, ?, ?)`, p.CategoryID
+		}
+		if _, err := tx.ExecContext(ctx, query, r.ID, ref, p.Price.Amount, p.Price.Currency); err != nil {
 			return err
 		}
 	}
@@ -426,7 +497,7 @@ func (m *Module) createSchedule(w http.ResponseWriter, r *http.Request, p *core.
 		if err := checkRuleRights(r.Context(), tx, p, nil, &rule); err != nil {
 			return err
 		}
-		if err := validateRule(r.Context(), tx, &rule); err != nil {
+		if err := validateRule(r.Context(), tx, &rule, m.app.Settings.Get().Currency); err != nil {
 			return err
 		}
 		days, start, end := ruleDays(&rule)
@@ -491,7 +562,7 @@ func (m *Module) updateSchedule(w http.ResponseWriter, r *http.Request, p *core.
 		if err := checkRuleRights(r.Context(), tx, p, &old, &next); err != nil {
 			return err
 		}
-		if err := validateRule(r.Context(), tx, &next); err != nil {
+		if err := validateRule(r.Context(), tx, &next, m.app.Settings.Get().Currency); err != nil {
 			return err
 		}
 		days, start, end := ruleDays(&next)
@@ -645,6 +716,13 @@ func (m *Module) schedulesNow(w http.ResponseWriter, r *http.Request, p *core.Pr
 	rules, err := loadRules(ctx, m.app.DB.R, `WHERE scope = 'global' OR zone_id = ?`, zoneID)
 	if err != nil {
 		return err
+	}
+	if hasCategoryPrices(rules) {
+		products, err := deploy.CatalogProducts(ctx, m.app.DB.R)
+		if err != nil {
+			return err
+		}
+		rules = schedule.ExpandPrices(rules, products)
 	}
 	rows, err := m.app.DB.R.QueryContext(ctx, `SELECT id, name, published_version IS NOT NULL AND archived_at IS NULL FROM playlists`)
 	if err != nil {

@@ -8,6 +8,7 @@
   "bad_range": "Datele încărcării nu au ajuns complet. Încercați din nou – încărcarea continuă de unde s-a oprit.",
   "bad_request": "Cererea nu a fost înțeleasă.",
   "bundle_invalid": "Fișierul nu este un pachet de versiune OpenSignage valid: {detail}",
+  "category_in_rules": "Categoria are încă prețuri în aceste programe orare: {rules}. Eliminați-le mai întâi de acolo.",
   "category_in_use": "Categoria este încă folosită de listele de produse din aceste prezentări (inclusiv cele arhivate): {presentations}. Eliminați-o mai întâi de acolo.",
   "category_not_empty": "Categoria conține încă produse ({products}, inclusiv cele arhivate) sau subcategorii ({subcategories}). Mutați-le sau ștergeți-le mai întâi.",
   "certificate_expired": "Certificatul a expirat.",

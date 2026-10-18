@@ -8,6 +8,7 @@
   "bad_range": "Įkeliami duomenys atkeliavo ne visi. Bandykite dar kartą – įkėlimas tęsiamas nuo ten, kur sustojo.",
   "bad_request": "Užklausa nesuprasta.",
   "bundle_invalid": "Failas nėra tinkamas OpenSignage leidimo paketas: {detail}",
+  "category_in_rules": "Kategorija vis dar turi kainų šiuose tvarkaraščiuose: {rules}. Pirmiausia pašalinkite jas iš ten.",
   "category_in_use": "Kategoriją vis dar naudoja produktų sąrašai šiose pateiktyse (įskaitant archyvuotas): {presentations}. Pirmiausia pašalinkite ją iš ten.",
   "category_not_empty": "Kategorijoje vis dar yra produktų ({products}, įskaitant archyvuotus) arba subkategorijų ({subcategories}). Pirmiausia juos perkelkite arba ištrinkite.",
   "certificate_expired": "Sertifikato galiojimas baigėsi.",

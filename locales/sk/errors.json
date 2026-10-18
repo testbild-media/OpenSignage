@@ -8,6 +8,7 @@
   "bad_range": "Údaje nahrávania neprišli celé. Skúste to znova – nahrávanie bude pokračovať tam, kde sa zastavilo.",
   "bad_request": "Požiadavke sa nepodarilo porozumieť.",
   "bundle_invalid": "Súbor nie je platný balík vydania OpenSignage: {detail}",
+  "category_in_rules": "Kategória má ešte ceny v týchto časových plánoch: {rules}. Najprv ich tam odstráňte.",
   "category_in_use": "Kategóriu ešte používajú zoznamy produktov v týchto prezentáciách (vrátane archivovaných): {presentations}. Najprv ju tam odstráňte.",
   "category_not_empty": "Kategória ešte obsahuje produkty ({products}, vrátane archivovaných) alebo podkategórie ({subcategories}). Najprv ich presuňte alebo odstráňte.",
   "certificate_expired": "Platnosť certifikátu vypršala.",

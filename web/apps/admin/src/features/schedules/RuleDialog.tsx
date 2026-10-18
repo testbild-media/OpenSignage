@@ -1,6 +1,7 @@
 // Editor for a time schedule rule: scope, zone, weekly window (with a clear explanation of
 // windows over midnight) and the list of things it changes: the playlist of
-// all screens, the playlist of single display groups, price overrides, showing a ticker over
+// all screens, the playlist of single display groups, price overrides (of products or whole
+// categories), showing a ticker over
 // the zone's screens (with a preview in its template) or hiding it; enabled.
 import { useMemo, useRef, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
@@ -8,13 +9,15 @@ import { NO_GROUP_ID, type GroupPlaylist, type PriceOverride, type Rule, type Ti
 import { formatMoney, getLanguage } from '@opensignage/i18n';
 import { patch, post } from '../../lib/api';
 import { useAction, useT } from '../../lib/hooks';
+import { useSession } from '../../lib/session';
 import { useToast } from '../../components/feedback';
 import { Button, Checkbox, Dialog, ErrorText, Field, IconButton, Select, TextInput } from '../../components/ui';
 import { Segmented } from '../../components/controls';
 import { currencyDigits, decimalSeparator, formatMoneyInput, parseMoney } from '../products/money';
-import { categoryTree, type Category, type Product } from '../products/types';
+import { categoryPath, type Category, type Product } from '../products/types';
 import { playlistOptions, type PlaylistSummary, type TickerTemplateRecord, type Zone } from '../zones/types';
 import { TickerPreview } from '../zones/TickerPreview';
+import { catalogOrder, moneyRange, productsIn, sortPrices, targetOf } from './prices';
 import { midnightInfo, parseHHMM, weekdayLabels } from './windows';
 
 type Scope = Rule['scope'];
@@ -22,10 +25,10 @@ type TickerMode = 'keep' | 'show' | 'hide';
 
 interface PriceRow {
   key: number;
-  productId: string;
+  /** "p:<product id>" or "c:<category id>". */
+  target: string;
   price: string;
 }
-
 export interface RuleDialogData {
   /** Zones the user may write rules for. */
   zones: Zone[];
@@ -39,25 +42,36 @@ export interface RuleDialogData {
   defaultTicker: TickerTemplate | undefined;
 }
 
-function ProductSelect({ value, products, categories, used, onChange, label, missingLabel }: { value: string; products: Product[]; categories: Category[]; used: Set<string>; onChange: (id: string) => void; label: string; missingLabel?: string }) {
+/**
+ * One group per category (in the order of the catalog): the whole category (with its
+ * subcategories), then its products.
+ */
+function PriceTargetSelect({ value, products, categories, used, onChange, label, missingLabel }: { value: string; products: Product[]; categories: Category[]; used: Set<string>; onChange: (target: string) => void; label: string; missingLabel?: string }) {
+  const t = useT();
   const groups = useMemo(() => {
-    const tree = categoryTree(categories);
-    const order = tree.flatMap((c) => [c, ...c.children]);
-    return order
-      .map((c) => ({
-        id: c.id,
-        label: c.parentId ? `${tree.find((x) => x.id === c.parentId)?.name ?? ''} › ${c.name}` : c.name,
-        items: products.filter((p) => p.categoryId === c.id),
-      }))
-      .filter((g) => g.items.length > 0);
-  }, [products, categories]);
+    return catalogOrder(categories)
+      .map((c) => {
+        const path = categoryPath(categories, c.id);
+        return {
+          id: c.id,
+          label: path,
+          whole: t('admin.schedules.prices.whole', { name: path }),
+          hasProducts: productsIn(c.id, products, categories).length > 0,
+          items: products.filter((p) => p.categoryId === c.id),
+        };
+      })
+      .filter((g) => g.hasProducts);
+  }, [products, categories, t]);
   return (
     <select className="input" aria-label={label} value={value} onChange={(e) => onChange(e.target.value)}>
       {missingLabel && <option value={value}>{missingLabel}</option>}
       {groups.map((g) => (
         <optgroup key={g.id} label={g.label}>
+          <option value={`c:${g.id}`} disabled={`c:${g.id}` !== value && used.has(`c:${g.id}`)}>
+            {g.whole}
+          </option>
           {g.items.map((p) => (
-            <option key={p.id} value={p.id} disabled={p.id !== value && used.has(p.id)}>
+            <option key={p.id} value={`p:${p.id}`} disabled={`p:${p.id}` !== value && used.has(`p:${p.id}`)}>
               {p.name}
             </option>
           ))}
@@ -82,8 +96,11 @@ export function RuleDialog({
 }) {
   const t = useT();
   const toast = useToast();
+  const { server } = useSession();
   const lang = getLanguage();
   const sep = decimalSeparator(lang);
+  // Category prices apply to the products in the server's currency.
+  const serverCurrency = server?.currency ?? 'EUR';
   const labels = useMemo(() => weekdayLabels(lang), [lang]);
   const longLabels = useMemo(() => weekdayLabels(lang, 'long'), [lang]);
   const productById = useMemo(() => new Map([...data.archivedProducts, ...data.products].map((p) => [p.id, p])), [data.products, data.archivedProducts]);
@@ -102,8 +119,9 @@ export function RuleDialog({
   const [groupPls, setGroupPls] = useState<Record<string, string>>(() => Object.fromEntries((rule?.groupPlaylists ?? []).map((g) => [g.groupId, g.playlistId])));
   const [tickerText, setTickerText] = useState(rule?.ticker?.text ?? '');
   const [tickerTemplateId, setTickerTemplateId] = useState(rule?.ticker?.templateId ?? '');
+  // Whole categories first (in the order of the catalog), then single products.
   const [prices, setPrices] = useState<PriceRow[]>(() =>
-    (rule?.prices ?? []).map((p) => ({ key: nextKey.current++, productId: p.productId, price: formatMoneyInput(p.price.amount, currencyDigits(p.price.currency), sep) })),
+    sortPrices(rule?.prices ?? [], data.categories).map((p) => ({ key: nextKey.current++, target: targetOf(p), price: formatMoneyInput(p.price.amount, currencyDigits(p.price.currency), sep) })),
   );
 
   const windowed = scope !== 'default';
@@ -112,14 +130,23 @@ export function RuleDialog({
   const groupTargets = zoneGroups.length ? [...zoneGroups.map((g) => ({ id: g.id, name: g.name })), { id: NO_GROUP_ID, name: t('admin.zones.groups.ungrouped') }] : [];
   const groupPlaylists: GroupPlaylist[] = groupTargets.filter((g) => groupPls[g.id]).map((g) => ({ groupId: g.id, playlistId: groupPls[g.id]! }));
   const info = midnightInfo(start, end);
-  const used = new Set(prices.map((p) => p.productId));
+  const used = new Set(prices.map((p) => p.target));
   const parsed = prices.map((row) => {
-    const prod = productById.get(row.productId);
-    const currency = prod?.price.currency ?? 'EUR';
+    const id = row.target.slice(2);
+    const isCategory = row.target.startsWith('c:');
+    const category = isCategory ? data.categories.find((c) => c.id === id) : undefined;
+    const prod = isCategory ? undefined : productById.get(id);
+    const currency = isCategory ? serverCurrency : (prod?.price.currency ?? serverCurrency);
+    const inCategory = category ? productsIn(category.id, data.products, data.categories) : [];
+    // The products a category price applies to (those in another currency keep their price).
+    const covered = inCategory.filter((p) => p.price.currency === currency);
+    // Not offered in the list (archived product, category without products): own option.
+    const missing = isCategory ? (category ? (inCategory.length > 0 ? undefined : categoryPath(data.categories, id)) : '?') : prod && !prod.archived ? undefined : t('admin.schedules.prices.archived', { name: prod?.name ?? '?' });
     const amount = row.price.trim() ? parseMoney(row.price, currencyDigits(currency)) : null;
-    return { row, prod, currency, amount };
+    return { row, id, category, prod, covered, missing, currency, amount };
   });
-  const pricesOk = parsed.every((p) => p.amount !== null && !!p.row.productId);
+  const pricesOk = parsed.every((p) => p.amount !== null && !!p.id);
+  const hasCategoryPrice = parsed.some((p) => p.row.target.startsWith('c:'));
   const problems: string[] = [];
   if (!name.trim()) problems.push(t('admin.schedules.problem.name'));
   if (scope !== 'global' && !zoneId) problems.push(t('admin.schedules.problem.zone'));
@@ -137,7 +164,7 @@ export function RuleDialog({
       window: windowed ? { days: [...days].sort((a, b) => a - b), start, end } : null,
       playlistId: playlistId || null,
       groupPlaylists,
-      prices: parsed.map((p): PriceOverride => ({ productId: p.row.productId, price: { amount: p.amount ?? 0, currency: p.currency } })),
+      prices: parsed.map((p): PriceOverride => ({ ...(p.row.target.startsWith('c:') ? { categoryId: p.id } : { productId: p.id }), price: { amount: p.amount ?? 0, currency: p.currency } })),
       ticker: tickerMode === 'show' ? { text: tickerText.trim(), templateId: tickerTemplateId } : tickerMode === 'hide' ? { hide: true, text: '' } : null,
       enabled,
     };
@@ -154,9 +181,16 @@ export function RuleDialog({
 
   const toggleDay = (d: number): void => setDays((ds) => (ds.includes(d) ? ds.filter((x) => x !== d) : [...ds, d]));
   const addPrice = (): void => {
-    const first = data.products.find((p) => !used.has(p.id));
+    const first = data.products.find((p) => !used.has(`p:${p.id}`));
     if (!first) return;
-    setPrices((ps) => [...ps, { key: nextKey.current++, productId: first.id, price: formatMoneyInput(first.price.amount, currencyDigits(first.price.currency), sep) }]);
+    setPrices((ps) => [...ps, { key: nextKey.current++, target: `p:${first.id}`, price: formatMoneyInput(first.price.amount, currencyDigits(first.price.currency), sep) }]);
+  };
+  // Categories that contain products, in the order of the catalog.
+  const priceCategories = catalogOrder(data.categories).filter((c) => productsIn(c.id, data.products, data.categories).length > 0);
+  const addCategoryPrice = (): void => {
+    const first = priceCategories.find((c) => !used.has(`c:${c.id}`));
+    if (!first) return;
+    setPrices((ps) => [...ps, { key: nextKey.current++, target: `c:${first.id}`, price: '' }]);
   };
 
   return (
@@ -265,38 +299,49 @@ export function RuleDialog({
         <div className="form rule-prices">
           <div className="rule-prices-head">
             <h3>{t('admin.schedules.prices.title')}</h3>
-            <Button icon={<Plus size={16} />} disabled={data.products.every((p) => used.has(p.id))} onClick={addPrice}>
-              {t('admin.schedules.prices.add')}
-            </Button>
+            <div className="rule-prices-add">
+              <Button icon={<Plus size={16} />} disabled={priceCategories.every((c) => used.has(`c:${c.id}`))} onClick={addCategoryPrice}>
+                {t('admin.schedules.prices.addCategory')}
+              </Button>
+              <Button icon={<Plus size={16} />} disabled={data.products.every((p) => used.has(`p:${p.id}`))} onClick={addPrice}>
+                {t('admin.schedules.prices.add')}
+              </Button>
+            </div>
           </div>
           <p className="faint">{t('admin.schedules.prices.hint')}</p>
+          {hasCategoryPrice && <p className="faint">{t('admin.schedules.prices.categoryHint')}</p>}
           {prices.length === 0 ? (
             <div className="state state-empty state-compact">{t('admin.schedules.prices.empty')}</div>
           ) : (
             <table className="table price-table">
               <thead>
                 <tr>
-                  <th>{t('admin.schedules.prices.product')}</th>
-                  <th className="num">{t('admin.schedules.prices.base')}</th>
+                  <th>{t('admin.schedules.prices.target')}</th>
                   <th>{t('admin.schedules.prices.price')}</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {parsed.map(({ row, prod, currency, amount }) => (
+                {parsed.map(({ row, category, prod, covered, missing, currency, amount }) => (
                   <tr key={row.key}>
                     <td>
-                      <ProductSelect
-                        value={row.productId}
+                      <PriceTargetSelect
+                        value={row.target}
                         products={data.products}
                         categories={data.categories}
                         used={used}
-                        label={t('admin.schedules.prices.product')}
-                        missingLabel={prod && !prod.archived ? undefined : t('admin.schedules.prices.archived', { name: prod?.name ?? '?' })}
-                        onChange={(id) => setPrices((ps) => ps.map((p) => (p.key === row.key ? { ...p, productId: id } : p)))}
+                        label={t('admin.schedules.prices.target')}
+                        missingLabel={missing}
+                        onChange={(target) => setPrices((ps) => ps.map((p) => (p.key === row.key ? { ...p, target } : p)))}
                       />
+                      <div className="price-base faint">
+                        {category
+                          ? [t('admin.products.count', { count: covered.length }), moneyRange(covered, lang)].filter(Boolean).join(' · ')
+                          : prod
+                            ? t('admin.schedules.prices.baseValue', { price: formatMoney(prod.price.amount, prod.price.currency, lang) })
+                            : ''}
+                      </div>
                     </td>
-                    <td className="num muted nowrap">{prod ? formatMoney(prod.price.amount, prod.price.currency, lang) : '—'}</td>
                     <td>
                       <div className="price-input">
                         <input

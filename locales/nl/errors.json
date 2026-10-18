@@ -8,6 +8,7 @@
   "bad_range": "De uploadgegevens zijn niet volledig aangekomen. Probeer het opnieuw – de upload gaat verder waar hij is gestopt.",
   "bad_request": "Het verzoek is niet begrepen.",
   "bundle_invalid": "Het bestand is geen geldige OpenSignage-releasebundel: {detail}",
+  "category_in_rules": "De categorie heeft nog prijzen in deze tijdschema’s: {rules}. Verwijder ze daar eerst.",
   "category_in_use": "De categorie wordt nog gebruikt door productlijsten in deze presentaties (inclusief gearchiveerde): {presentations}. Verwijder de categorie daar eerst.",
   "category_not_empty": "De categorie bevat nog producten ({products}, inclusief gearchiveerde) of subcategorieën ({subcategories}). Verplaats of verwijder deze eerst.",
   "certificate_expired": "Het certificaat is verlopen.",

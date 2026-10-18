@@ -31,10 +31,14 @@ type Window struct {
 	End   string `json:"end"`
 }
 
-// PriceOverride replaces the base price of one product while the rule is active.
+// PriceOverride replaces the base price of one product, or of every product of a category
+// and its subcategories (exactly one of ProductID and CategoryID), while the rule is active.
+// Within a rule a product price wins over a subcategory price, which wins over a category
+// price. Deployments carry product prices only (schedule.ExpandPrices).
 type PriceOverride struct {
-	ProductID string `json:"productId"`
-	Price     Money  `json:"price"`
+	ProductID  string `json:"productId,omitempty"`
+	CategoryID string `json:"categoryId,omitempty"`
+	Price      Money  `json:"price"`
 }
 
 // MaxTickerRunes bounds a ticker text.
@@ -178,10 +182,14 @@ func (r *Rule) Validate() error {
 	}
 	seen := map[string]bool{}
 	for i, p := range r.Prices {
-		if p.ProductID == "" || seen[p.ProductID] {
+		key := "p:" + p.ProductID
+		if p.CategoryID != "" {
+			key = "c:" + p.CategoryID
+		}
+		if (p.ProductID == "") == (p.CategoryID == "") || seen[key] {
 			return fieldErr("prices", "invalid")
 		}
-		seen[p.ProductID] = true
+		seen[key] = true
 		if err := p.Price.Validate(fmt.Sprintf("prices[%d].price", i)); err != nil {
 			return err
 		}

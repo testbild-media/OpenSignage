@@ -107,6 +107,9 @@ func Evaluate(in Input) Result {
 	for _, r := range ordered {
 		res.ActiveRuleIDs = append(res.ActiveRuleIDs, r.ID)
 		for _, p := range r.Prices {
+			if p.ProductID == "" {
+				continue // category price that was not expanded (ExpandPrices)
+			}
 			if _, set := res.Prices[p.ProductID]; !set {
 				res.Prices[p.ProductID] = p.Price
 			}
@@ -176,7 +179,7 @@ func PlaylistFor(r contracts.Rule, groupID string, available func(string) bool) 
 }
 
 // Changes lists what a rule sets: "playlist" (all screens),
-// "playlist:<group>", "price:<product>", "ticker". Rules whose windows overlap may not
+// "playlist:<group>", "price:<product>", "price:category:<category>", "ticker". Rules whose windows overlap may not
 // change the same thing.
 func Changes(r contracts.Rule) []string {
 	var out []string
@@ -187,7 +190,11 @@ func Changes(r contracts.Rule) []string {
 		out = append(out, "playlist:"+g.GroupID)
 	}
 	for _, p := range r.Prices {
-		out = append(out, "price:"+p.ProductID)
+		if p.CategoryID != "" {
+			out = append(out, "price:category:"+p.CategoryID)
+		} else {
+			out = append(out, "price:"+p.ProductID)
+		}
 	}
 	if r.Ticker != nil {
 		out = append(out, "ticker")

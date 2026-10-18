@@ -8,6 +8,7 @@
   "bad_range": "Níor tháinig sonraí na huaslódála go hiomlán. Bain triail eile as – leanann an uaslódáil ar aghaidh ón áit ar stop sí.",
   "bad_request": "Níor tuigeadh an t-iarratas.",
   "bundle_invalid": "Ní beart eisiúna bailí OpenSignage é an comhad: {detail}",
+  "category_in_rules": "Tá praghsanna fós ag an gcatagóir sna sceidil ama seo: {rules}. Bain as sin iad ar dtús.",
   "category_in_use": "Úsáideann liostaí táirgí sna cur i láthair seo an chatagóir fós (cinn chartlannaithe san áireamh): {presentations}. Bain as sin í ar dtús.",
   "category_not_empty": "Tá táirgí ({products}, táirgí cartlannaithe san áireamh) nó fochatagóirí ({subcategories}) sa chatagóir fós. Bog nó scrios iad ar dtús.",
   "certificate_expired": "Tá an deimhniú imithe in éag.",

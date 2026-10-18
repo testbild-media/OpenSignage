@@ -8,6 +8,7 @@
   "bad_range": "A feltöltés adatai nem érkeztek meg teljesen. Próbálja újra – a feltöltés ott folytatódik, ahol megszakadt.",
   "bad_request": "A kérés nem értelmezhető.",
   "bundle_invalid": "A fájl nem érvényes OpenSignage-kiadáscsomag: {detail}",
+  "category_in_rules": "A kategóriának még vannak árai ezekben az időbeosztásokban: {rules}. Először ott távolítsa el őket.",
   "category_in_use": "A kategóriát még terméklisták használják ezekben a prezentációkban (az archiváltakkal együtt): {presentations}. Először ott távolítsa el.",
   "category_not_empty": "A kategória még tartalmaz termékeket ({products}, az archiváltakkal együtt) vagy alkategóriákat ({subcategories}). Először helyezze át vagy törölje őket.",
   "certificate_expired": "A tanúsítvány lejárt.",

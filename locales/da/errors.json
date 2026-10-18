@@ -8,6 +8,7 @@
   "bad_range": "Uploaddataene kom ikke fuldstændigt frem. Prøv igen – uploaden fortsætter, hvor den stoppede.",
   "bad_request": "Anmodningen blev ikke forstået.",
   "bundle_invalid": "Filen er ikke en gyldig OpenSignage-versionspakke: {detail}",
+  "category_in_rules": "Kategorien har stadig priser i disse tidsplaner: {rules}. Fjern dem der først.",
   "category_in_use": "Kategorien bruges stadig af produktlister i disse præsentationer (inklusive arkiverede): {presentations}. Fjern den der først.",
   "category_not_empty": "Kategorien indeholder stadig produkter ({products}, inklusive arkiverede) eller underkategorier ({subcategories}). Flyt eller slet dem først.",
   "certificate_expired": "Certifikatet er udløbet.",

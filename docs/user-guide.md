@@ -91,7 +91,9 @@ all zones. A rule changes only what it sets:
 
 - the playlist of all screens of the zone, or of single display groups (or of the screens
   without group);
-- prices of single products;
+- prices of single products or of whole categories – "all long drinks 5 €": the price applies
+  to every product of the category and its subcategories, also to products added later; a
+  price for a subcategory or a single product in the same rule comes first;
 - a **ticker** – show one (text and ticker template) or hide it.
 
 For each of these things the first active rule wins in this order: zone window → global

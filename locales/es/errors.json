@@ -8,6 +8,7 @@
   "bad_range": "Los datos de la subida no llegaron completos. Inténtelo de nuevo – la subida continúa donde se detuvo.",
   "bad_request": "No se entendió la solicitud.",
   "bundle_invalid": "El archivo no es un paquete de versión de OpenSignage válido: {detail}",
+  "category_in_rules": "La categoría todavía tiene precios en estas programaciones horarias: {rules}. Quítelos de allí primero.",
   "category_in_use": "La categoría todavía la usan listas de productos en estas presentaciones (incluidas las archivadas): {presentations}. Quítela de allí primero.",
   "category_not_empty": "La categoría todavía contiene productos ({products}, incluidos los archivados) o subcategorías ({subcategories}). Muévalos o elimínelos primero.",
   "certificate_expired": "El certificado ha caducado.",

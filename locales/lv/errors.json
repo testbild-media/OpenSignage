@@ -8,6 +8,7 @@
   "bad_range": "Augšupielādes dati netika saņemti pilnībā. Mēģiniet vēlreiz – augšupielāde turpināsies no vietas, kur tā apstājās.",
   "bad_request": "Pieprasījums netika saprasts.",
   "bundle_invalid": "Fails nav derīga OpenSignage laidiena pakotne: {detail}",
+  "category_in_rules": "Kategorijai joprojām ir cenas šajos laika grafikos: {rules}. Vispirms noņemiet tās tur.",
   "category_in_use": "Kategoriju joprojām izmanto produktu saraksti šajās prezentācijās (ieskaitot arhivētās): {presentations}. Vispirms noņemiet to tur.",
   "category_not_empty": "Kategorijā joprojām ir produkti ({products}, ieskaitot arhivētos) vai apakškategorijas ({subcategories}). Vispirms tos pārvietojiet vai izdzēsiet.",
   "certificate_expired": "Sertifikāta derīguma termiņš ir beidzies.",

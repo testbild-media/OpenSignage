@@ -8,6 +8,7 @@
   "bad_range": "Id-dejta tal-upload ma waslitx kollha. Erġa’ pprova – l-upload ikompli minn fejn waqaf.",
   "bad_request": "It-talba ma nfehmitx.",
   "bundle_invalid": "Il-fajl mhuwiex pakkett validu ta’ rilaxx ta’ OpenSignage: {detail}",
+  "category_in_rules": "Il-kategorija għad għandha prezzijiet f’dawn l-iskedi tal-ħin: {rules}. L-ewwel neħħihom minn hemm.",
   "category_in_use": "Il-kategorija għadha tintuża minn listi tal-prodotti f’dawn il-preżentazzjonijiet (inklużi dawk arkivjati): {presentations}. L-ewwel neħħiha minn hemm.",
   "category_not_empty": "Il-kategorija għad fiha prodotti ({products}, inklużi dawk arkivjati) jew sottokategoriji ({subcategories}). L-ewwel ċaqlaqhom jew ħassarhom.",
   "certificate_expired": "Iċ-ċertifikat skada.",

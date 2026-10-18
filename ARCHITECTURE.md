@@ -198,7 +198,7 @@ the screen at place n plays track n, a place beyond the tracks track 1.
 Rule { id, revision, name, scope: "zone"|"global"|"default", zoneId?,
        window?: { days: [1..7] (ISO, 1=Mon, day of window start), start: "HH:MM", end: "HH:MM" },
        playlistId?: string, groupPlaylists?: [{ groupId | "ungrouped", playlistId }],
-       prices: [{ productId, price: Money }],
+       prices: [{ productId | categoryId, price: Money }],
        ticker?: { hide?, text, templateId?, template?: TickerTemplate (resolved in manifests) }, enabled }
 ```
 A rule changes only what it sets – the playlist of all screens, of single
@@ -218,6 +218,12 @@ with valid playlist, 2) active global window with valid playlist, 3) zone defaul
 valid playlist, 4) nothing → cleared. Price per product: zone window → global window →
 default rule → base price. A deleted/archived playlist does not count; the rest of the rule
 (prices, ticker) still applies. `end <= start` crosses midnight.
+A category price applies to every product of the category and of its subcategories in the
+server currency (other currencies keep their price); inside a rule the product's own price
+comes before its subcategory's, which comes before its category's. The server expands category
+prices into product prices (`schedule.ExpandPrices`) for manifests, `now` and the overlap check,
+so devices only ever see product prices; manifests are rebuilt when products or categories
+change. A category with schedule prices cannot be deleted (`category_in_rules`).
 
 ### 5.5 Deployment manifest (`GET /device/v1/deployments/{id}`)
 

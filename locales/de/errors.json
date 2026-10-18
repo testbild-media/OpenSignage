@@ -8,6 +8,7 @@
   "bad_range": "Die Upload-Daten sind nicht vollständig angekommen. Erneut versuchen – der Upload setzt an der Abbruchstelle fort.",
   "bad_request": "Die Anfrage wurde nicht verstanden.",
   "bundle_invalid": "Die Datei ist kein gültiges OpenSignage-Release-Bündel: {detail}",
+  "category_in_rules": "Die Kategorie hat noch Preise in diesen Zeitplänen: {rules}. Zuerst dort entfernen.",
   "category_in_use": "Die Kategorie wird noch von Produktlisten in diesen Präsentationen verwendet (archivierte eingeschlossen): {presentations}. Zuerst dort entfernen.",
   "category_not_empty": "Die Kategorie enthält noch Produkte ({products}, archivierte eingeschlossen) oder Unterkategorien ({subcategories}). Diese zuerst verschieben oder löschen.",
   "certificate_expired": "Das Zertifikat ist abgelaufen.",

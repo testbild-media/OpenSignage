@@ -413,6 +413,14 @@ func (m *Module) deleteCategory(w http.ResponseWriter, r *http.Request, p *core.
 		if len(pres) > 0 {
 			return errCategoryInUse.With("presentations", refNames(pres))
 		}
+		rules, err := queryRefs(r.Context(), tx, `SELECT DISTINCT r.id, r.name FROM schedule_category_prices sp
+			JOIN schedule_rules r ON r.id = sp.rule_id WHERE sp.category_id = ? ORDER BY r.name, r.id`, id)
+		if err != nil {
+			return err
+		}
+		if len(rules) > 0 {
+			return errCategoryInRules.With("rules", refNames(rules))
+		}
 		if _, err := tx.ExecContext(r.Context(), `DELETE FROM categories WHERE id = ?`, id); err != nil {
 			return err
 		}

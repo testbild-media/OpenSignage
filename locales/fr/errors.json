@@ -8,6 +8,7 @@
   "bad_range": "Les données importées ne sont pas arrivées entièrement. Réessayez – l’importation reprend là où elle s’est arrêtée.",
   "bad_request": "La requête n’a pas été comprise.",
   "bundle_invalid": "Le fichier n’est pas un paquet de version OpenSignage valide : {detail}",
+  "category_in_rules": "La catégorie a encore des prix dans ces planifications horaires : {rules}. Retirez-les d’abord à ces endroits.",
   "category_in_use": "La catégorie est encore utilisée par des listes de produits dans ces présentations (archivées comprises) : {presentations}. Retirez-la d’abord à ces endroits.",
   "category_not_empty": "La catégorie contient encore des produits ({products}, archivés compris) ou des sous-catégories ({subcategories}). Déplacez-les ou supprimez-les d’abord.",
   "certificate_expired": "Le certificat a expiré.",

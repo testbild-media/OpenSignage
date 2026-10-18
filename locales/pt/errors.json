@@ -8,6 +8,7 @@
   "bad_range": "Os dados do carregamento não chegaram completos. Tente novamente – o carregamento continua onde parou.",
   "bad_request": "O pedido não foi compreendido.",
   "bundle_invalid": "O ficheiro não é um pacote de versão do OpenSignage válido: {detail}",
+  "category_in_rules": "A categoria ainda tem preços nestas programações horárias: {rules}. Remova-os primeiro desses locais.",
   "category_in_use": "A categoria ainda é utilizada por listas de produtos nestas apresentações (incluindo as arquivadas): {presentations}. Remova-a primeiro desses locais.",
   "category_not_empty": "A categoria ainda contém produtos ({products}, incluindo os arquivados) ou subcategorias ({subcategories}). Mova-os ou elimine-os primeiro.",
   "certificate_expired": "O certificado expirou.",

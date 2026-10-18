@@ -8,6 +8,7 @@
   "bad_range": "Lähetyksen tiedot eivät saapuneet kokonaan. Yritä uudelleen – lähetys jatkuu keskeytyskohdasta.",
   "bad_request": "Pyyntöä ei ymmärretty.",
   "bundle_invalid": "Tiedosto ei ole kelvollinen OpenSignage-versiopaketti: {detail}",
+  "category_in_rules": "Kategorialla on vielä hintoja näissä aikatauluissa: {rules}. Poista ne ensin niistä.",
   "category_in_use": "Kategoriaa käyttävät yhä tuoteluettelot seuraavissa esityksissä (arkistoidut mukaan lukien): {presentations}. Poista se ensin niistä.",
   "category_not_empty": "Kategoriassa on yhä tuotteita ({products}, arkistoidut mukaan lukien) tai alakategorioita ({subcategories}). Siirrä tai poista ne ensin.",
   "certificate_expired": "Varmenne on vanhentunut.",

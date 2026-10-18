@@ -23,6 +23,7 @@ import (
 
 	"opensignage/internal/common/ids"
 	"opensignage/internal/contracts"
+	"opensignage/internal/schedule"
 	"opensignage/internal/server/core"
 	"opensignage/internal/server/db"
 )
@@ -348,6 +349,37 @@ func (b *Builder) loadRules(ctx context.Context, q querier, zoneID string) ([]co
 	if err := prows.Err(); err != nil {
 		return nil, err
 	}
+	crows, err := q.QueryContext(ctx, `SELECT rule_id, category_id, amount, currency FROM schedule_category_prices
+		WHERE rule_id IN (`+placeholders(len(args))+`) ORDER BY rule_id, category_id`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("deploy: category prices: %w", err)
+	}
+	categoryPrices := false
+	for crows.Next() {
+		var ruleID string
+		var p contracts.PriceOverride
+		if err := crows.Scan(&ruleID, &p.CategoryID, &p.Price.Amount, &p.Price.Currency); err != nil {
+			crows.Close()
+			return nil, err
+		}
+		if i, ok := idx[ruleID]; ok {
+			out[i].Prices = append(out[i].Prices, p)
+			categoryPrices = true
+		}
+	}
+	crows.Close()
+	if err := crows.Err(); err != nil {
+		return nil, err
+	}
+	if categoryPrices {
+		// The screens get product prices only (schedule.ExpandPrices); the manifest is built
+		// again when products or categories change.
+		products, err := CatalogProducts(ctx, q)
+		if err != nil {
+			return nil, err
+		}
+		out = schedule.ExpandPrices(out, products)
+	}
 	grows, err := q.QueryContext(ctx, `SELECT rule_id, group_id, playlist_id FROM schedule_group_playlists
 		WHERE rule_id IN (`+placeholders(len(args))+`) ORDER BY rule_id, group_id`, args...)
 	if err != nil {
@@ -365,6 +397,27 @@ func (b *Builder) loadRules(ctx context.Context, q querier, zoneID string) ([]co
 		}
 	}
 	return out, grows.Err()
+}
+
+// CatalogProducts lists the products that category prices of time schedules apply to (not
+// archived), with their category and its parent.
+func CatalogProducts(ctx context.Context, q querier) ([]schedule.CatalogProduct, error) {
+	rows, err := q.QueryContext(ctx, `SELECT p.id, p.category_id, COALESCE(c.parent_id, ''), p.currency
+		FROM products p JOIN categories c ON c.id = p.category_id
+		WHERE p.archived_at IS NULL ORDER BY p.id`)
+	if err != nil {
+		return nil, fmt.Errorf("deploy: catalog products: %w", err)
+	}
+	defer rows.Close()
+	out := []schedule.CatalogProduct{}
+	for rows.Next() {
+		var p schedule.CatalogProduct
+		if err := rows.Scan(&p.ID, &p.CategoryID, &p.ParentID, &p.Currency); err != nil {
+			return nil, err
+		}
+		out = append(out, p)
+	}
+	return out, rows.Err()
 }
 
 // loadGroups reads the display groups of the zone, ordered by id so the manifest hash

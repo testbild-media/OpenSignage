@@ -8,6 +8,7 @@
   "bad_range": "The upload data did not arrive completely. Try again – the upload continues where it stopped.",
   "bad_request": "The request was not understood.",
   "bundle_invalid": "The file is not a valid OpenSignage release bundle: {detail}",
+  "category_in_rules": "The category still has prices in these Time Schedules: {rules}. Remove them there first.",
   "category_in_use": "The category is still used by product lists in these presentations (archived ones included): {presentations}. Remove it there first.",
   "category_not_empty": "The category still contains products ({products}, archived ones included) or subcategories ({subcategories}). Move or delete them first.",
   "certificate_expired": "The certificate has expired.",

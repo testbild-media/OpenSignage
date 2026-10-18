@@ -8,6 +8,7 @@
   "bad_range": "Üleslaaditud andmed ei jõudnud täielikult kohale. Proovi uuesti – üleslaadimine jätkub katkestuskohast.",
   "bad_request": "Päringust ei saadud aru.",
   "bundle_invalid": "Fail ei ole kehtiv OpenSignage’i väljalaskepakett: {detail}",
+  "category_in_rules": "Kategoorial on veel hindu nendes ajakavades: {rules}. Eemalda need esmalt sealt.",
   "category_in_use": "Kategooriat kasutavad veel tootenimekirjad nendes esitlustes (sh arhiveeritud): {presentations}. Eemalda see esmalt sealt.",
   "category_not_empty": "Kategoorias on veel tooteid ({products}, sh arhiveeritud) või alamkategooriaid ({subcategories}). Teisalda või kustuta need esmalt.",
   "certificate_expired": "Sertifikaat on aegunud.",

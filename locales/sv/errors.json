@@ -8,6 +8,7 @@
   "bad_range": "Uppladdningsdata kom inte fram fullständigt. Försök igen – uppladdningen fortsätter där den stannade.",
   "bad_request": "Begäran kunde inte tolkas.",
   "bundle_invalid": "Filen är inget giltigt OpenSignage-utgåvepaket: {detail}",
+  "category_in_rules": "Kategorin har fortfarande priser i dessa tidsscheman: {rules}. Ta bort dem där först.",
   "category_in_use": "Kategorin används fortfarande av produktlistor i de här presentationerna (inklusive arkiverade): {presentations}. Ta bort den där först.",
   "category_not_empty": "Kategorin innehåller fortfarande produkter ({products}, inklusive arkiverade) eller underkategorier ({subcategories}). Flytta eller ta bort dem först.",
   "certificate_expired": "Certifikatet har gått ut.",

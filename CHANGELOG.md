@@ -4,6 +4,14 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added
+- Time schedules: prices for whole categories and subcategories, e.g. "all long drinks 5 €"
+  during happy hour. The price applies to every product of the category (also to products
+  added later); a price for a subcategory or a single product in the same rule comes first.
+  The server sends the players product prices, so players on older versions show them too.
+
 ## 1.1.0 – 2026-10-18
 
 User rights: operators can be responsible for selected zones only. Installations on 1.0.x update

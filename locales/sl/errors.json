@@ -8,6 +8,7 @@
   "bad_range": "Podatki nalaganja niso prispeli v celoti. Poskusite znova – nalaganje se nadaljuje tam, kjer se je ustavilo.",
   "bad_request": "Zahteve ni bilo mogoče razumeti.",
   "bundle_invalid": "Datoteka ni veljaven paket izdaje OpenSignage: {detail}",
+  "category_in_rules": "Kategorija ima še cene v teh časovnih razporedih: {rules}. Najprej jih tam odstranite.",
   "category_in_use": "Kategorijo še uporabljajo seznami izdelkov v teh predstavitvah (vključno z arhiviranimi): {presentations}. Najprej jo tam odstranite.",
   "category_not_empty": "Kategorija še vsebuje izdelke ({products}, vključno z arhiviranimi) ali podkategorije ({subcategories}). Najprej jih premaknite ali izbrišite.",
   "certificate_expired": "Potrdilo je poteklo.",

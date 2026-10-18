@@ -329,6 +329,12 @@
   margin: 0;
   font-size: 14px;
 }
+.rule-prices-add {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
 .rule-prices p {
   margin: -6px 0 0;
 }
@@ -354,8 +360,16 @@
 .price-table td {
   padding: 6px 8px;
 }
+.price-table td:first-child {
+  width: 100%;
+}
 .price-table select {
+  width: 100%;
   min-width: 140px;
+}
+.price-base {
+  margin-top: 2px;
+  font-size: 12px;
 }
 .price-input {
   display: flex;

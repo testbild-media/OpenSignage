@@ -301,8 +301,14 @@ export interface Window {
   end: string; // HH:MM; <= start crosses midnight
 }
 
+/**
+ * Price of one product, or of every product of a category and its subcategories (exactly one
+ * of productId and categoryId). Within a rule a product price comes before a subcategory
+ * price, which comes before a category price.
+ */
 export interface PriceOverride {
-  productId: string;
+  productId?: string;
+  categoryId?: string;
   price: Money;
 }
 

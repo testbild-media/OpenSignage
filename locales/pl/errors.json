@@ -8,6 +8,7 @@
   "bad_range": "Przesyłane dane nie dotarły w całości. Spróbuj ponownie – przesyłanie zostanie wznowione od miejsca przerwania.",
   "bad_request": "Nie zrozumiano żądania.",
   "bundle_invalid": "Plik nie jest prawidłowym pakietem wydania OpenSignage: {detail}",
+  "category_in_rules": "Kategoria nadal ma ceny w tych harmonogramach: {rules}. Najpierw je tam usuń.",
   "category_in_use": "Kategoria jest nadal używana przez listy produktów w tych prezentacjach (łącznie z zarchiwizowanymi): {presentations}. Najpierw ją tam usuń.",
   "category_not_empty": "Kategoria nadal zawiera produkty ({products}, łącznie z zarchiwizowanymi) lub podkategorie ({subcategories}). Najpierw je przenieś lub usuń.",
   "certificate_expired": "Certyfikat wygasł.",

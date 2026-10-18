@@ -8,6 +8,7 @@
   "bad_range": "I dati del caricamento non sono arrivati completamente. Riprova – il caricamento riprende da dove si era interrotto.",
   "bad_request": "La richiesta non è stata compresa.",
   "bundle_invalid": "Il file non è un pacchetto di release OpenSignage valido: {detail}",
+  "category_in_rules": "La categoria ha ancora prezzi in queste pianificazioni orarie: {rules}. Rimuovili prima da lì.",
   "category_in_use": "La categoria è ancora usata da elenchi prodotti in queste presentazioni (incluse quelle archiviate): {presentations}. Rimuovila prima da lì.",
   "category_not_empty": "La categoria contiene ancora prodotti ({products}, inclusi quelli archiviati) o sottocategorie ({subcategories}). Spostali o eliminali prima.",
   "certificate_expired": "Il certificato è scaduto.",

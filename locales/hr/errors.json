@@ -8,6 +8,7 @@
   "bad_range": "Podaci prijenosa nisu stigli u potpunosti. Pokušajte ponovno – prijenos se nastavlja ondje gdje je stao.",
   "bad_request": "Zahtjev nije razumljiv.",
   "bundle_invalid": "Datoteka nije valjani paket izdanja OpenSignagea: {detail}",
+  "category_in_rules": "Kategorija još ima cijene u ovim vremenskim rasporedima: {rules}. Najprije ih ondje uklonite.",
   "category_in_use": "Kategoriju još koriste popisi proizvoda u ovim prezentacijama (uključujući arhivirane): {presentations}. Najprije je ondje uklonite.",
   "category_not_empty": "Kategorija još sadrži proizvode ({products}, uključujući arhivirane) ili potkategorije ({subcategories}). Najprije ih premjestite ili izbrišite.",
   "certificate_expired": "Certifikat je istekao.",
