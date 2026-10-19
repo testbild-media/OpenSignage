@@ -56,6 +56,18 @@ if [ -d "$BACKUP_DIR" ]; then
 	done
 fi
 
+# Network settings made in the WebGUI stay, so the device keeps its addresses and its Wi-Fi.
+# An unconfirmed change still ends with the next restart; the system files it changed are
+# put back now, because no agent is left to do that after the restart.
+NETCTL=/usr/lib/opensignage-agent/opensignage-netctl
+if [ -x "$NETCTL" ] && [ ! -L "$NETCTL" ]; then
+	if out=$("$NETCTL" uninstall 2>/dev/null); then
+		case "$out" in *'"pending":true'*) warn "an unconfirmed network change is active: restart the device to return to the previous network settings" ;; esac
+	else
+		warn "the network helper could not put back the files of an unconfirmed change"
+	fi
+fi
+
 say "Stopping services"
 for u in opensignage-agent.service opensignage-display.service opensignage-agent-rollback.service; do
 	systemctl stop "$u" 2>/dev/null || true
@@ -72,6 +84,24 @@ allowed_dir() {
 	case "$1" in
 	/opt/opensignage-agent|/usr/lib/opensignage-agent|/var/lib/opensignage-agent|/etc/opensignage|/var/lib/opensignage-agent-install) return 0 ;;
 	esac
+	return 1
+}
+
+# nonfree_firmware_installed: firmware from Debian's non-free-firmware component is installed
+# (it stays: the hardware needs it).
+nonfree_firmware_installed() {
+	dpkg-query -W -f '${binary:Package} ${db:Status-Status}\n' 'firmware-*' 2>/dev/null |
+		awk '$2 == "installed" && $1 !~ /^firmware-linux-free/ { found = 1 } END { exit !found }'
+}
+# wifi_in_use: a wireless interface is connected or set up in the WebGUI.
+wifi_in_use() {
+	for d in /sys/class/net/*; do
+		[ -d "$d/wireless" ] || [ -e "$d/phy80211" ] || continue
+		[ "$(cat "$d/operstate" 2>/dev/null)" = up ] && return 0
+	done
+	for f in /etc/wpa_supplicant/opensignage-*.conf /etc/NetworkManager/system-connections/opensignage-*.nmconnection; do
+		[ -e "$f" ] && return 0
+	done
 	return 1
 }
 
@@ -112,8 +142,20 @@ for line in $(printf '%s\n' "$ENTRIES" | tr ' ' '|'); do
 		if allowed_file "$arg1"; then rm -f "$arg1"; say "removed $arg1"; else warn "ignoring manifest entry: file $arg1"; fi
 		;;
 	restore)
-		if [ "$arg1" = /etc/X11/Xwrapper.config ] && [ -f "$SAVED/Xwrapper.config" ]; then
-			cp -p "$SAVED/Xwrapper.config" "$arg1"
+		saved=""
+		case "$arg1" in
+		/etc/X11/Xwrapper.config) saved=Xwrapper.config ;;
+		/etc/apt/sources.list) saved=sources.list ;;
+		/etc/apt/sources.list.d/debian.sources) saved=debian.sources ;;
+		esac
+		if [ "$saved" = sources.list ] || [ "$saved" = debian.sources ]; then
+			if nonfree_firmware_installed; then
+				say "kept the non-free-firmware component in $arg1 (the installed firmware keeps its updates)"
+				continue
+			fi
+		fi
+		if [ -n "$saved" ] && [ -f "$SAVED/$saved" ]; then
+			cp -p "$SAVED/$saved" "$arg1"
 			say "restored $arg1"
 		else
 			warn "cannot restore $arg1"
@@ -196,6 +238,33 @@ done
 set +f
 systemctl daemon-reload
 systemctl reset-failed opensignage-display.service opensignage-agent.service opensignage-agent-rollback.service 2>/dev/null || true
+
+# Packages the network needs stay: network firmware (the hardware needs it) and, while Wi-Fi
+# is in use, the Wi-Fi tools – removing them would cut the device off.
+if [ -n "$PKGS" ] && [ "$KEEP_PKGS" -eq 0 ]; then
+	kept=""
+	rest=""
+	for p in $PKGS; do
+		case "$p" in
+		firmware-*) kept="$kept $p" ;;
+		wpasupplicant | iw | wireless-regdb) if wifi_in_use; then kept="$kept $p"; else rest="$rest $p"; fi ;;
+		*) rest="$rest $p" ;;
+		esac
+	done
+	if [ -n "$kept" ]; then
+		# Their dependencies the installer added stay too (e.g. libnl for wpasupplicant).
+		# shellcheck disable=SC2086
+		deps=$(apt-cache depends --recurse --installed --no-recommends --no-suggests --no-conflicts \
+			--no-breaks --no-replaces --no-enhances $kept 2>/dev/null | awk '/^[a-z0-9]/ { sub(/:.*/, "", $1); print $1 }' | sort -u)
+		left=""
+		for p in $rest; do
+			if printf '%s\n' "$deps" | grep -qx "$p"; then kept="$kept $p"; else left="$left $p"; fi
+		done
+		rest=$left
+		say "kept the packages the network needs:$kept"
+	fi
+	PKGS=$rest
+fi
 
 for d in $DIRS; do
 	if [ "$d" = /var/lib/opensignage-agent ] && [ "$KEEP_DATA" -eq 1 ]; then

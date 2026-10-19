@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – grafikacceleration mistet, genstarter af afspilleren hjalp ikke (nyt forsøg hver time)",
   "mon.gpuRecovered": "Grafikacceleration gendannet efter tab: {count}× (senest {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Netværk",
   "mon.power": "Strømforsyning",
   "mon.powerEvents": "Underspændinger siden start: {count}",
   "mon.powerLowNow": "Underspænding nu (hændelser siden start: {count}) – enheden sænker farten",

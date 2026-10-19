@@ -153,6 +153,9 @@ temperature, disk, cache, clock, video decoding, display mode and a screenshot o
   would be deleted), screenshot, restart the player, reboot the device, blackout.
 - **Display:** resolution, refresh rate and rotation (also custom modes), chosen from the
   modes the screen reports; scaling fit, fill or 1:1.
+- **Network:** wired or Wi-Fi, address and whether it comes from DHCP or is fixed, the Wi-Fi
+  network and its signal strength; a network change that waits for its confirmation is
+  marked.
 - **Performance profile:** Automatic, Economy (e.g. Raspberry Pi 3: 720p videos), Standard
   (Raspberry Pi 4), Strong (PC). It decides which video variant a player downloads.
 - **Plasma protection** (slight pixel shift) and **plasma regeneration** (white noise until
@@ -166,8 +169,29 @@ that lost its graphics acceleration restarts (at most three times an hour, then 
 a problem).
 
 Each player also has its own small web interface (`https://<player-ip>:8443`): status,
-server address, pair again, actions. A central password for all players can be set under
-Settings → Defaults.
+server address, pair again, display, network, actions, logs and update. A central password
+for all players can be set under Settings → Defaults.
+
+**Network of a player** (its web interface → *Network*):
+
+- Every wired and Wi-Fi adapter with its state, address, gateway, DNS servers and – for
+  Wi-Fi – network, signal strength, band and channel. Without a Wi-Fi adapter the page says
+  so; a supported USB Wi-Fi stick appears as soon as it is plugged in.
+- **Wi-Fi:** *Search networks* lists the networks around with signal and security;
+  *Choose* fills in the network. Enter the password (WPA2 or WPA3; open networks without
+  one) and the country of the radio rules (e.g. DE) – it decides which channels the player
+  may use. A hidden network is entered by hand. *Switch Wi-Fi off* ends a connection set up
+  here. WEP and enterprise networks (802.1X) are not supported.
+- **Address:** *Automatic (DHCP)* or *Fixed address* with IP address, subnet mask (e.g.
+  255.255.255.0 or /24), gateway and up to two DNS servers (the form suggests the values in
+  use). The settings are for IPv4; IPv6 stays automatic.
+- **Apply:** the change is active at once and you are logged out. The screen of the player
+  shows its new address until you log in there again – that login saves the change. If you
+  cannot reach the player any more, restart it: without that login it starts with the
+  previous settings. A change that does not come up at all (for example no answer from
+  DHCP, or the Wi-Fi network refuses the password) is undone at once; after the next login
+  the page says why.
+- When the firmware of an adapter is missing, the page names it and installs it on request.
 
 ## Media and fonts
 

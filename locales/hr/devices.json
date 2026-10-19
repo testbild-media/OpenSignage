@@ -104,6 +104,7 @@
   "mon.gpuLost": "Softver – grafičko ubrzanje izgubljeno, ponovna pokretanja reproduktora nisu pomogla (novi pokušaj svaki sat)",
   "mon.gpuRecovered": "Grafičko ubrzanje vraćeno nakon gubitka: {count}× (zadnji put {time})",
   "mon.hardware": "Hardver",
+  "mon.network": "Mreža",
   "mon.power": "Napajanje",
   "mon.powerEvents": "Događaji podnapona od pokretanja: {count}",
   "mon.powerLowNow": "Trenutačno podnapon (događaji od pokretanja: {count}) – uređaj usporava",

@@ -34,6 +34,12 @@ func clientIP(r *http.Request) string {
 
 type loginData struct {
 	Default bool // the default password is still active
+	// NetworkPending: the login confirms a changed network setting.
+	NetworkPending bool
+}
+
+func (s *Server) loginData() loginData {
+	return loginData{Default: s.mustChange(), NetworkPending: s.networkBackend().NetworkPending()}
 }
 
 func (s *Server) loginPage(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +47,7 @@ func (s *Server) loginPage(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	s.render(w, r, http.StatusOK, "login", &page{CSRF: loginCSRF(w, r), Data: loginData{Default: s.mustChange()}})
+	s.render(w, r, http.StatusOK, "login", &page{CSRF: loginCSRF(w, r), Data: s.loginData()})
 }
 
 func (s *Server) loginPost(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +60,7 @@ func (s *Server) loginPost(w http.ResponseWriter, r *http.Request) {
 	ip := clientIP(r)
 	if d := max(s.throttle.Check(ip), s.global.Check("*")); d > 0 {
 		slog.Warn("webgui login throttled", "remote", ip, "wait", d.Round(time.Second).String())
-		s.render(w, r, http.StatusTooManyRequests, "login", &page{CSRF: c.Value, Data: loginData{Default: s.mustChange()},
+		s.render(w, r, http.StatusTooManyRequests, "login", &page{CSRF: c.Value, Data: s.loginData(),
 			Error: s.t(lang, "login.throttled", "seconds", int(math.Ceil(d.Seconds())))})
 		return
 	}
@@ -74,13 +80,24 @@ func (s *Server) loginPost(w http.ResponseWriter, r *http.Request) {
 		s.throttle.Fail(ip)
 		s.global.Fail("*")
 		slog.Warn("webgui login failed", "remote", ip)
-		s.render(w, r, http.StatusUnauthorized, "login", &page{CSRF: c.Value, Data: loginData{Default: s.mustChange()},
+		s.render(w, r, http.StatusUnauthorized, "login", &page{CSRF: c.Value, Data: s.loginData(),
 			Error: s.t(lang, "login.failed")})
 		return
 	}
 	s.throttle.Success(ip)
 	slog.Info("webgui login", "remote", ip)
 	s.newSession(w)
+	// A new login confirms a changed network setting (it is permanent from now on).
+	if confirmed, failure := s.confirmNetwork(r); confirmed {
+		flash(w, r, "/network", "networkConfirmed")
+		return
+	} else if failure != "" {
+		http.Redirect(w, r, "/network?err=confirm", http.StatusSeeOther)
+		return
+	} else if s.networkBackend().NetworkFailed() {
+		http.Redirect(w, r, "/network", http.StatusSeeOther) // it says why the change failed
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

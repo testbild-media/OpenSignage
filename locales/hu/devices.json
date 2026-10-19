@@ -104,6 +104,7 @@
   "mon.gpuLost": "Szoftver – a grafikus gyorsítás elveszett, a lejátszó újraindításai nem segítettek (új próbálkozás óránként)",
   "mon.gpuRecovered": "A grafikus gyorsítás kiesés után helyreállt: {count}× (legutóbb {time})",
   "mon.hardware": "Hardver",
+  "mon.network": "Hálózat",
   "mon.power": "Tápellátás",
   "mon.powerEvents": "Alacsony feszültség események indítás óta: {count}",
   "mon.powerLowNow": "Most alacsony a feszültség (események indítás óta: {count}) – az eszköz lelassul",

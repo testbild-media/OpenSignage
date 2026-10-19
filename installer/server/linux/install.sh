@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# OpenSignage server installer for Debian/Ubuntu/Raspberry Pi OS (amd64, arm64, armhf).
+# OpenSignage server installer for Debian/Raspberry Pi OS (amd64, arm64, armhf).
 #
 # Run from an extracted release package as root:
 #   sudo ./install-server.sh [--admin USER]
@@ -46,7 +46,7 @@ done
 # --- capability checks (not version checks) -----------------------------------------------
 [ "$(id -u)" = 0 ] || die "please run as root (sudo)"
 command -v systemctl >/dev/null || die "systemd is required"
-command -v apt-get >/dev/null || die "apt-get is required (Debian, Ubuntu, Raspberry Pi OS)"
+command -v apt-get >/dev/null || die "apt-get is required (Debian, Raspberry Pi OS)"
 command -v runuser >/dev/null || die "runuser (util-linux) is required"
 [ -x "$PKG_DIR/bin/opensignage-server" ] || die "bin/opensignage-server not found next to this script"
 "$PKG_DIR/bin/opensignage-server" version >/dev/null 2>&1 || die "the server binary does not run on this machine (wrong architecture $(uname -m)?)"

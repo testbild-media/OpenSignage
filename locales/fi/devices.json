@@ -104,6 +104,7 @@
   "mon.gpuLost": "Ohjelmisto – grafiikkakiihdytys menetettiin, soittimen uudelleenkäynnistykset eivät auttaneet (uusi yritys tunnin välein)",
   "mon.gpuRecovered": "Grafiikkakiihdytys palautui menetyksen jälkeen: {count}× (viimeksi {time})",
   "mon.hardware": "Laitteisto",
+  "mon.network": "Verkko",
   "mon.power": "Virransyöttö",
   "mon.powerEvents": "Alijännitetapahtumia käynnistyksestä: {count}",
   "mon.powerLowNow": "Alijännite nyt (tapahtumia käynnistyksestä: {count}) – laite hidastaa",

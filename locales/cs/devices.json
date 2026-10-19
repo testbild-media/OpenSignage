@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – grafická akcelerace selhala, restarty přehrávače nepomohly (nový pokus každou hodinu)",
   "mon.gpuRecovered": "Grafická akcelerace obnovena po výpadku: {count}× (naposledy {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Síť",
   "mon.power": "Napájení",
   "mon.powerEvents": "Události podpětí od spuštění: {count}",
   "mon.powerLowNow": "Právě podpětí (události od spuštění: {count}) – zařízení se zpomaluje",

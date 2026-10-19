@@ -104,6 +104,7 @@
   "mon.gpuLost": "Programinė įranga – prarastas grafikos spartinimas, grotuvo paleidimai iš naujo nepadėjo (naujas bandymas kas valandą)",
   "mon.gpuRecovered": "Grafikos spartinimas atkurtas po praradimo: {count}× (paskutinį kartą {time})",
   "mon.hardware": "Aparatinė įranga",
+  "mon.network": "Tinklas",
   "mon.power": "Maitinimas",
   "mon.powerEvents": "Per mažos įtampos įvykiai nuo paleidimo: {count}",
   "mon.powerLowNow": "Dabar per maža įtampa (įvykiai nuo paleidimo: {count}) – įrenginys lėtėja",

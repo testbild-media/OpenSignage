@@ -104,6 +104,7 @@
   "mon.gpuLost": "Programmatūra – zaudēts grafikas paātrinājums, atskaņotāja restartēšana nepalīdzēja (jauns mēģinājums ik stundu)",
   "mon.gpuRecovered": "Grafikas paātrinājums atjaunots pēc zuduma: {count}× (pēdējoreiz {time})",
   "mon.hardware": "Aparatūra",
+  "mon.network": "Tīkls",
   "mon.power": "Barošana",
   "mon.powerEvents": "Pazemināta sprieguma notikumi kopš starta: {count}",
   "mon.powerLowNow": "Pašlaik pazemināts spriegums (notikumi kopš starta: {count}) – ierīce palēninās",

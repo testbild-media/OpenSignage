@@ -104,6 +104,7 @@
   "mon.gpuLost": "Programsko – grafično pospeševanje izgubljeno, ponovni zagoni predvajalnika niso pomagali (nov poskus vsako uro)",
   "mon.gpuRecovered": "Grafično pospeševanje obnovljeno po izgubi: {count}× (nazadnje {time})",
   "mon.hardware": "Strojna oprema",
+  "mon.network": "Omrežje",
   "mon.power": "Napajanje",
   "mon.powerEvents": "Dogodki podnapetosti od zagona: {count}",
   "mon.powerLowNow": "Trenutno podnapetost (dogodki od zagona: {count}) – naprava se upočasni",

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"opensignage/locales"
@@ -59,6 +60,22 @@ func parseTemplates(bundle *locales.Bundle) (*template.Template, error) {
 		},
 		"float": func(f float64) string { return fmt.Sprintf("%.1f", f) },
 		"hz":    func(f float64) string { return fmt.Sprintf("%.2f", f) },
+		"join":  func(l []string) string { return strings.Join(l, ", ") },
+		"quality": func(q string) string {
+			switch q {
+			case "excellent", "good":
+				return "ok"
+			case "fair":
+				return "warn"
+			}
+			return "err"
+		},
+		"netctx": func(p *page, i netIface) any {
+			return struct {
+				P *page
+				I netIface
+			}{p, i}
+		},
 		"linkctx": func(l string, s Status) any {
 			return struct {
 				L    string
@@ -66,7 +83,11 @@ func parseTemplates(bundle *locales.Bundle) (*template.Template, error) {
 			}{l, s}
 		},
 	}
-	return template.New("webgui").Funcs(funcs).Parse(templates)
+	t, err := template.New("webgui").Funcs(funcs).Parse(templates)
+	if err != nil {
+		return nil, err
+	}
+	return t.Parse(networkTemplates)
 }
 
 func serveCSS(w http.ResponseWriter, _ *http.Request) {
@@ -107,6 +128,10 @@ pre{background:var(--bg);border:1px solid var(--border);border-radius:6px;paddin
 .pin{font-size:48px;font-weight:700;letter-spacing:.12em;color:var(--primary);font-variant-numeric:tabular-nums}
 .login{max-width:420px;margin:8vh auto}
 code{background:var(--raised);padding:1px 6px;border-radius:4px}
+table.aps{width:100%;border-collapse:collapse;margin-top:8px}table.aps th,table.aps td{text-align:left;padding:6px 8px;border-top:1px solid var(--border)}table.aps th{color:var(--muted);font-weight:500}
+.unsupported{color:var(--faint)}
+fieldset{border:1px solid var(--border);border-radius:8px;padding:6px 14px 12px;margin:12px 0}legend{color:var(--muted);padding:0 6px}
+input[type=radio],input[type=checkbox]{accent-color:var(--primary)}
 @media (max-width:640px){dl.grid{grid-template-columns:1fr}main{padding:16px}header{padding:12px 16px}}
 `
 
@@ -123,6 +148,7 @@ const templates = `
     <a href="/server" {{if eq .Nav "server"}}class="active"{{end}}>{{t .L "nav.server"}}</a>
     <a href="/pairing" {{if eq .Nav "pairing"}}class="active"{{end}}>{{t .L "nav.pairing"}}</a>
     <a href="/display" {{if eq .Nav "display"}}class="active"{{end}}>{{t .L "nav.display"}}</a>
+    <a href="/network" {{if eq .Nav "network"}}class="active"{{end}}>{{t .L "nav.network"}}</a>
     <a href="/actions" {{if eq .Nav "actions"}}class="active"{{end}}>{{t .L "nav.actions"}}</a>
     <a href="/logs" {{if eq .Nav "logs"}}class="active"{{end}}>{{t .L "nav.logs"}}</a>
     <a href="/update" {{if eq .Nav "update"}}class="active"{{end}}>{{t .L "nav.update"}}</a>
@@ -153,6 +179,7 @@ const templates = `
     <p><button type="submit">{{t .L "login.submit"}}</button></p>
   </form>
   {{if .Data.Default}}<p class="note">{{t .L "login.defaultHint" "password" "opensignage"}}</p>{{end}}
+  {{if .Data.NetworkPending}}<p class="note">{{t .L "login.networkPending"}}</p>{{end}}
 </div>{{end}}
 
 {{define "password"}}<div class="card">

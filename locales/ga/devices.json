@@ -104,6 +104,7 @@
   "mon.gpuLost": "Bogearraí – cailleadh luasghéarú grafaice, níor chabhraigh atosú an tseinnteora (triail eile gach uair an chloig)",
   "mon.gpuRecovered": "Athbhunaíodh luasghéarú grafaice tar éis é a chailleadh: {count}× (an uair dheireanach: {time})",
   "mon.hardware": "Crua-earraí",
+  "mon.network": "Líonra",
   "mon.power": "Soláthar cumhachta",
   "mon.powerEvents": "Teagmhais íosvoltais ón tosú: {count}",
   "mon.powerLowNow": "Íosvoltas anois (teagmhais ón tosú: {count}) – moillíonn an gléas",

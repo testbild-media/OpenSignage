@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – grafische versnelling uitgevallen, herstarts van de speler hielpen niet (nieuwe poging elk uur)",
   "mon.gpuRecovered": "Grafische versnelling hersteld na uitval: {count}× (laatste keer {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Netwerk",
   "mon.power": "Voeding",
   "mon.powerEvents": "Onderspanningen sinds start: {count}",
   "mon.powerLowNow": "Nu onderspanning (gebeurtenissen sinds start: {count}) – het apparaat vertraagt",

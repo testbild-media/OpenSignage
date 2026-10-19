@@ -90,10 +90,10 @@ func TestWebSocketSnapshotAndDiffs(t *testing.T) {
 	}
 	defer c.CloseNow()
 	var types []string
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 7; i++ {
 		types = append(types, readMsg(t, c).T)
 	}
-	if strings.Join(types, ",") != "mode,config,bundle,source,live,versionNotice" {
+	if strings.Join(types, ",") != "mode,config,bundle,source,live,versionNotice,networkNotice" {
 		t.Fatalf("snapshot order: %v", types)
 	}
 	// Only the changed part is sent.

@@ -4,6 +4,29 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added
+- Network settings in the player's web interface (*Network*): wired and Wi-Fi with DHCP or
+  a fixed address (IP address, subnet mask, gateway, DNS servers), a scan for Wi-Fi
+  networks, the country of the radio rules, signal strength, band and channel. A change is
+  active at once and the screen shows the new address; the next login to the web interface
+  makes it permanent, a restart without that login returns to the previous settings; a
+  change that does not come up at all is undone at once.
+  Players without a Wi-Fi adapter say so; missing network firmware is named and installed
+  on request. Follows the system's network setup (ifupdown on Debian, NetworkManager on
+  Raspberry Pi OS). Existing players need the installer once more for it.
+- Device page: network of each player – wired or Wi-Fi, address, DHCP or fixed, Wi-Fi
+  network and signal strength, a change waiting for its confirmation.
+- Client installer: Wi-Fi packages (`wpasupplicant`, `iw`, `wireless-regdb`) and the network
+  firmware the adapters miss (Debian `non-free-firmware`).
+
+### Changed
+- Supported systems: Debian 12/13 and Raspberry Pi OS; Ubuntu is no longer listed (it was
+  never tested).
+- Client uninstaller: network settings made in the web interface, network firmware and – while
+  Wi-Fi is in use – the Wi-Fi packages stay, so the device stays reachable.
+
 ## 1.3.0 – 2026-10-19
 
 Zone preview: what the screens of a zone show, now or at any moment, also without devices online.

@@ -129,3 +129,6 @@ a.kpi:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.net-line + .net-line {
+  margin-top: 2px;
+}

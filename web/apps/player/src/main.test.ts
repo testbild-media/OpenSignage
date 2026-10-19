@@ -258,6 +258,21 @@ describe('IP overlay at start', () => {
   });
 });
 
+describe('network change waiting for its confirmation', () => {
+  it('keeps the addresses of the WebGUI on screen until it is confirmed', async () => {
+    await push({ t: 'mode', p: MODE }, { t: 'config', p: { ...CONFIG, showIpOverlay: false } });
+    expect(visible('netnotice')).toBe(false);
+    await push({ t: 'networkNotice', p: { text: 'New network setting\nhttps://10.20.3.200:8443' } });
+    expect(visible('netnotice')).toBe(true);
+    expect($('netnotice').textContent).toContain('https://10.20.3.200:8443');
+    expect(getComputedStyle($('netnotice')).whiteSpace).toBe('pre-line');
+    await vi.advanceTimersByTimeAsync(60_000); // no timeout: it stays
+    expect(visible('netnotice')).toBe(true);
+    await push({ t: 'networkNotice', p: { text: null } });
+    expect(visible('netnotice')).toBe(false);
+  });
+});
+
 // ---------------------------------------------------------------- scale mode and assets
 
 describe('scale mode and assets on the player', () => {

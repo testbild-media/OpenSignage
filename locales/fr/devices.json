@@ -104,6 +104,7 @@
   "mon.gpuLost": "Logiciel – accélération graphique perdue, les redémarrages du lecteur n’ont rien donné (nouvelle tentative toutes les heures)",
   "mon.gpuRecovered": "Accélération graphique rétablie après une perte : {count}× (dernière fois : {time})",
   "mon.hardware": "Matériel",
+  "mon.network": "Réseau",
   "mon.power": "Alimentation",
   "mon.powerEvents": "Sous-tensions depuis le démarrage : {count}",
   "mon.powerLowNow": "Sous-tension actuellement (événements depuis le démarrage : {count}) – l’appareil ralentit",

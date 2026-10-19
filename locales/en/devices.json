@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – graphics acceleration lost, restarting the player did not help (tried again every hour)",
   "mon.gpuRecovered": "Graphics acceleration restored after a loss: {count}× (last {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Network",
   "mon.power": "Power supply",
   "mon.powerEvents": "Under-voltage events since start: {count}",
   "mon.powerLowNow": "Under-voltage now (events since start: {count}) – the device slows down",

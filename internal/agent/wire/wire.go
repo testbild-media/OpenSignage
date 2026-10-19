@@ -72,6 +72,7 @@ const (
 	TConfig        = "config"
 	TCmd           = "cmd"
 	TVersionNotice = "versionNotice"
+	TNetworkNotice = "networkNotice"
 
 	// Player → agent.
 	TPing = "ping"
@@ -324,6 +325,28 @@ type Status struct {
 	Model string `json:"model,omitempty"`
 	// Clock: source and quality of the time used for synchronous playback.
 	Clock *ClockInfo `json:"clock,omitempty"`
+	// Network: the interfaces with addresses and the wireless signal (absent in older agents).
+	Network *StatusNetwork `json:"network,omitempty"`
+}
+
+// StatusNetwork is the network of the device in status reports.
+type StatusNetwork struct {
+	Interfaces []StatusNetIface `json:"interfaces"`
+	// Pending: a change made in the client WebGUI waits for its confirmation.
+	Pending bool `json:"pending,omitempty"`
+}
+
+// StatusNetIface is one wired or wireless interface.
+type StatusNetIface struct {
+	Name      string   `json:"name"`
+	Kind      string   `json:"kind"` // ethernet | wifi
+	Connected bool     `json:"connected"`
+	IPv4      []string `json:"ipv4,omitempty"`
+	Method    string   `json:"method,omitempty"` // dhcp | static
+	SpeedMbps int      `json:"speedMbps,omitempty"`
+	SSID      string   `json:"ssid,omitempty"`
+	SignalDBM int      `json:"signalDbm,omitempty"`
+	FreqMHz   int      `json:"freqMHz,omitempty"`
 }
 
 // UpdateInfo is the agent update state in status reports (absent when idle).
@@ -618,6 +641,12 @@ type PlayerCmd struct {
 
 // VersionNotice is shown discreetly when agent and server versions differ.
 type VersionNotice struct {
+	Text *string `json:"text"`
+}
+
+// NetworkNotice stays on the screen while a network change waits for its confirmation (a
+// new login to the client WebGUI); it names the addresses of the WebGUI.
+type NetworkNotice struct {
 	Text *string `json:"text"`
 }
 

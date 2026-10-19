@@ -22,7 +22,7 @@ for arch in $ARCHES; do
   echo "==> linux/$arch"
   rm -rf "$out"
   mkdir -p "$out/bin" "$out/share" "$out/install"
-  for cmd in opensignage-server opensignage-agent; do
+  for cmd in opensignage-server opensignage-agent opensignage-netctl; do
     [ -f "$ROOT/cmd/$cmd/main.go" ] || continue
     GOOS=linux GOARCH=$goarch GOARM=$goarm CGO_ENABLED=0 go build -trimpath -ldflags "$LDFLAGS" -o "$out/bin/$cmd" "$ROOT/cmd/$cmd"
   done

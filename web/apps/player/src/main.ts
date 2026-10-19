@@ -230,6 +230,13 @@ function handle(msg: AgentToPlayer): void {
       versionNotice = !!msg.p.text;
       renderNotice();
       break;
+    case 'networkNotice': {
+      // Stays until the change is confirmed by a new login (or the device restarts).
+      const el = $('netnotice');
+      el.textContent = msg.p.text ?? '';
+      el.classList.toggle('hidden', !msg.p.text);
+      break;
+    }
   }
 }
 

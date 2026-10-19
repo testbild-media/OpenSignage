@@ -98,6 +98,9 @@ Everything is open source (AGPL-3.0) and available in the 24 official EU languag
 - Install a player with one line, give it a name, type the PIN shown on the screen into the
   administration – done. Players find the server in the LAN by themselves; in other
   networks they get its address or host name.
+- Wired network and Wi-Fi are set up in the player's own web interface: DHCP or a fixed
+  address, Wi-Fi networks found by a scan, signal strength. A change only stays once you
+  log in again at the new address – a restart undoes a wrong setting.
 - Hardware video decoding on the Raspberry Pi and on Intel graphics; videos are converted on
   upload so every player gets a version it can play smoothly.
 - A crashed browser, a hanging video or lost graphics acceleration are detected and fixed
@@ -158,8 +161,8 @@ Step by step, manual installation, certificates and hardware notes:
 
 | | |
 | --- | --- |
-| **Server** | Debian 12/13, Ubuntu 22.04+ or Raspberry Pi OS (64-bit); amd64 or arm64 |
-| **Players** | **Recommended:** small x86 PCs with Intel graphics (Debian, Ubuntu), up to 4K. **Minimum:** Raspberry Pi 4 (Raspberry Pi OS 64-bit Lite) |
+| **Server** | Debian 12/13 or Raspberry Pi OS (64-bit); amd64 or arm64 |
+| **Players** | **Recommended:** small x86 PCs with Intel graphics (Debian), up to 4K. **Minimum:** Raspberry Pi 4 (Raspberry Pi OS 64-bit Lite) |
 | **Operator view** | any current browser on phones, tablets and computers |
 
 Raspberry Pi 3 and 2 are **not supported**: their hardware video decoder fails about every

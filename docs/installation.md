@@ -30,8 +30,7 @@ The rest of this page explains the installation by hand and what the installers 
 
 ## 1. Server
 
-Requirements: Debian 12/13, Ubuntu 22.04 or newer, or Raspberry Pi OS (64-bit); amd64 or
-arm64; systemd; 1 GB free disk space plus room for your media. These ports must be free:
+Requirements: Debian 12/13 or Raspberry Pi OS (64-bit); amd64 or arm64; systemd; 1 GB free disk space plus room for your media. These ports must be free:
 
 | Port | Purpose |
 | --- | --- |
@@ -85,7 +84,7 @@ server that they pin when they are paired (port 7443).
 
 ## 3. Players
 
-Requirements: Raspberry Pi OS Lite (64-bit) on a Raspberry Pi 4, or Debian/Ubuntu on an x86
+Requirements: Raspberry Pi OS Lite (64-bit) on a Raspberry Pi 4, or Debian 12/13 on an x86
 PC; a screen connected via HDMI. No desktop is needed – the player starts its own minimal
 graphics session.
 
@@ -115,6 +114,27 @@ crashes "Automatic" switches to software decoding until the next restart and sho
 in the administration; "On" is never overridden, "Off" always decodes in software. The
 installer adds the drivers the distribution offers (`intel-media-va-driver` or
 `mesa-va-drivers`, `mesa-vulkan-drivers`; skip with `--no-video-drivers`).
+
+**Network (wired and Wi-Fi)** is set up in the player's web interface under *Network*: DHCP
+or a fixed address (IP address, subnet mask, gateway, up to two DNS servers) for the wired
+port and for Wi-Fi, a scan for Wi-Fi networks, the country of the radio rules and the signal
+strength. A change is active at once; the web interface logs you out and the screen shows
+the new address. The change becomes permanent with the next login to the web interface – a
+restart without that login returns to the previous settings, so a wrong address never locks
+the player away for good; a change that does not come up at all is undone at once. The player keeps to the system's own network setup:
+`/etc/network/interfaces` on Debian, NetworkManager on Raspberry Pi OS.
+
+- The installer adds what Wi-Fi needs on Debian (`wpasupplicant`, `iw`, `wireless-regdb`),
+  enables the `non-free-firmware` component of the Debian sources and installs the firmware
+  the network adapters miss. For a USB Wi-Fi stick plugged in later the web interface offers
+  its firmware; restart the device (or plug the stick in again) after installing it.
+- Players installed with version 1.3.0 or older need the installer once more for this
+  (`sudo ./install-client.sh`; name, pairing and content stay) – updates from the
+  administration do not change the system's network permissions. Until then the page only
+  shows the network state.
+- `uninstall-client.sh` leaves the network settings made in the web interface in place and
+  keeps the network firmware and – while Wi-Fi is in use – the Wi-Fi packages, so the device
+  stays reachable.
 
 ## 4. Take a player over
 

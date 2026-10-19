@@ -207,6 +207,9 @@ if ! apt-cache show --no-all-versions chromium >/dev/null 2>&1; then
 	fi
 fi
 PKGS="xserver-xorg-core xserver-xorg-video-fbdev xserver-xorg-legacy xinit x11-xserver-utils $CHROMIUM_PKG fonts-noto-color-emoji fonts-dejavu-core sudo"
+# Wireless networks (network settings of the client WebGUI): Raspberry Pi OS has them already;
+# on Debian a USB stick plugged in later works without installing anything.
+PKGS="$PKGS wpasupplicant iw wireless-regdb"
 # cvt (forced display modes) moved from xserver-xorg-core into its own package.
 if apt-cache show --no-all-versions xcvt >/dev/null 2>&1; then PKGS="$PKGS xcvt"; fi
 
@@ -271,6 +274,57 @@ if [ "$VIDEO_DRIVERS" -eq 1 ] && [ "$ARCH" = amd64 ]; then
 	fi
 fi
 
+# Network firmware: Wi-Fi chips (and some wired ones) need firmware from Debian's
+# non-free-firmware component. The Debian installer enables it when the hardware needs it;
+# here it is enabled as well (saved for uninstall) and the firmware the kernel misses is
+# installed. Raspberry Pi OS ships its firmware.
+is_raspios() { [ -f /etc/rpi-issue ]; }
+enable_nonfree_firmware() {
+	changed=0
+	f=/etc/apt/sources.list.d/debian.sources
+	if [ -f "$f" ] && grep -q '^Components:' "$f" && grep '^Components:' "$f" | grep -vq 'non-free-firmware'; then
+		if ! recorded "restore $f"; then cp -p "$f" "$BACKUP/debian.sources"; record "restore $f"; fi
+		sed -i '/^Components:/{/non-free-firmware/!s/$/ non-free-firmware/}' "$f"
+		changed=1
+	fi
+	f=/etc/apt/sources.list
+	if [ -f "$f" ] && grep -Eq '^deb(-src)?[[:space:]].*(deb|security|ftp\.[a-z]+)\.debian\.org' "$f" &&
+		grep -E '^deb(-src)?[[:space:]].*(deb|security|ftp\.[a-z]+)\.debian\.org' "$f" | grep -vq 'non-free-firmware'; then
+		if ! recorded "restore $f"; then cp -p "$f" "$BACKUP/sources.list"; record "restore $f"; fi
+		sed -i -E '/^deb(-src)?[[:space:]].*(deb|security|ftp\.[a-z]+)\.debian\.org/{/non-free-firmware/!s/$/ non-free-firmware/}' "$f"
+		changed=1
+	fi
+	if [ "$changed" -eq 1 ]; then
+		say "Enabled the non-free-firmware component of the Debian sources"
+		apt-get update -q || warn "apt-get update failed"
+	fi
+}
+# missing_net_firmware: the packages with network firmware the kernel could not load.
+missing_net_firmware() {
+	dmesg 2>/dev/null | sed -n 's/.*Direct firmware load for \([^ ]*\) failed.*/\1/p' | sort -u | while read -r f; do
+		if [ -e "/lib/firmware/$f" ] || [ -e "/lib/firmware/$f.xz" ] || [ -e "/lib/firmware/$f.zst" ]; then continue; fi
+		case "$f" in
+		iwlwifi-*) echo firmware-iwlwifi ;;
+		rtw88/* | rtw89/* | rtlwifi/* | rtl_nic/*) echo firmware-realtek ;;
+		ath9k_htc/* | ath10k/* | ath11k/* | ath12k/* | ar3k/* | ar5* | ar7* | ar9*) echo firmware-atheros ;;
+		mediatek/* | mt7*) if pkg_available firmware-mediatek; then echo firmware-mediatek; else echo firmware-misc-nonfree; fi ;;
+		brcm/*) echo firmware-brcm80211 ;;
+		libertas/* | mrvl/*) echo firmware-libertas ;;
+		ti-connectivity/*) echo firmware-ti-connectivity ;;
+		esac
+	done | sort -u
+}
+if ! is_raspios; then
+	enable_nonfree_firmware
+	FW_PKGS=$(missing_net_firmware | tr '\n' ' ')
+	if [ -n "$FW_PKGS" ]; then
+		say "Installing network firmware: $FW_PKGS"
+		# shellcheck disable=SC2086
+		install_pkgs optional $FW_PKGS
+		warn "network firmware installed: restart the device (or plug the adapter in again) to load it"
+	fi
+fi
+
 # Raspberry Pi 2/3 (VideoCore IV): the GPU has no MMU, so every graphics and video buffer
 # comes from the contiguous memory pool (CMA). Raspberry Pi OS reserves 256 MB; a 1080p
 # output with 720p video leaves about 30 MB, and a mode switch or a screenshot then fails to
@@ -280,7 +334,7 @@ fi
 # always available). Takes effect after the next reboot; uninstall.sh restores the line.
 PI_CMA=384
 REBOOT_NEEDED=0
-pi_model() { tr -d '\000' </proc/device-tree/model 2>/dev/null || true; }
+pi_model() { if [ -r /proc/device-tree/model ]; then tr -d '\000' </proc/device-tree/model; fi; }
 # The Raspberry Pi 2/3 is not supported (it may work with simple content).
 UNSUPPORTED_BOARD=""
 case "$(pi_model)" in
@@ -405,6 +459,12 @@ mkdir -p "$LIBDIR"
 for f in session.sh rollback.sh uninstall.sh; do
 	install -o root -g root -m 0755 "$SCRIPT_DIR/$f" "$LIBDIR/$f"
 done
+# Root helper of the network settings (root-owned: the agent may run it, never change it).
+if [ -f "$PKGROOT/bin/opensignage-netctl" ]; then
+	install -o root -g root -m 0755 "$PKGROOT/bin/opensignage-netctl" "$LIBDIR/opensignage-netctl"
+else
+	warn "package without opensignage-netctl: the network settings of the WebGUI stay read-only"
+fi
 rm -f "$LIBDIR/set-hostname.sh" # host name helper of older versions (now set here)
 
 # ---------------------------------------------------------------- configuration
@@ -499,9 +559,13 @@ if [ -d /etc/X11 ]; then
 	printf 'allowed_users=anybody\nneeds_root_rights=auto\n' >"$XWRAPPER"
 fi
 
-# Minimal reboot permission for the remote action "reboot device".
-say "Installing sudoers rule (systemctl reboot only)"
-printf '%s ALL=(root) NOPASSWD: /usr/bin/systemctl reboot\n' "$SVCUSER" >"$SUDOERS.tmp"
+# Minimal permissions: the remote action "reboot device" and the root helper of the network
+# settings (it accepts only fixed commands and checks every input).
+say "Installing sudoers rule (reboot, network helper)"
+{
+	printf '%s ALL=(root) NOPASSWD: /usr/bin/systemctl reboot\n' "$SVCUSER"
+	printf '%s ALL=(root) NOPASSWD: %s/opensignage-netctl\n' "$SVCUSER" "$LIBDIR"
+} >"$SUDOERS.tmp"
 chmod 0440 "$SUDOERS.tmp"
 if command -v visudo >/dev/null 2>&1 && ! visudo -cf "$SUDOERS.tmp" >/dev/null; then
 	rm -f "$SUDOERS.tmp"

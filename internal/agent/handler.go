@@ -98,6 +98,9 @@ func (a *Agent) Status() wire.Status {
 	}
 	s.Video = a.videoStatus()
 	s.Clock = a.clockInfo()
+	nctx, ncancel := context.WithTimeout(context.Background(), 10*time.Second)
+	s.Network = a.networkReport(nctx)
+	ncancel()
 	if total, free, err := sysinfo.Disk(a.cfg.DataDir); err == nil {
 		s.DiskTotal, s.DiskFree = total, free
 	}

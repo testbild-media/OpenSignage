@@ -3,6 +3,7 @@
 // older agent does not report show "—".
 import { useCallback, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Eraser, OctagonAlert, ArrowUpCircle } from 'lucide-react';
+import type { DeviceStatus } from '@opensignage/contracts';
 import { has } from '@opensignage/i18n';
 import { post } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
@@ -18,6 +19,8 @@ import {
   formatTemperature,
   formatUptime,
   modeLabel,
+  signalPercent,
+  signalQuality,
   storageOf,
   type Device,
   type DiskLevel,
@@ -173,6 +176,44 @@ function AlignBlock({ d }: { d: Device }) {
   );
 }
 
+/** Wired and wireless interfaces: address, DHCP/static, speed or network and signal. */
+function NetworkValue({ network }: { network: DeviceStatus['network'] }) {
+  const t = useT();
+  if (!network || network.interfaces.length === 0) return <>—</>;
+  return (
+    <>
+      {network.interfaces.map((n) => {
+        const kind = n.kind === 'wifi' ? t('client.network.wifiTitle') : t('client.network.ethernetTitle');
+        const q = n.signalDbm ? signalQuality(n.signalDbm) : null;
+        return (
+          <div key={n.name} className="net-line">
+            <span className="strong">{kind}</span> <span className="faint">{n.name}</span>
+            {n.connected ? (
+              <>
+                {n.ssid && <> · {n.ssid}</>}
+                {n.ipv4?.length ? <> · {n.ipv4.join(', ')}</> : null}
+                {n.method && <span className="faint"> · {t(`client.network.method.${n.method}`)}</span>}
+                {!!n.speedMbps && <span className="faint"> · {n.speedMbps} Mbit/s</span>}
+                {q && n.signalDbm && (
+                  <>
+                    {' '}
+                    <Badge tone={q === 'weak' ? 'danger' : q === 'fair' ? 'warning' : 'success'}>
+                      {t(`client.network.quality.${q}`)} · {n.signalDbm} dBm ({signalPercent(n.signalDbm)} %)
+                    </Badge>
+                  </>
+                )}
+              </>
+            ) : (
+              <span className="faint"> · {t('client.network.state.disconnected')}</span>
+            )}
+          </div>
+        );
+      })}
+      {network.pending && <Badge tone="warning">{t('client.network.pendingBadge')}</Badge>}
+    </>
+  );
+}
+
 /** The monitoring card: everything the device reports, translated and formatted. */
 export function MonitorCard({ d }: { d: Device }) {
   const t = useT();
@@ -234,6 +275,10 @@ export function MonitorCard({ d }: { d: Device }) {
           ) : (
             '—'
           )}
+        </dd>
+        <dt>{t('devices.mon.network')}</dt>
+        <dd>
+          <NetworkValue network={m.network} />
         </dd>
         <dt>{t('client.status.cpu')}</dt>
         <dd>{formatPercentValue(m.cpu)}</dd>

@@ -104,6 +104,7 @@
   "mon.gpuLost": "Programowe – utracono akcelerację grafiki, ponowne uruchomienia odtwarzacza nie pomogły (nowa próba co godzinę)",
   "mon.gpuRecovered": "Przywrócono akcelerację grafiki po utracie: {count}× (ostatnio {time})",
   "mon.hardware": "Sprzęt",
+  "mon.network": "Sieć",
   "mon.power": "Zasilanie",
   "mon.powerEvents": "Zdarzenia zbyt niskiego napięcia od uruchomienia: {count}",
   "mon.powerLowNow": "Teraz zbyt niskie napięcie (zdarzenia od uruchomienia: {count}) – urządzenie zwalnia",

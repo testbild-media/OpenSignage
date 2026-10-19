@@ -23,7 +23,8 @@ install and use it in [docs/](docs/README.md).
  │   ├─ local state: JSON files (atomic), blob cache                                     │
  │   ├─ scheduler: evaluates time schedules locally (shared Go package)                  │
  │   ├─ loopback server 127.0.0.1:7600 → player app, assets, fonts, WS to player         │
- │   ├─ client WebGUI :8443 (HTTPS, server-rendered HTML)                                 │
+ │   ├─ client WebGUI :8443 (HTTPS, server-rendered HTML)                                │
+ │   │    └─ network settings: root helper opensignage-netctl via sudo (fixed commands)  │
  │   ├─ kiosk supervisor: Chromium child process, CDP, watchdog with backoff             │
  │   ├─ display provider (X11/xrandr; a fake one for tests)                              │
  │   └─ updater (install side by side, health check, self rollback)                      │
@@ -37,6 +38,7 @@ Repository layout:
 | Path | Content |
 | --- | --- |
 | `cmd/opensignage-server`, `cmd/opensignage-agent` | binaries |
+| `cmd/opensignage-netctl` | root helper of the network settings on players (§6.1) |
 | `cmd/osrelease` | release tool (build matrix, pack, sign, verify, keygen) |
 | `internal/contracts` | Go contract types (source of truth) + validation |
 | `internal/schedule` | time schedule evaluation (server and agent) |
@@ -316,7 +318,10 @@ displayMode, displayBusy?, displayError? }` (what the agent made of the last
 only reports `{ deleted, freedBytes, partial, partialBytes, cacheBytes }`; the server sends
 a dry run only to agents with this capability), `clock { source: "server"|"peer"|"local",
 offsetMs, rttMs, leader?, ageS }` (time used for synchronous playback), `model` (hardware
-model, e.g. "Raspberry Pi 3 Model B Rev 1.2"; the admin marks unsupported boards).
+model, e.g. "Raspberry Pi 3 Model B Rev 1.2"; the admin marks unsupported boards),
+`network { interfaces: [{ name, kind: "ethernet"|"wifi", connected, ipv4?: ["a.b.c.d/n"],
+method?: "dhcp"|"static", speedMbps?, ssid?, signalDbm?, freqMHz? }], pending? }` (pending:
+a change made in the client WebGUI waits for its confirmation).
 
 Unknown types are ignored and logged. Max message size 1 MiB (server side), 8 MiB (agent
 side for live state). Invalid messages are counted per connection; > 20 invalid in 60 s →
@@ -331,7 +336,8 @@ position }` (anchor: ms epoch of the timeline start – every screen plays (now 
 length on the corrected clock; position: the track of a playlist for several screens),
 `live { LiveState, prices }` (prices = schedule-effective prices map), `config
 { scaleMode, perf, plasmaShift, showIpOverlay }`, `cmd { name: "reload"|"blackout"|… }`,
-`versionNotice { text? }`.
+`versionNotice { text? }`, `networkNotice { text? }` (shown until a network change is
+confirmed; names the WebGUI addresses).
 Player → agent: `ping { heap, fps, item }` (every 5 s), `log { level, msg }`.
 
 ### 5.9 Release
@@ -343,7 +349,7 @@ SHA256SUMS, SHA256SUMS.sig (Ed25519 over SHA256SUMS, base64)
 opensignage-<v>-bundle.tar (all of the above, for offline upload)
 ```
 Package layout: `VERSION`, `bin/opensignage-server`, `bin/opensignage-agent`,
-`share/fonts/…`, `install/…`.
+`bin/opensignage-netctl`, `share/fonts/…`, `install/…`.
 
 Trust: the server accepts releases signed by a built-in key or a key the admin added in
 the settings. Devices never rely on the server for trust: before installing an offered
@@ -367,6 +373,53 @@ Config: `/etc/opensignage/server.env` (validated).
 Client (`/var/lib/opensignage-agent`): `state/*.json`, `cache/blobs/<sha256>`, `logs/`,
 `chromium/` (profile). Binaries: `/opt/opensignage-agent/releases/<v>/` + symlinks.
 Config: `/etc/opensignage/agent.env`.
+
+### 6.1 Client network settings
+
+- **Privileges:** the agent runs as the unprivileged service user. The installer puts the
+  helper root-owned at `/usr/lib/opensignage-agent/opensignage-netctl` and allows exactly
+  two commands with sudo: `systemctl reboot` and this helper. The helper accepts fixed
+  commands (`version`, `apply` with strict JSON on stdin, `confirm`, `cleanup`,
+  `uninstall`, `scan IFACE`, `firmware`, `install-firmware PACKAGE`), validates every input
+  again (interface must exist and match its kind, addresses, SSID, passphrase, country) and
+  installs only firmware packages of a fixed list. It answers one JSON object. In-app
+  updates do not replace it (they run without root): the agent asks for its protocol
+  (`version`) and the WebGUI asks to run the installer again when it is missing or older.
+- **Backends:** the helper follows the system: NetworkManager when it runs (Raspberry Pi
+  OS), otherwise ifupdown with `wpa_supplicant` (Debian). For scans and Wi-Fi changes it
+  switches the radio on – the rfkill soft block and NetworkManager's own Wi-Fi switch, both
+  off as Raspberry Pi OS ships – and sets the country of the radio rules (`iw reg set`).
+- **IPv6** stays as it was: NetworkManager profiles use `ipv6.method=auto`. The ifupdown
+  stanza of OpenSignage replaces every stanza of the interface, so it carries the system's
+  `inet6` stanza over; without one, a fixed IPv4 address gets `inet6 auto` (with DHCP,
+  dhcpcd configures IPv6 itself). dhcpcd switches the kernel's IPv6 addresses off on its
+  interfaces (`addr_gen_mode` 1), so the helper sets the default back when it takes an
+  interface over with a fixed address.
+- **Pending until the next login:** `apply` makes the change active without touching the
+  system's configuration: ifupdown brings the interface up from a stanza in
+  `/run/opensignage-net/`, NetworkManager gets a profile in `/run/NetworkManager/
+  system-connections/`. With ifupdown, static DNS servers go into a marked block of
+  `/etc/resolv.conf` and `resolv.conf.head` (dhcpcd puts the head on top of what it writes;
+  the stanza also carries `dns-nameservers` for resolvconf, and a symlinked resolv.conf is
+  left alone); `/var/lib/opensignage-net/unconfirmed/` notes which files the change
+  touched. The WebGUI ends all sessions and the player shows
+  `networkNotice` with the WebGUI addresses. The next successful login runs `confirm`: the
+  stanza goes to `/etc/network/interfaces.d/opensignage-<iface>` (the system's stanzas for
+  the interface are commented out with `#opensignage# `, the originals kept in
+  `/var/lib/opensignage-net/original/`), the Wi-Fi settings to
+  `/etc/wpa_supplicant/opensignage-<iface>.conf`, or the NetworkManager profile becomes
+  permanent as `opensignage-<iface>` and replaces the other profiles of the interface; a
+  summary without the passphrase is kept in `/etc/opensignage/network/`.
+- **A change that does not come up** (`ifup` or `nmcli connection up` fails) is undone at
+  once: the pending files of the interface go, the DNS block is set back (or rewritten for
+  the changes still pending) and the interface comes up with its settings on disk
+  (`ifup IFACE`, `nmcli device connect IFACE`). The agent keeps the error; the next login
+  leads to the network page, which shows it.
+- **Restart without confirmation:** `/run` is empty, the system starts with its previous
+  configuration and the agent runs `cleanup`: the DNS block of the touched files gets the
+  servers of the confirmed settings again (or goes); what dhcpcd wrote stays.
+- **Uninstall:** `uninstall` does the same for an unconfirmed change; confirmed settings stay
+  so that the device stays reachable.
 
 ## 7. Server modules and ownership
 

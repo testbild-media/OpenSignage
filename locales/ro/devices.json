@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – accelerarea grafică s-a pierdut, repornirile playerului nu au ajutat (o nouă încercare în fiecare oră)",
   "mon.gpuRecovered": "Accelerarea grafică a fost restabilită după o pierdere: {count}× (ultima dată: {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Rețea",
   "mon.power": "Alimentare",
   "mon.powerEvents": "Evenimente de subtensiune de la pornire: {count}",
   "mon.powerLowNow": "Subtensiune acum (evenimente de la pornire: {count}) – dispozitivul încetinește",

@@ -123,6 +123,20 @@ export function formatTemperature(c: unknown): string {
   return isNum(c) ? unit(c, 'celsius', 1) : '—';
 }
 
+/** Rating of a wireless signal (as the client WebGUI shows it). */
+export function signalQuality(dbm: number): 'excellent' | 'good' | 'fair' | 'weak' {
+  if (dbm >= -55) return 'excellent';
+  if (dbm >= -67) return 'good';
+  if (dbm >= -75) return 'fair';
+  return 'weak';
+}
+
+/** 0–100 % of a signal in dBm (-100 dBm = 0 %, -50 dBm and better = 100 %). */
+export function signalPercent(dbm: number): number {
+  if (dbm === 0) return 0;
+  return Math.max(0, Math.min(100, 2 * (dbm + 100)));
+}
+
 export function formatPercentValue(v: unknown): string {
   return isNum(v) ? `${num(v, 1)} %` : '—';
 }

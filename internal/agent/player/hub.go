@@ -10,7 +10,8 @@ import (
 )
 
 // Snapshot is the complete state the player needs. The hub sends only the parts that
-// changed, in a fixed order (mode, config, bundle, source, live, versionNotice), so a
+// changed, in a fixed order (mode, config, bundle, source, live, versionNotice,
+// networkNotice), so a
 // new bundle always arrives before a source that refers to it.
 type Snapshot struct {
 	Mode          wire.PlayerMode
@@ -19,9 +20,10 @@ type Snapshot struct {
 	Source        wire.PlayerSource
 	Live          wire.PlayerLive
 	VersionNotice wire.VersionNotice
+	NetworkNotice wire.NetworkNotice
 }
 
-var order = []string{wire.TMode, wire.TConfig, wire.TBundle, wire.TSource, wire.TLive, wire.TVersionNotice}
+var order = []string{wire.TMode, wire.TConfig, wire.TBundle, wire.TSource, wire.TLive, wire.TVersionNotice, wire.TNetworkNotice}
 
 // Hub fans the snapshot out to connected players.
 type Hub struct {
@@ -47,7 +49,7 @@ func (h *Hub) Set(s Snapshot) {
 	defer h.mu.Unlock()
 	parts := map[string]any{
 		wire.TMode: s.Mode, wire.TConfig: s.Config, wire.TSource: s.Source,
-		wire.TLive: s.Live, wire.TVersionNotice: s.VersionNotice,
+		wire.TLive: s.Live, wire.TVersionNotice: s.VersionNotice, wire.TNetworkNotice: s.NetworkNotice,
 	}
 	// The bundle can be megabytes: re-encode only when its hash changed.
 	if h.bundleHash == nil || *h.bundleHash != s.Bundle.Hash {

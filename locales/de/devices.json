@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – Grafikbeschleunigung ausgefallen, Neustarts des Players halfen nicht (neuer Versuch stündlich)",
   "mon.gpuRecovered": "Grafikbeschleunigung nach Ausfall wiederhergestellt: {count}× (zuletzt {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Netzwerk",
   "mon.power": "Stromversorgung",
   "mon.powerEvents": "Unterspannungen seit Start: {count}",
   "mon.powerLowNow": "Unterspannung jetzt (Ereignisse seit Start: {count}) – das Gerät drosselt sich",

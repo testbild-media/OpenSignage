@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"opensignage/internal/agent/display"
+	"opensignage/internal/agent/netcfg"
 	"opensignage/internal/agent/state"
 	"opensignage/internal/agent/wire"
 	"opensignage/internal/common/passwords"
@@ -28,7 +29,33 @@ type fakeBackend struct {
 	address       string
 	regen         bool
 	regenSource   string
+	net           NetworkView
+	applied       []netcfg.Config
+	confirmed     int
+	confirmErr    error
+	scan          []netcfg.AP
 }
+
+func (f *fakeBackend) NetworkView(context.Context) NetworkView { return f.net }
+func (f *fakeBackend) ScanWifi(context.Context, string) ([]netcfg.AP, error) {
+	return f.scan, nil
+}
+func (f *fakeBackend) ApplyNetwork(c netcfg.Config) error {
+	f.applied = append(f.applied, c)
+	f.net.Pending = &netcfg.Pending{Interfaces: []string{c.Interface}}
+	return nil
+}
+func (f *fakeBackend) NetworkPending() bool { return f.net.Pending != nil }
+func (f *fakeBackend) NetworkFailed() bool  { return f.net.LastError != "" }
+func (f *fakeBackend) ConfirmNetwork(context.Context) error {
+	if f.confirmErr != nil {
+		return f.confirmErr
+	}
+	f.confirmed++
+	f.net.Pending = nil
+	return nil
+}
+func (f *fakeBackend) InstallFirmware(context.Context, string) error { return nil }
 
 func (f *fakeBackend) StatusView(context.Context) Status {
 	return Status{Version: "1.2.3", IPs: []string{"10.0.0.2"}, LinkPhase: "connected", Mode: "playing",

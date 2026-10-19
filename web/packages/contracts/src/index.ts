@@ -484,6 +484,18 @@ export interface AppliedConfig {
  * The `status` message of an agent (every 30 s). Every key is optional: older agents send
  * fewer, and the server stores whatever arrives.
  */
+export interface DeviceNetIface {
+  name: string;
+  kind: 'ethernet' | 'wifi';
+  connected: boolean;
+  ipv4?: string[];
+  method?: 'dhcp' | 'static';
+  speedMbps?: number;
+  ssid?: string;
+  signalDbm?: number;
+  freqMHz?: number;
+}
+
 export interface DeviceStatus {
   version?: string;
   os?: string;
@@ -521,6 +533,9 @@ export interface DeviceStatus {
   logsBytes?: number;
   display?: { output?: string; width: number; height: number; refresh: number; rotation: number; modes?: DisplayModeGroup[] };
   sync?: { state: string; deploymentId?: string; done: number; total: number; error?: string };
+  /** Wired and wireless interfaces (absent in older agents); pending: a change made in the
+   * client WebGUI waits for its confirmation. */
+  network?: { interfaces: DeviceNetIface[]; pending?: boolean };
   update?: { phase: string; version?: string; error?: string; done?: number; total?: number };
   applied?: AppliedConfig;
   caps?: string[];
@@ -580,7 +595,8 @@ export type AgentToPlayer =
   | { t: 'live'; p: { state: LiveState | null; prices: Record<string, Money>; ticker?: ScheduleTicker | null } }
   | { t: 'config'; p: PlayerConfig }
   | { t: 'cmd'; p: { name: 'reload' } }
-  | { t: 'versionNotice'; p: { text: string | null } };
+  | { t: 'versionNotice'; p: { text: string | null } }
+  | { t: 'networkNotice'; p: { text: string | null } };
 
 export type PlayerToAgent =
   | { t: 'ping'; p: { heap: number; item: string; fps: number } }

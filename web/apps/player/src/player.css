@@ -125,6 +125,25 @@ body {
   color: #ff9f40;
   font-weight: 600;
 }
+/* A network change waits for its confirmation: the addresses of the WebGUI stay on screen. */
+#netnotice {
+  position: fixed;
+  left: 50%;
+  top: 4vh;
+  transform: translateX(-50%);
+  z-index: 45;
+  max-width: 80vw;
+  background: rgba(32, 28, 24, 0.94);
+  color: #f2ede6;
+  border: 0.15vh solid #453e35;
+  border-left: 0.6vh solid #ff8a00;
+  border-radius: 1vh;
+  padding: 1.6vh 2.4vh;
+  font-size: 2.6vh;
+  line-height: 1.5;
+  white-space: pre-line;
+  text-align: left;
+}
 #notice {
   position: fixed;
   left: 2vh;

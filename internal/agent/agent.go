@@ -100,6 +100,8 @@ type Agent struct {
 	// status.applied so the admin sees a change as pending until it is applied).
 	srvDisplayBusy bool
 	srvDisplayErr  string
+
+	net networkState // network settings of the client WebGUI (network.go)
 }
 
 // New loads the state and builds all components.
@@ -344,6 +346,7 @@ func (a *Agent) Run(ctx context.Context, web interface{ Run(context.Context) err
 		})
 	}
 	safe.Go("power", func() { a.power.Run(ctx) })
+	safe.Go("network-cleanup", func() { a.networkCleanup(ctx) })
 	safe.Loop(ctx, "link", a.link.Run)
 	safe.Loop(ctx, "sync", a.sync.Run)
 	safe.Loop(ctx, "scheduler", a.sched.Run)
@@ -591,7 +594,8 @@ func (a *Agent) snapshot() player.Snapshot {
 		text := a.i18n.T(lang, "client.notice.versionMismatch")
 		vn.Text = &text
 	}
-	return player.Snapshot{Mode: mode, Config: pc, Bundle: bundle, Source: src, Live: live, VersionNotice: vn}
+	return player.Snapshot{Mode: mode, Config: pc, Bundle: bundle, Source: src, Live: live, VersionNotice: vn,
+		NetworkNotice: wire.NetworkNotice{Text: a.networkNoticeLocked(lang)}}
 }
 
 func (a *Agent) linkNoticeLocked(lang string) string {

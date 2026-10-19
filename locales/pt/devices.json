@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – aceleração gráfica perdida, os reinícios do reprodutor não resolveram (nova tentativa de hora a hora)",
   "mon.gpuRecovered": "Aceleração gráfica restabelecida após uma perda: {count}× (última vez: {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Rede",
   "mon.power": "Alimentação",
   "mon.powerEvents": "Ocorrências de subtensão desde o arranque: {count}",
   "mon.powerLowNow": "Subtensão agora (ocorrências desde o arranque: {count}) – o dispositivo abranda",

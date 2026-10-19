@@ -104,6 +104,7 @@
   "mon.gpuLost": "Softwer – l-aċċelerazzjoni grafika intilfet, il-bidu mill-ġdid tal-plejer ma għenx (tentattiv ġdid kull siegħa)",
   "mon.gpuRecovered": "L-aċċelerazzjoni grafika ġiet irrestawrata wara telf: {count}× (l-aħħar darba {time})",
   "mon.hardware": "Tagħmir",
+  "mon.network": "Netwerk",
   "mon.power": "Provvista tal-enerġija",
   "mon.powerEvents": "Avvenimenti ta’ vultaġġ baxx mill-bidu: {count}",
   "mon.powerLowNow": "Vultaġġ baxx issa (avvenimenti mill-bidu: {count}) – l-apparat jonqos il-veloċità",

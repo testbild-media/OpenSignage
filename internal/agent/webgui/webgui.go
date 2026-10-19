@@ -117,6 +117,7 @@ type Backend interface {
 	DeviceLanguage() string
 	CentralPasswordHash() string
 	LogFiles() []string
+	NetworkBackend
 }
 
 // Server is the client WebGUI.
@@ -268,6 +269,8 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /pairing", s.auth(false, s.pairingPost))
 	mux.HandleFunc("GET /display", s.auth(false, s.displayPage))
 	mux.HandleFunc("POST /display", s.auth(false, s.displayPost))
+	mux.HandleFunc("GET /network", s.auth(false, s.networkPage))
+	mux.HandleFunc("POST /network", s.auth(false, s.networkPost))
 	mux.HandleFunc("GET /actions", s.auth(false, s.actionsPage))
 	mux.HandleFunc("POST /actions", s.auth(false, s.actionsPost))
 	mux.HandleFunc("GET /logs", s.auth(false, s.logsPage))

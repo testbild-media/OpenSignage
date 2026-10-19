@@ -104,6 +104,7 @@
   "mon.gpuLost": "Tarkvara – graafikakiirendus kadus, esitaja taaskäivitused ei aidanud (uus katse iga tund)",
   "mon.gpuRecovered": "Graafikakiirendus taastus pärast kadumist: {count}× (viimati {time})",
   "mon.hardware": "Riistvara",
+  "mon.network": "Võrk",
   "mon.power": "Toide",
   "mon.powerEvents": "Alapinge sündmusi käivitamisest: {count}",
   "mon.powerLowNow": "Praegu alapinge (sündmusi käivitamisest: {count}) – seade aeglustub",

@@ -104,6 +104,7 @@
   "mon.gpuLost": "Software – accelerazione grafica persa, i riavvii del player non sono serviti (nuovo tentativo ogni ora)",
   "mon.gpuRecovered": "Accelerazione grafica ripristinata dopo una perdita: {count}× (ultima volta: {time})",
   "mon.hardware": "Hardware",
+  "mon.network": "Rete",
   "mon.power": "Alimentazione",
   "mon.powerEvents": "Eventi di sottotensione dall’avvio: {count}",
   "mon.powerLowNow": "Sottotensione in corso (eventi dall’avvio: {count}): il dispositivo rallenta",

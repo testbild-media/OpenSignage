@@ -104,6 +104,7 @@
   "mon.gpuLost": "Programvara – grafikacceleration förlorad, omstarter av spelaren hjälpte inte (nytt försök varje timme)",
   "mon.gpuRecovered": "Grafikacceleration återställd efter bortfall: {count}× (senast {time})",
   "mon.hardware": "Maskinvara",
+  "mon.network": "Nätverk",
   "mon.power": "Strömförsörjning",
   "mon.powerEvents": "Underspänningar sedan start: {count}",
   "mon.powerLowNow": "Underspänning nu (händelser sedan start: {count}) – enheten saktar ner",
