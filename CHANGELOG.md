@@ -4,6 +4,20 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.3 – 2026-10-19
+
+Time schedules with a period of dates. Installations on 1.x update from the web interface
+(Settings → Updates); dated rules need the updated players – a player keeps its current
+content until it has the update.
+
+### Added
+- Time schedules: a time window runs every week or only between two dates – e.g. a happy hour
+  on one Saturday in two weeks, set up and checked today. One date may stay open. The rules
+  table shows the period, *planned* or *expired*, and a link to the zone preview at the next
+  time of the rule. The week view goes forward and back by week, with the dates of the days,
+  and shows a dated rule only in its weeks. Rules on different dates do not count as
+  overlapping.
+
 ## 1.4.2 – 2026-10-19
 
 A login right after a network change on a player confirms it. Installations on 1.x update
