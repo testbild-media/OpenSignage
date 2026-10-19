@@ -176,6 +176,7 @@
   "network.state.nocable": "nema kabela",
   "network.static": "Fiksna adresa",
   "network.unsupported": "nije podržano",
+  "network.waitingFor": "Nije povezano – automatski se povezuje s „{ssid}” čim mreža bude u dometu.",
   "network.wifiOff": "Isključi Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certifikat poslužitelja promijenjen – veza odbijena.",

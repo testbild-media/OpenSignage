@@ -191,6 +191,10 @@ for all players can be set under Settings → Defaults.
   previous settings. A change that does not come up at all (for example no answer from
   DHCP, or the Wi-Fi network refuses the password) is undone at once; after the next login
   the page says why.
+- **Wi-Fi in advance:** a Wi-Fi network that is not in range yet can be set up beforehand –
+  e.g. over the LAN in the office, then the player goes to its place without cable. Confirm
+  the change with a login over the LAN; the player joins the network as soon as it is in
+  range (also after a router restart or a power cut), and the page says so meanwhile.
 - When the firmware of an adapter is missing, the page names it and installs it on request.
 
 ## Media and fonts

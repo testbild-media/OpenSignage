@@ -176,6 +176,7 @@
   "network.state.nocable": "intet kabel",
   "network.static": "Fast adresse",
   "network.unsupported": "ikke understøttet",
+  "network.waitingFor": "Ikke forbundet – opretter automatisk forbindelse til »{ssid}«, så snart netværket er inden for rækkevidde.",
   "network.wifiOff": "Slå Wi-Fi fra",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Servercertifikatet er ændret – forbindelsen afvist.",

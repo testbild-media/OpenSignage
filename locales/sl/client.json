@@ -176,6 +176,7 @@
   "network.state.nocable": "ni kabla",
   "network.static": "Fiksni naslov",
   "network.unsupported": "ni podprto",
+  "network.waitingFor": "Ni povezave – samodejno se poveže z »{ssid}«, ko bo omrežje v dosegu.",
   "network.wifiOff": "Izklopi Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Potrdilo strežnika se je spremenilo – povezava zavrnjena.",

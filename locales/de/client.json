@@ -176,6 +176,7 @@
   "network.state.nocable": "kein Kabel",
   "network.static": "Feste Adresse",
   "network.unsupported": "nicht unterstützt",
+  "network.waitingFor": "Nicht verbunden – verbindet sich automatisch mit „{ssid}“, sobald das Netz in Reichweite ist.",
   "network.wifiOff": "WLAN ausschalten",
   "network.wifiTitle": "WLAN",
   "notice.certificate_changed": "Serverzertifikat geändert – Verbindung abgelehnt.",

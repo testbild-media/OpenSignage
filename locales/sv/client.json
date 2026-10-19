@@ -176,6 +176,7 @@
   "network.state.nocable": "ingen kabel",
   "network.static": "Fast adress",
   "network.unsupported": "stöds inte",
+  "network.waitingFor": "Inte ansluten – ansluter automatiskt till ”{ssid}” så snart nätverket är inom räckhåll.",
   "network.wifiOff": "Stäng av Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Servercertifikatet har ändrats – anslutningen nekas.",

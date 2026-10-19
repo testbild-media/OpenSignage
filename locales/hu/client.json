@@ -176,6 +176,7 @@
   "network.state.nocable": "nincs kábel",
   "network.static": "Rögzített cím",
   "network.unsupported": "nem támogatott",
+  "network.waitingFor": "Nincs kapcsolat – automatikusan csatlakozik a(z) „{ssid}” hálózathoz, amint az elérhető.",
   "network.wifiOff": "Wi-Fi kikapcsolása",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "A szerver tanúsítványa megváltozott – a kapcsolat elutasítva.",

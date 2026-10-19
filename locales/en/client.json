@@ -176,6 +176,7 @@
   "network.state.nocable": "no cable",
   "network.static": "Fixed address",
   "network.unsupported": "not supported",
+  "network.waitingFor": "Not connected – joins “{ssid}” automatically as soon as the network is in range.",
   "network.wifiOff": "Switch Wi-Fi off",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Server certificate changed – connection refused.",

@@ -176,6 +176,7 @@
   "network.state.nocable": "gan chábla",
   "network.static": "Seoladh seasta",
   "network.unsupported": "gan tacaíocht",
+  "network.waitingFor": "Gan cheangal – ceanglaíonn sé le „{ssid}“ go huathoibríoch a luaithe a bhíonn an líonra i raon.",
   "network.wifiOff": "Múch Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Teastas an fhreastalaí athraithe – diúltaíodh don cheangal.",

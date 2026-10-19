@@ -438,6 +438,26 @@ func TestApplyFailureReverts(t *testing.T) {
 	}
 }
 
+// Wi-Fi set up in advance (over the LAN, before the player goes to its place): a network
+// that is not in range stays configured; NetworkManager joins it when it appears.
+func TestWifiInAdvanceNM(t *testing.T) {
+	s, h := newSys(t, netcfg.BackendNM)
+	s.fail["nmcli --wait 60 connection up"] = errors.New("nmcli --wait 60 connection up uuid x: exit status 4: Error: Connection activation failed: The Wi-Fi network could not be found")
+	w := netcfg.Config{Interface: "wlan0", Kind: netcfg.KindWifi, Method: netcfg.MethodDHCP, Wifi: &netcfg.Wifi{SSID: "Site", Passphrase: "secret123", Country: "DE"}}
+	if err := h.Apply(context.Background(), w); err != nil {
+		t.Fatalf("a network out of range is not an error: %v", err)
+	}
+	kf := s.get("/run/NetworkManager/system-connections/opensignage-pending-wlan0.nmconnection")
+	if !strings.Contains(kf, "autoconnect=true") || netcfg.ReadPending(filepath.Join(s.root, "run/opensignage-net/pending.json")) == nil {
+		t.Fatalf("profile must stay pending: %q", kf)
+	}
+	// A wired change or a refused password is still undone.
+	s.fail["nmcli --wait 60 connection up"] = errors.New("Error: Connection activation failed: Secrets were required, but not provided")
+	if err := h.Apply(context.Background(), w); err == nil {
+		t.Fatal("a refused password must fail")
+	}
+}
+
 func TestApplyFailureRevertsNM(t *testing.T) {
 	s, h := newSys(t, netcfg.BackendNM)
 	s.fail["nmcli --wait 60 connection up"] = errors.New("connection activation failed")

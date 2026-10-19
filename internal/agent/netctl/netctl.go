@@ -444,6 +444,13 @@ func (h *Helper) applyNM(ctx context.Context, c netcfg.Config) error {
 		return err
 	}
 	_, err := h.run(ctx, 90*time.Second, "nmcli", "--wait", "60", "connection", "up", "uuid", uuid)
+	if err != nil && c.Kind == netcfg.KindWifi && strings.Contains(err.Error(), "network could not be found") {
+		// Not in range (yet): the profile stays, and NetworkManager joins the network as soon
+		// as it appears – Wi-Fi can be set up in advance, e.g. over the LAN before the player
+		// goes to its place (ifupdown behaves the same: wpa_supplicant keeps searching). A
+		// network in range that refuses the password still fails and is undone.
+		return nil
+	}
 	return err
 }
 

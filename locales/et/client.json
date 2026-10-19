@@ -176,6 +176,7 @@
   "network.state.nocable": "kaabel puudub",
   "network.static": "Fikseeritud aadress",
   "network.unsupported": "pole toetatud",
+  "network.waitingFor": "Ühendus puudub – ühendub automaatselt võrguga „{ssid}“, kui see on levialas.",
   "network.wifiOff": "Lülita WiFi välja",
   "network.wifiTitle": "WiFi",
   "notice.certificate_changed": "Serveri sertifikaat muutus – ühendus keelatud.",

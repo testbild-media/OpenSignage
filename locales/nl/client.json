@@ -176,6 +176,7 @@
   "network.state.nocable": "geen kabel",
   "network.static": "Vast adres",
   "network.unsupported": "niet ondersteund",
+  "network.waitingFor": "Niet verbonden – maakt automatisch verbinding met ‘{ssid}’ zodra het netwerk binnen bereik is.",
   "network.wifiOff": "Wifi uitschakelen",
   "network.wifiTitle": "Wifi",
   "notice.certificate_changed": "Servercertificaat gewijzigd – verbinding geweigerd.",

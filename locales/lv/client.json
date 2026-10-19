@@ -176,6 +176,7 @@
   "network.state.nocable": "nav kabeļa",
   "network.static": "Fiksēta adrese",
   "network.unsupported": "netiek atbalstīts",
+  "network.waitingFor": "Nav savienojuma – automātiski pievienojas „{ssid}“, tiklīdz tīkls ir sasniedzams.",
   "network.wifiOff": "Izslēgt Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Servera sertifikāts mainīts – savienojums noraidīts.",

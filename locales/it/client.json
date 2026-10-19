@@ -176,6 +176,7 @@
   "network.state.nocable": "nessun cavo",
   "network.static": "Indirizzo fisso",
   "network.unsupported": "non supportata",
+  "network.waitingFor": "Non connesso – si collega automaticamente a «{ssid}» non appena la rete è a portata.",
   "network.wifiOff": "Spegni il Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certificato del server cambiato – connessione rifiutata.",

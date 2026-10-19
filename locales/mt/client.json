@@ -176,6 +176,7 @@
   "network.state.nocable": "l-ebda kejbil",
   "network.static": "Indirizz fiss",
   "network.unsupported": "mhux appoġġat",
+  "network.waitingFor": "Mhux imqabbad – jitqabbad awtomatikament ma’ “{ssid}” hekk kif in-netwerk ikun fil-medda.",
   "network.wifiOff": "Itfi l-Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Iċ-ċertifikat tas-server inbidel – konnessjoni miċħuda.",

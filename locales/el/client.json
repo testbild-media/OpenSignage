@@ -176,6 +176,7 @@
   "network.state.nocable": "χωρίς καλώδιο",
   "network.static": "Σταθερή διεύθυνση",
   "network.unsupported": "δεν υποστηρίζεται",
+  "network.waitingFor": "Χωρίς σύνδεση – συνδέεται αυτόματα στο «{ssid}» μόλις το δίκτυο είναι εντός εμβέλειας.",
   "network.wifiOff": "Απενεργοποίηση Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Το πιστοποιητικό του διακομιστή άλλαξε – η σύνδεση απορρίφθηκε.",

@@ -176,6 +176,7 @@
   "network.state.nocable": "ei kaapelia",
   "network.static": "Kiinteä osoite",
   "network.unsupported": "ei tuettu",
+  "network.waitingFor": "Ei yhteyttä – yhdistää automaattisesti verkkoon ”{ssid}”, kun se on kantaman sisällä.",
   "network.wifiOff": "Kytke Wi-Fi pois",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Palvelimen varmenne muuttui – yhteys estetty.",

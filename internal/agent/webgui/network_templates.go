@@ -31,6 +31,7 @@ const networkTemplates = `
   {{if $i.Gateway}}<div><dt>{{t $L "network.gateway"}}</dt><dd>{{$i.Gateway}}</dd></div>{{end}}
   <div><dt>{{t $L "network.method"}}</dt><dd>{{if $i.Method}}{{t $L (printf "network.method.%s" $i.Method)}}{{else}}{{t $L "network.method.none"}}{{end}} · {{if $i.Managed}}{{t $L "network.source.webgui"}}{{else}}{{t $L "network.source.system"}}{{end}}</dd></div>
 </dl>
+{{if and (eq $i.Kind "wifi") (ne $i.State "connected") $i.Configured}}{{if and $i.Configured.Wifi (not $i.Configured.Disabled)}}<p class="note">{{t $L "network.waitingFor" "ssid" $i.Configured.Wifi.SSID}}</p>{{end}}{{end}}
 <p class="net-hw">{{if $i.IPv6}}IPv6 {{join $i.IPv6}} · {{end}}MAC {{$i.MAC}}{{if $i.Driver}} · {{$i.Driver}}{{end}}</p>
 {{if $p.Data.View.Available}}
 <details class="net-edit" id="form-{{$i.Name}}"{{if $i.Open}} open{{end}}>

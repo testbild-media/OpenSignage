@@ -176,6 +176,7 @@
   "network.state.nocable": "sin cable",
   "network.static": "Dirección fija",
   "network.unsupported": "no compatible",
+  "network.waitingFor": "Sin conexión: se conecta automáticamente a «{ssid}» en cuanto la red esté al alcance.",
   "network.wifiOff": "Desactivar Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certificado del servidor cambiado: conexión rechazada.",

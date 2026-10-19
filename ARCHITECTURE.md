@@ -421,8 +421,11 @@ Config: `/etc/opensignage/agent.env`.
   permanent as `opensignage-<iface>` and replaces the other profiles of the interface; a
   summary without the passphrase is kept in `/etc/opensignage/network/`.
 - **A change that does not come up** (`ifup` or `nmcli connection up` fails) is undone at
-  once: the pending files of the interface go, the DNS block is set back (or rewritten for
-  the changes still pending) and the interface comes up with its settings on disk
+  once – except a Wi-Fi network that is not in range (NetworkManager: "network could not be
+  found"; ifupdown: wpa_supplicant keeps searching and dhcpcd waits for the link): it stays,
+  so Wi-Fi can be set up in advance, and the system joins it when it appears. Otherwise
+  the pending files of the interface go, the DNS block is set back (or rewritten for the
+  changes still pending) and the interface comes up with its settings on disk
   (`ifup IFACE`, `nmcli device connect IFACE`). The agent keeps the error; the next login
   leads to the network page, which shows it.
 - **Restart without confirmation:** `/run` is empty, the system starts with its previous

@@ -176,6 +176,7 @@
   "network.state.nocable": "nėra kabelio",
   "network.static": "Fiksuotas adresas",
   "network.unsupported": "nepalaikoma",
+  "network.waitingFor": "Neprisijungta – automatiškai prisijungs prie „{ssid}“, kai tik tinklas bus pasiekiamas.",
   "network.wifiOff": "Išjungti Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Serverio sertifikatas pasikeitė – ryšys atmestas.",

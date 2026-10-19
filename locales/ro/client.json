@@ -176,6 +176,7 @@
   "network.state.nocable": "fără cablu",
   "network.static": "Adresă fixă",
   "network.unsupported": "neacceptat",
+  "network.waitingFor": "Neconectat – se conectează automat la „{ssid}” de îndată ce rețeaua este în raza de acoperire.",
   "network.wifiOff": "Oprește Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certificatul serverului s-a schimbat – conexiune refuzată.",

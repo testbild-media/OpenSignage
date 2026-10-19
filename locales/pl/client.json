@@ -176,6 +176,7 @@
   "network.state.nocable": "brak kabla",
   "network.static": "Stały adres",
   "network.unsupported": "nieobsługiwana",
+  "network.waitingFor": "Brak połączenia – połączy się automatycznie z „{ssid}”, gdy tylko sieć będzie w zasięgu.",
   "network.wifiOff": "Wyłącz Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certyfikat serwera się zmienił – połączenie odrzucone.",

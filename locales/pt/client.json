@@ -176,6 +176,7 @@
   "network.state.nocable": "sem cabo",
   "network.static": "Endereço fixo",
   "network.unsupported": "não suportada",
+  "network.waitingFor": "Sem ligação – liga-se automaticamente a «{ssid}» assim que a rede estiver ao alcance.",
   "network.wifiOff": "Desligar o Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certificado do servidor alterado – ligação recusada.",

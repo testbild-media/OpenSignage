@@ -176,6 +176,7 @@
   "network.state.nocable": "няма кабел",
   "network.static": "Фиксиран адрес",
   "network.unsupported": "не се поддържа",
+  "network.waitingFor": "Няма връзка – свързва се автоматично с „{ssid}“, щом мрежата е в обхват.",
   "network.wifiOff": "Изключи Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Сертификатът на сървъра е променен – връзката е отказана.",

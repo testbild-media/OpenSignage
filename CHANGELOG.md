@@ -4,6 +4,15 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+- Network settings of the players: a Wi-Fi network that is not in range can be set up in
+  advance – e.g. over the LAN before the player goes to its place. It stays configured and
+  the player joins it as soon as it is in range; the network page says so meanwhile. On
+  Raspberry Pi OS such a change used to be undone (it already worked on Debian). A network
+  in range that refuses the password is still undone at once.
+
 ## 1.4.0 – 2026-10-19
 
 Network settings on the players (wired and Wi-Fi), defaults for new presentations and a

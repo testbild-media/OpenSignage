@@ -176,6 +176,7 @@
   "network.state.nocable": "bez kabelu",
   "network.static": "Pevná adresa",
   "network.unsupported": "nepodporováno",
+  "network.waitingFor": "Nepřipojeno – automaticky se připojí k „{ssid}“, jakmile bude síť v dosahu.",
   "network.wifiOff": "Vypnout Wi-Fi",
   "network.wifiTitle": "Wi-Fi",
   "notice.certificate_changed": "Certifikát serveru se změnil – spojení odmítnuto.",

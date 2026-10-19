@@ -184,6 +184,10 @@ func TestNetworkWifiOffAndConfirmFailure(t *testing.T) {
 	if !strings.Contains(body, `value="wifiOff"`) || !strings.Contains(body, e.en(t, "network.passphraseKeep")) || !strings.Contains(body, `value="AT"`) {
 		t.Fatalf("configured Wi-Fi: %s", body)
 	}
+	// Set up but not connected (e.g. in advance, out of range): the page says it joins later.
+	if !strings.Contains(body, e.en(t, "network.waitingFor", "ssid", "Bar")) {
+		t.Fatal("no hint that the player joins the network when it is in range")
+	}
 	resp, _ := e.post(t, "/network", url.Values{"csrf": {csrf(t, body)}, "do": {"wifiOff"}, "iface": {"wlan0"}})
 	if resp.StatusCode != http.StatusOK || len(e.be.applied) != 1 || !e.be.applied[0].Disabled {
 		t.Fatalf("wifi off: %d %+v", resp.StatusCode, e.be.applied)
