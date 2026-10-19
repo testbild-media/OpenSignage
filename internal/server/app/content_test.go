@@ -33,7 +33,8 @@ func cntTextElem(id, font string) contracts.Element {
 }
 
 func cntMediaElem(id, typ, asset string) contracts.Element {
-	return contracts.Element{ID: id, Type: typ, X: 0, Y: 0, W: 300, H: 200, Opacity: 1, AssetID: asset, Fit: "contain", Loop: true, Muted: true}
+	on := true
+	return contracts.Element{ID: id, Type: typ, X: 0, Y: 0, W: 300, H: 200, Opacity: 1, AssetID: asset, Fit: "contain", Loop: &on, Muted: &on}
 }
 
 func cntSlide(id, name string, ms int64) contracts.Slide {
@@ -281,6 +282,47 @@ func TestPresentationDraftPublishDiscardCycle(t *testing.T) {
 	e.expect(user, "GET", "/api/v1/presentations", nil, 403, "forbidden")
 	op := e.login("manager", "operator")
 	e.expect(op, "GET", "/api/v1/presentations", nil, 200, "")
+}
+
+// A video switched to play once and with sound keeps that through saving and publishing –
+// false was dropped before, and the player then looped the video and muted it again.
+func TestPresentationVideoLoopAndSoundOff(t *testing.T) {
+	e := catSetup(t)
+	vid := e.seedAsset("video")
+	id, created := e.newPres("Video", 1280, 720)
+	doc := cntDoc(t, created)
+	off := false
+	once := cntMediaElem("v1", contracts.ElVideo, vid)
+	once.Loop, once.Muted = &off, &off
+	plain := cntMediaElem("v2", contracts.ElVideo, vid)
+	plain.Loop, plain.Muted = nil, nil // never touched: the defaults of the player
+	doc.Slides[0].Elements = []contracts.Element{once}
+	second := cntSlide(ids.New(), "Second", 5000)
+	second.Elements = []contracts.Element{plain}
+	doc.Slides = append(doc.Slides, second)
+	rev := e.savePres(id, 1, doc)
+	e.expect(e.admin, "POST", "/api/v1/presentations/"+id+"/publish", map[string]any{"revision": rev}, 200, "")
+	d := e.expect(e.admin, "GET", "/api/v1/presentations/"+id, nil, 200, "")
+	raw := catJSON(d["draft"])
+	if !strings.Contains(raw, `"loop":false`) || !strings.Contains(raw, `"muted":false`) {
+		t.Fatalf("false must be stored: %s", raw)
+	}
+	got := cntDoc(t, d)
+	v1, v2 := got.Slides[0].Elements[0], got.Slides[1].Elements[0]
+	if v1.Loop == nil || *v1.Loop || v1.Muted == nil || *v1.Muted {
+		t.Fatalf("loop/sound off lost: %+v", v1)
+	}
+	if v2.Loop != nil || v2.Muted != nil {
+		t.Fatalf("untouched video must keep the defaults: %+v", v2)
+	}
+	// The published version (what the players get) as well.
+	var pub string
+	if err := e.srv.App.DB.R.QueryRow(`SELECT doc FROM presentation_versions WHERE presentation_id = ? AND version = 1`, id).Scan(&pub); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(pub, `"loop":false`) || !strings.Contains(pub, `"muted":false`) {
+		t.Fatalf("published version without the settings: %s", pub)
+	}
 }
 
 func TestPresentationCopiesTemplatesResizeRenameArchive(t *testing.T) {

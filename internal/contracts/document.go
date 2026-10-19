@@ -209,11 +209,13 @@ type Element struct {
 	AutoShrink bool        `json:"autoShrink,omitempty"`
 
 	// image, video, audio
-	AssetID string   `json:"assetId,omitempty"`
-	Fit     string   `json:"fit,omitempty"`
-	Loop    bool     `json:"loop,omitempty"`
-	Muted   bool     `json:"muted,omitempty"`
-	Volume  *float64 `json:"volume,omitempty"`
+	AssetID string `json:"assetId,omitempty"`
+	Fit     string `json:"fit,omitempty"`
+	// Loop and Muted: absent = the default of the element type (a video loops and is muted,
+	// audio plays once); false must survive a save, so they are pointers.
+	Loop   *bool    `json:"loop,omitempty"`
+	Muted  *bool    `json:"muted,omitempty"`
+	Volume *float64 `json:"volume,omitempty"`
 
 	// shape
 	Shape  string  `json:"shape,omitempty"`

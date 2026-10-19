@@ -153,8 +153,8 @@ Element =
   text      { doc: RichDoc, style: TextStyle, valign: "top"|"middle"|"bottom",
               padding: [t,r,b,l], fill?: color, autoShrink: bool }
 | image     { assetId, fit: "contain"|"cover"|"fill" }
-| video     { assetId, fit, loop: bool, muted: bool }
-| audio     { assetId, loop: bool, volume: 0..1 }
+| video     { assetId, fit, loop?: bool (absent = true), muted?: bool (absent = true) }
+| audio     { assetId, loop?: bool (absent = false), volume: 0..1 }
 | shape     { shape: "rect"|"ellipse"|"line"|"arrow", fill?: color,
               stroke: { color, width, dash: "solid"|"dashed"|"dotted" }, radius }
 | productList { source: { kind: "all"|"categories"|"products", ids: [] },
