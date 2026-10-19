@@ -4,6 +4,21 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.4 – 2026-10-19
+
+A login during a network change no longer hangs. Installations on 1.x update from the web
+interface (Settings → Updates); the players need no installer for this.
+
+### Fixed
+- Network settings of the players: a login while a change was still being applied – up to
+  about two minutes when a Wi-Fi network does not connect at once, e.g. when it refuses the
+  password – kept loading until the change was done. The login now waits at most a few
+  seconds and then leads to the network page, which follows the change and shows the result.
+- A change that waits for its confirmation can be saved on the network page (*Save now*);
+  before, only a new login saved it.
+- A Wi-Fi network that refuses the password on a Raspberry Pi now says so in plain words
+  instead of the message of NetworkManager.
+
 ## 1.4.3 – 2026-10-19
 
 Time schedules with a period of dates. Installations on 1.x update from the web interface
