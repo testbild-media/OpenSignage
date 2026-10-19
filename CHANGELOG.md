@@ -4,6 +4,26 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.5 – 2026-10-19
+
+Raspberry Pi players on TVs that do not report themselves, and Wi-Fi networks on both bands.
+Installations on 1.x update from the web interface (Settings → Updates); for the HDMI output
+and the bands in the Wi-Fi scan run the client installer once more on the players (both
+change the system, which an update from the administration does not).
+
+### Added
+- Installer: on a Raspberry Pi the HDMI output is switched on for good. Many TVs do not
+  report themselves to the Pi – the boot screen showed, then the screen stayed black. The TV
+  still reports its resolutions, so the display page and custom resolutions work as usual.
+  `--no-force-hdmi` leaves the boot line alone; the uninstaller removes the setting.
+
+### Fixed
+- Network settings of the players: the Wi-Fi scan shows every band a network was seen on,
+  with its signal. A network on 2.4 and 5 GHz showed only its stronger band, so 5 GHz seemed
+  to be missing.
+- Display page of the player: when no screen reports itself it says "No screen detected" and
+  what helps, instead of "Display control is not available on this device".
+
 ## 1.4.4 – 2026-10-19
 
 A login during a network change no longer hangs. Installations on 1.x update from the web
