@@ -4,7 +4,10 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.3.0 – 2026-10-19
+
+Zone preview: what the screens of a zone show, now or at any moment, also without devices online.
+Installations on 1.x update from the web interface (Settings → Updates).
 
 ### Added
 - Zone preview: every screen of a zone as its player shows it – content, prices of the time
