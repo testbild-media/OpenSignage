@@ -4,7 +4,11 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.4.0 – 2026-10-19
+
+Network settings on the players (wired and Wi-Fi), defaults for new presentations and a
+device page in two columns. Installations on 1.x update from the web interface (Settings →
+Updates); for the network settings run the client installer once more on each player.
 
 ### Added
 - Network settings in the player's web interface (*Network*): wired and Wi-Fi with DHCP or
@@ -12,15 +16,14 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   networks, the country of the radio rules, signal strength, band and channel. A change is
   active at once and the screen shows the new address; the next login to the web interface
   makes it permanent, a restart without that login returns to the previous settings; a
-  change that does not come up at all is undone at once.
-  dhcpcd and wpa_supplicant run in a systemd scope of their own, so updates and restarts of
-  the agent never take the connection down; a Wi-Fi scan sets the radio rules of the country
-  first, so 5 GHz networks are found before the first Wi-Fi setup. Wi-Fi power saving is off
-  (players run on mains power; on USB sticks it causes dropouts). Tested with a USB stick with
-  Realtek RTL8822BU on Debian 13 (driver in the kernel, firmware from `firmware-realtek`).
-  Players without a Wi-Fi adapter say so; missing network firmware is named and installed
-  on request. Follows the system's network setup (ifupdown on Debian, NetworkManager on
-  Raspberry Pi OS). Existing players need the installer once more for it.
+  change that does not come up at all is undone at once. Players without a Wi-Fi adapter say
+  so; missing network firmware is named and installed on request. Follows the system's
+  network setup (ifupdown on Debian, NetworkManager on Raspberry Pi OS); updates and restarts
+  of the agent never take the connection down. A Wi-Fi scan sets the radio rules of the
+  country first, so 5 GHz networks are found before the first Wi-Fi setup; Wi-Fi power saving
+  is off (players run on mains power; on USB sticks it causes dropouts). Tested on x86 with a
+  USB stick with Realtek RTL8822BU on Debian 13 (driver in the kernel, firmware from
+  `firmware-realtek`). Existing players need the installer once more for it.
 - Device page: network of each player – wired or Wi-Fi, address, DHCP or fixed, Wi-Fi
   network and signal strength, a change waiting for its confirmation.
 - Client installer: Wi-Fi packages (`wpasupplicant`, `iw`, `wireless-regdb`) and the network

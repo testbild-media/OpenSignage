@@ -180,6 +180,24 @@ the internet, through a VPN or directly.
 AMD and Nvidia graphics and the Raspberry Pi 5 are not tested. The server runs on any of the
 systems listed in section 1, including a Raspberry Pi (arm64).
 
+### Network adapters
+
+| Adapter | Status |
+| --- | --- |
+| x86 wired, Realtek RTL8111/8168 (`r8169`) | tested – DHCP and fixed address |
+| Raspberry Pi 4 wired (`bcmgenet`) | tested – DHCP and fixed address |
+| Raspberry Pi 4 Wi-Fi (Broadcom, `brcmfmac`) | supported – scan (2.4 and 5 GHz) and switching the radio on tested |
+| USB Wi-Fi stick UGREEN CM493 (Realtek RTL8822BU, AC1200) on x86 | tested on Debian 13 – 2.4 and 5 GHz, driver `rtw88_8822bu` in the kernel, firmware from `firmware-realtek` (the installer or the web interface installs it) |
+
+- A USB Wi-Fi stick needs a driver in the kernel. Debian 13 (kernel 6.12) has one for most
+  current sticks; Debian 12 (kernel 6.1) lacks the Realtek USB drivers (RTL8822BU,
+  RTL8821CU …, in the kernel since 6.2) – there the stick does not appear and the web
+  interface says "No Wi-Fi adapter found".
+- The name of a USB Wi-Fi interface contains the MAC address of the stick (e.g.
+  `wlx001122aabbcc`): after replacing the stick, set up the Wi-Fi again.
+- Wi-Fi power saving is switched off – players run on mains power, and on USB sticks it
+  causes dropouts.
+
 ### Raspberry Pi notes
 
 - Use the 64-bit Raspberry Pi OS; Lite is enough. `/boot/firmware/config.txt` must contain

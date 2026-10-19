@@ -163,6 +163,7 @@ Step by step, manual installation, certificates and hardware notes:
 | --- | --- |
 | **Server** | Debian 12/13 or Raspberry Pi OS (64-bit); amd64 or arm64 |
 | **Players** | **Recommended:** small x86 PCs with Intel graphics (Debian), up to 4K. **Minimum:** Raspberry Pi 4 (Raspberry Pi OS 64-bit Lite) |
+| **Player network** | wired or Wi-Fi – the Wi-Fi of the Raspberry Pi 4, on x86 a USB Wi-Fi stick (tested: UGREEN CM493 with Realtek RTL8822BU on Debian 13) |
 | **Operator view** | any current browser on phones, tablets and computers |
 
 Raspberry Pi 3 and 2 are **not supported**: their hardware video decoder fails about every
