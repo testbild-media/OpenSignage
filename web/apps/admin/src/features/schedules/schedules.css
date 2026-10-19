@@ -418,3 +418,11 @@
 .now-groups .badge {
   margin-left: 6px;
 }
+.now-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}

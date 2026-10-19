@@ -2,6 +2,7 @@ import { MapPinned } from 'lucide-react';
 import type { Feature } from '../types';
 import { ZonesPage } from './ZonesPage';
 import { TickerTemplatesPage } from './TickerTemplatesPage';
+import { ZonePreviewPage } from './ZonePreviewPage';
 import '../../components/controls.css';
 import './zones.css';
 
@@ -9,6 +10,7 @@ export const zonesFeature: Feature = {
   routes: [
     { path: '/zones', element: <ZonesPage />, minRole: 'operator' },
     { path: '/zones/tickers', element: <TickerTemplatesPage />, minRole: 'operator', visible: (r) => r.canManageGlobal },
+    { path: '/zones/:id/preview', element: <ZonePreviewPage />, minRole: 'operator' },
   ],
   nav: [
     {

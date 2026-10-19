@@ -16,14 +16,14 @@ import {
   LiveStore,
   Sequencer,
   Stage,
+  ZoneTickerOverlay,
   contentFromManifest,
-  createTicker,
   customFontCss,
   fontFaceCss,
   installStyle,
+  zoneTickerSuppressed,
   type AssetResolver,
   type RenderEnv,
-  type Ticker,
 } from '@opensignage/render';
 import { setLanguage, t, restrictNamespaces } from '@opensignage/i18n';
 import { createNoise } from './noise';
@@ -78,44 +78,12 @@ const sequencer = new Sequencer(stage, envFor, {
 
 // ---------------------------------------------------------------- zone ticker overlay
 
-let zoneTicker: Ticker | null = null;
-let zoneTickerSig = '';
+const zoneTicker = new ZoneTickerOverlay($('zone-ticker'));
 
 function updateZoneTicker(): void {
-  const el = $('zone-ticker');
   const tk = live.ticker; // ticker of the active time schedule rule
-  const suppressed = currentSlide?.elements.some((e) => e.type === 'ticker' && e.tickerSource === 'zone' && !e.hidden) ?? false;
-  const show = !!tk && tk.text.trim() !== '' && !suppressed && mode?.kind === 'playing';
-  el.classList.toggle('hidden', !show);
-  if (!tk || !show) {
-    zoneTicker?.stop();
-    return;
-  }
-  const tpl = tk.template;
-  const sig = JSON.stringify(tpl);
-  const scale = window.innerHeight / 1080;
-  el.style.setProperty('--s', String(scale));
-  el.style.height = `${tpl.height * scale}px`;
-  el.style.top = tpl.position === 'top' ? '0' : '';
-  el.style.bottom = tpl.position === 'bottom' ? '0' : '';
-  el.style.background = tpl.background;
-  if (sig !== zoneTickerSig || !zoneTicker) {
-    zoneTicker?.stop();
-    el.replaceChildren();
-    zoneTicker = createTicker(
-      el,
-      { font: tpl.font, size: tpl.size, color: tpl.color, bold: false, italic: false, underline: false, strike: false, letterSpacing: 0, lineHeight: 1, align: 'left' },
-      tpl.speed,
-      tpl.direction,
-      true,
-    );
-    zoneTickerSig = sig;
-    zoneTicker.setText(tk.text);
-    zoneTicker.start();
-    return;
-  }
-  zoneTicker.setText(tk.text);
-  zoneTicker.start();
+  const show = mode?.kind === 'playing' && !zoneTickerSuppressed(currentSlide);
+  zoneTicker.update(show ? tk : null, window.innerHeight / 1080);
 }
 
 // ---------------------------------------------------------------- system screens

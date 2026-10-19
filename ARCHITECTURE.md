@@ -224,6 +224,15 @@ comes before its subcategory's, which comes before its category's. The server ex
 prices into product prices (`schedule.ExpandPrices`) for manifests, `now` and the overlap check,
 so devices only ever see product prices; manifests are rebuilt when products or categories
 change. A category with schedule prices cannot be deleted (`category_in_rules`).
+A screen evaluates its deployment with `schedule.Deployment.Evaluate` (rules, closed
+playlists of the zone and its group, only playlists contained in the deployment). The zone
+preview of the WebGUI uses the same function on the server: `GET /api/v1/zones/{id}/preview
+?at=&state=` builds the zone's manifest now and returns it with the zone's live state, the
+schedule prices and ticker, and every screen (each device with group, place, size and
+connection; display groups without device with one place per track) with its playlist and
+anchor at `at` (RFC 3339 or local `YYYY-MM-DDTHH:MM`; `state` OPEN/CLOSED simulates the
+zone state). The browser renders each screen with the player's stage, sequencer and ticker
+overlay, its clock running on from `at`.
 
 ### 5.5 Deployment manifest (`GET /device/v1/deployments/{id}`)
 

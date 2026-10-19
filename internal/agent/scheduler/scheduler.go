@@ -164,24 +164,8 @@ func compute(in Inputs, loc *time.Location, now time.Time) Output {
 	for _, p := range m.Playlists {
 		playlists[p.ID] = true
 	}
-	groupClosed := ""
-	for _, g := range m.Groups {
-		if g.ID == in.GroupID {
-			groupClosed = g.ClosedPlaylistID
-		}
-	}
-	res := schedule.Evaluate(schedule.Input{
-		Rules:                 m.Rules,
-		ZoneID:                m.ZoneID,
-		GroupID:               in.GroupID,
-		ZoneClosed:            in.ZoneClosed,
-		ClosedPlaylistID:      m.ClosedPlaylistID,
-		GroupClosedPlaylistID: groupClosed,
-		ClosedSince:           in.ClosedSince,
-		Now:                   now,
-		Location:              loc,
-		PlaylistAvailable:     func(id string) bool { return playlists[id] },
-	})
+	d := schedule.Deployment{ZoneID: m.ZoneID, Rules: m.Rules, ClosedPlaylistID: m.ClosedPlaylistID, Groups: m.Groups, Playlists: playlists}
+	res := d.Evaluate(schedule.Screen{GroupID: in.GroupID, ZoneClosed: in.ZoneClosed, ClosedSince: in.ClosedSince}, now, loc)
 	if res.Since != nil {
 		out.Since = *res.Since
 	}

@@ -8,6 +8,7 @@ export { selectProducts } from './productlist';
 export { Stage, backgroundSignature, elementSignature, type StageSlide } from './stage';
 export { Sequencer, contentFromManifest, type SequencerContent, type MediaInfo } from './sequencer';
 export { createTicker, type Ticker } from './ticker';
+export { ZoneTickerOverlay, zoneTickerSuppressed } from './zoneticker';
 export { watchVideo } from './video';
 export { fontFaceCss, customFontCss, installStyle } from './fonts';
 export { px, fpx, color, fontFamily, applyTextStyle, applyMarks, mergeStyle } from './units';

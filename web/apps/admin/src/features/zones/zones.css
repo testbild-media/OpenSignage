@@ -173,3 +173,118 @@
     max-width: none;
   }
 }
+
+/* Zone preview: every screen of the zone, rendered like its player. */
+.preview-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+}
+.preview-at {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.preview-clock {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--os-text-muted);
+}
+.preview-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.preview-summary section {
+  padding: 12px 14px;
+  border: 1px solid var(--os-border);
+  border-radius: var(--os-radius);
+  background: var(--os-surface);
+  min-width: 0;
+}
+.preview-summary h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--os-text-muted);
+}
+.preview-summary p {
+  margin: 0;
+}
+.preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.preview-state {
+  margin-top: 8px !important;
+}
+.preview-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+.preview-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.preview-tile {
+  margin: 0;
+  min-width: 0;
+}
+.preview-tile.portrait .preview-screen {
+  max-width: 260px;
+}
+.preview-tile figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  min-width: 0;
+}
+.preview-screen {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--os-radius-s);
+  border: 1px solid var(--os-border);
+  background: #000;
+}
+.preview-stage {
+  position: absolute;
+  inset: 0;
+}
+.preview-ticker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  overflow: hidden;
+}
+.preview-ticker.hidden {
+  display: none;
+}
+.preview-source {
+  margin-top: 6px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.preview-hint {
+  margin-top: 16px;
+}

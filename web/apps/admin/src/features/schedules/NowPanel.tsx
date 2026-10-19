@@ -1,7 +1,8 @@
 // "What runs now" for one zone: the server evaluates the same rules as the clients
 // (GET /api/v1/schedules/now?zone=).
 import { useEffect } from 'react';
-import { CircleOff, MoonStar, CirclePlay } from 'lucide-react';
+import { Link } from 'react-router';
+import { CircleOff, Eye, MoonStar, CirclePlay } from 'lucide-react';
 import { NO_GROUP_ID, type Money, type Rule } from '@opensignage/contracts';
 import { useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
@@ -41,7 +42,13 @@ export function NowPanel({ zoneId, rules }: { zoneId: string; rules: Rule[] }) {
   const at = d ? d.at.slice(11, 16) : '';
   return (
     <div className={`now-panel now-${d?.kind ?? 'loading'}`} aria-live="polite">
-      <div className="now-title">{t('admin.schedules.now.title')}</div>
+      <div className="now-title">
+        {t('admin.schedules.now.title')}
+        <Link to={`/zones/${zoneId}/preview`} className="now-preview">
+          <Eye size={14} />
+          {t('admin.zones.preview.action')}
+        </Link>
+      </div>
       <DataState loading={q.loading && !d} error={q.error} onRetry={q.reload}>
         {d && (
           <div className="now-body">

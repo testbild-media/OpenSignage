@@ -2,7 +2,7 @@
 // delete with a warning that names the devices that become zone-less.
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
-import { CalendarClock, MonitorSmartphone, Pencil, Plus, Trash2 } from 'lucide-react';
+import { CalendarClock, Eye, MonitorSmartphone, Pencil, Plus, Trash2 } from 'lucide-react';
 import { del, get, patch, post } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
@@ -163,6 +163,9 @@ export function ZonesPage() {
                       <MonitorSmartphone size={16} />
                     </IconButton>
                   )}
+                  <Link to={`/zones/${z.id}/preview`} className="icon-btn" title={t('admin.zones.preview.action')} aria-label={t('admin.zones.preview.action')}>
+                    <Eye size={16} />
+                  </Link>
                   <Link to={`/schedules#zone-${z.id}`} className="icon-btn" title={t('admin.zones.schedules')} aria-label={t('admin.zones.schedules')}>
                     <CalendarClock size={16} />
                   </Link>

@@ -205,6 +205,8 @@ func (m *Module) Routes(rt *core.Router) {
 	rt.Scoped("GET /api/v1/devices/{id}/actions/{requestId}", core.RoleOperator, m.deviceAccess(false, m.getAction))
 	rt.Scoped("GET /api/v1/devices/{id}/screenshot", core.RoleOperator, m.deviceAccess(false, m.screenshot))
 	rt.Scoped("POST /api/v1/devices/{id}/blackout", core.RoleOperator, m.deviceAccess(true, m.blackout))
+	// Zone preview: what the screens of a zone show now or at another moment (zone viewers).
+	rt.Scoped("GET /api/v1/zones/{id}/preview", core.RoleOperator, m.zonePreview)
 	rt.Role("GET /api/v1/alerts", core.RoleUser, m.alerts)
 	rt.Role("POST /api/v1/alerts/ack", core.RoleUser, m.ackAlert)
 	rt.Role("POST /api/v1/alerts/unack", core.RoleUser, m.unackAlert)

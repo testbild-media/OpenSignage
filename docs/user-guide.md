@@ -111,6 +111,14 @@ window → default rule. Rules may overlap as long as they do not change the sam
 zone that is **CLOSED** shows its CLOSED playlist (a display group may have its own).
 **Now** shows for each zone and display group what is playing and why.
 
+**Preview** (Zones → eye icon, or *Preview* in the *Running now* box) shows every screen of a
+zone as its player shows it – content, prices of the time schedules, ticker and what is sold
+out in the zone – also when no device is online. Choose *Now* or a moment, e.g. Monday 18:00,
+to check a happy hour before it starts; from there the clock runs on and time windows switch
+as on the screens. *OPEN* / *CLOSED* shows the zone in the other state. Every device of the
+zone has its own tile (with its place in its display group); a display group without device
+shows one tile per screen of its playlist. Sound is off in the preview.
+
 Every player evaluates the schedule itself in the configured time zone (daylight saving
 included), so switches happen on time even when the server is offline.
 

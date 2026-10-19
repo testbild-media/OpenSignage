@@ -6,6 +6,15 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 
 ## Unreleased
 
+### Added
+- Zone preview: every screen of a zone as its player shows it – content, prices of the time
+  schedules, ticker and what is sold out in the zone – now or at a chosen moment (the clock
+  runs on from there), optionally as OPEN or CLOSED, also when no device is online. One tile
+  per device (online state, place in the display group); display groups without device show
+  one tile per screen of their playlist. Opened from the zone list or from *Running now* on
+  the Time Schedules page. The server evaluates the schedule with the same function as the
+  players.
+
 ### Fixed
 - Product variants: the bar through a sold-out variant runs through the middle of the small
   letters of the font (it was too high).
