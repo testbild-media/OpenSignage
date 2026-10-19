@@ -59,6 +59,7 @@
   "field.name": "Nume",
   "field.price": "Preț",
   "field.quantity": "Cantitate",
+  "field.variants": "Variante",
   "font.missingChars": "Acest font nu conține unele caractere din text; pentru ele se folosește un font de rezervă.",
   "front": "În față",
   "grid": "Grilă",

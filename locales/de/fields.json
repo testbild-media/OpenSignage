@@ -85,6 +85,8 @@
   "updateRepo": "Update-Quelle",
   "username": "Benutzername",
   "variant": "Variante",
+  "variantName": "Name der Sorte",
+  "variants": "Sorten",
   "version": "Version",
   "weightMax": "Stärke bis",
   "weightMin": "Stärke von",

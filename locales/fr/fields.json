@@ -85,6 +85,8 @@
   "updateRepo": "Source des mises à jour",
   "username": "Nom d’utilisateur",
   "variant": "Variante",
+  "variantName": "Nom de la variante",
+  "variants": "Variantes",
   "version": "Version",
   "weightMax": "Graisse jusqu’à",
   "weightMin": "Graisse à partir de",

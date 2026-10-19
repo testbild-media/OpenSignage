@@ -35,6 +35,14 @@ export interface LiveZone {
   state: ZoneState;
   hasClosedPlaylist: boolean;
   products: LiveStatusEntry[];
+  /** Status of every variant in the zone (id = variant id). */
+  variants?: LiveStatusEntry[];
+}
+
+interface LiveVariant {
+  id: string;
+  name: string;
+  status: ProductStatus; // global
 }
 
 interface LiveCategory {
@@ -54,6 +62,7 @@ interface LiveProduct {
   price: Money;
   status: ProductStatus; // global
   sort: number;
+  variants?: LiveVariant[];
 }
 
 export interface LiveZones {
@@ -65,6 +74,7 @@ export interface LiveZones {
 
 interface StatusResult {
   productId: string;
+  variantId?: string;
   zoneId?: string;
   status: ProductStatus;
   override: ProductStatus | null;
@@ -90,6 +100,20 @@ export function carriedProducts<P extends { id: string; status: ProductStatus }>
 }
 
 export function applyZoneStatus(data: LiveZones, zoneId: string, r: StatusResult): LiveZones {
+  if (r.variantId) {
+    const entry = { id: r.variantId, status: r.effective, override: r.override };
+    return {
+      ...data,
+      zones: data.zones.map((z) => {
+        if (z.id !== zoneId) return z;
+        const list = z.variants ?? [];
+        return { ...z, variants: list.some((v) => v.id === r.variantId) ? list.map((v) => (v.id === r.variantId ? entry : v)) : [...list, entry] };
+      }),
+      products: data.products.map((p) =>
+        p.id === r.productId ? { ...p, variants: p.variants?.map((v) => (v.id === r.variantId ? { ...v, status: r.status } : v)) } : p,
+      ),
+    };
+  }
   return {
     ...data,
     zones: data.zones.map((z) =>
@@ -97,6 +121,20 @@ export function applyZoneStatus(data: LiveZones, zoneId: string, r: StatusResult
     ),
     products: data.products.map((p) => (p.id === r.productId ? { ...p, status: r.status } : p)),
   };
+}
+
+/** A variant as the operator view shows it: effective status in the zone and its global one. */
+export interface ZoneVariant {
+  id: string;
+  name: string;
+  status: ProductStatus;
+  global: ProductStatus;
+}
+
+/** The variants of a product carried in the zone (not "not available"), in their order. */
+export function zoneVariants(p: Pick<LiveProduct, 'variants'>, zone: Pick<LiveZone, 'variants'>): ZoneVariant[] {
+  const eff = new Map((zone.variants ?? []).map((v) => [v.id, v.status]));
+  return (p.variants ?? []).map((v) => ({ id: v.id, name: v.name, global: v.status, status: eff.get(v.id) ?? v.status })).filter((v) => v.status !== 'UNAVAILABLE');
 }
 
 export interface ProductSection {
@@ -134,12 +172,14 @@ export function categoryChoices(categories: LiveCategory[], sections: ProductSec
   return categories.filter((c) => !c.parentId && typed.some((s) => s.category.id === c.id || s.parent?.id === c.id));
 }
 
-/** The sections left after the type filter, the category chip and the search (combined). */
+/** The sections left after the type filter, the category chip and the search (combined; the
+ *  search also finds a product by the name of one of its variants). */
 export function filterSections(sections: ProductSection[], f: ProductFilter): ProductSection[] {
   const needle = f.search.trim().toLowerCase();
+  const found = (p: LiveProduct): boolean => !needle || p.name.toLowerCase().includes(needle) || (p.variants ?? []).some((v) => v.name.toLowerCase().includes(needle));
   return sections
     .filter((s) => f.category === 'all' || s.category.id === f.category || s.parent?.id === f.category)
-    .map((s) => ({ ...s, products: s.products.filter((p) => matchesType(p, f.type) && (!needle || p.name.toLowerCase().includes(needle))) }))
+    .map((s) => ({ ...s, products: s.products.filter((p) => matchesType(p, f.type) && found(p)) }))
     .filter((s) => s.products.length > 0);
 }
 
@@ -361,6 +401,20 @@ function ProductsCard({ data, zone, onStatus, report }: { data: LiveZones; zone:
   const category = tops.length > 1 && tops.some((c) => c.id === filter) ? filter : 'all';
 
   const confirm = useConfirm();
+  // A variant switches between available and sold out with one tap (asked first). Going back
+  // to its global status clears the zone override instead of setting one.
+  const askVariant = async (p: LiveProduct, v: ZoneVariant): Promise<void> => {
+    if (lock.current.has(v.id)) return;
+    const next: ProductStatus = v.status === 'SOLD_OUT' ? 'AVAILABLE' : 'SOLD_OUT';
+    const name = `${p.name} – ${v.name}`;
+    const ok = await confirm({
+      title: name,
+      message: next === 'SOLD_OUT' ? t('control.confirm.soldOut', { name }) : t('control.confirm.available', { name }),
+      confirmLabel: t(`control.status.${next}`),
+      danger: next === 'SOLD_OUT',
+    });
+    if (ok) await setStatus(v.id, next === v.global ? null : next, 'variants');
+  };
   // Asked first: a tap by mistake on a tablet must not take a product off the screens.
   const askStatus = async (p: LiveProduct, status: ProductStatus | null): Promise<void> => {
     if (lock.current.has(p.id)) return;
@@ -379,17 +433,17 @@ function ProductsCard({ data, zone, onStatus, report }: { data: LiveZones; zone:
     if (ok) await setStatus(p.id, status);
   };
 
-  const setStatus = async (productId: string, status: ProductStatus | null): Promise<void> => {
-    if (lock.current.has(productId)) return;
-    lock.current.add(productId);
+  const setStatus = async (id: string, status: ProductStatus | null, kind: 'products' | 'variants' = 'products'): Promise<void> => {
+    if (lock.current.has(id)) return;
+    lock.current.add(id);
     setPending(new Set(lock.current));
     try {
-      const r = await post<StatusResult>(`/api/v1/live/products/${encodeURIComponent(productId)}/status`, { status, zoneId: zone.id });
+      const r = await post<StatusResult>(`/api/v1/live/${kind}/${encodeURIComponent(id)}/status`, { status, zoneId: zone.id });
       onStatus(r);
     } catch (e) {
       report(e);
     } finally {
-      lock.current.delete(productId);
+      lock.current.delete(id);
       setPending(new Set(lock.current));
     }
   };
@@ -451,8 +505,11 @@ function ProductsCard({ data, zone, onStatus, report }: { data: LiveZones; zone:
                 const override = st?.override ?? null;
                 const busy = pending.has(p.id);
                 const qty = p.quantity ? `${formatQuantityValue(p.quantity.value, sep)} ${t(`admin.products.unit.${p.quantity.unit}`)}` : '';
+                const variants = zoneVariants(p, zone);
+                // Every variant sold out: the screens show the whole product as sold out.
+                const allOut = effective === 'AVAILABLE' && variants.length > 0 && variants.every((v) => v.status === 'SOLD_OUT');
                 return (
-                  <li key={p.id} className={`ctl-product st-${effective.toLowerCase()}`}>
+                  <li key={p.id} className={`ctl-product st-${(allOut ? 'SOLD_OUT' : effective).toLowerCase()} ${variants.length ? 'has-variants' : ''}`}>
                     {/* One line like the product list: name, then quantity and price in fixed columns
                         so they line up in every row. A zone override shows as the reset button. */}
                     <div className="ctl-product-info">
@@ -499,6 +556,25 @@ function ProductsCard({ data, zone, onStatus, report }: { data: LiveZones; zone:
                         </button>
                       ))}
                     </div>
+                    {variants.length > 0 && (
+                      <div className="ctl-variants" role="group" aria-label={t('control.products.variantsOf', { name: p.name })}>
+                        {variants.map((v) => (
+                          <button
+                            key={v.id}
+                            type="button"
+                            className={`ctl-var st-${v.status.toLowerCase()}`}
+                            aria-pressed={v.status === 'SOLD_OUT'}
+                            title={t(`control.status.${v.status}`)}
+                            disabled={pending.has(v.id) || effective !== 'AVAILABLE'}
+                            onClick={() => void askVariant(p, v)}
+                          >
+                            {pending.has(v.id) ? <Loader2 size={16} className="spin" /> : v.status === 'SOLD_OUT' ? <Ban size={16} /> : <Check size={16} />}
+                            <span className="ctl-var-name">{v.name}</span>
+                          </button>
+                        ))}
+                        {allOut && <span className="ctl-var-note">{t('control.products.allVariantsSoldOut')}</span>}
+                      </div>
+                    )}
                   </li>
                 );
               })}

@@ -405,9 +405,10 @@ function ProductProps({ e, upd }: { e: Extract<SlideElement, { type: 'productLis
       )}
       {e.type === 'product' && <SourcePicker kind="products" single ids={e.productId ? [e.productId] : []} onChange={(ids) => upd((x) => x.type === 'product' && (x.productId = ids[0] ?? ''))} />}
       <Row label={t('editor.prop.fields')}>
-        {(['name', 'quantity', 'description', 'price'] as const).map((f) => (
+        {(['name', 'quantity', 'description', 'variants', 'price'] as const).map((f) => (
           <label key={f} className="checkbox small">
-            <input type="checkbox" checked={e.fields[f]} onChange={(ev) => upd((x) => (x.type === 'productList' || x.type === 'product') && (x.fields[f] = ev.target.checked))} />
+            {/* Variants are shown unless switched off (older elements have no setting). */}
+            <input type="checkbox" checked={e.fields[f] !== false && (f === 'variants' || !!e.fields[f])} onChange={(ev) => upd((x) => (x.type === 'productList' || x.type === 'product') && (x.fields[f] = ev.target.checked))} />
             <span>{t(`editor.field.${f}`)}</span>
           </label>
         ))}

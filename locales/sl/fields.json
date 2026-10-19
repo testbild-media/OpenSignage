@@ -85,6 +85,8 @@
   "updateRepo": "Vir posodobitev",
   "username": "Uporabniško ime",
   "variant": "Varianta",
+  "variantName": "Ime vrste",
+  "variants": "Vrste",
   "version": "Različica",
   "weightMax": "Debelina do",
   "weightMin": "Debelina od",

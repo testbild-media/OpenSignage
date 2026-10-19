@@ -59,6 +59,7 @@
   "field.name": "Name",
   "field.price": "Preis",
   "field.quantity": "Menge",
+  "field.variants": "Sorten",
   "font.missingChars": "Dieser Schrift fehlen Zeichen des Textes; dafür wird eine Ersatzschrift verwendet.",
   "front": "Nach vorne",
   "grid": "Raster",

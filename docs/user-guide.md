@@ -64,6 +64,15 @@ Products have a category (and optional subcategory), type, quantity, description
 price and an optional logo image. **Duplicate** copies a product with all its values.
 Prices that change by time (happy hour) are set in time schedule rules, not on the product.
 
+**Variants** are the kinds of a product that share its price – the juices "Orange, Apple,
+Passion fruit" of one juice product, "Bitter Lemon, Tonic" of a tonic. On the screens they
+stand below the name like the description, separated by commas. Each variant has its own
+status: a sold-out variant is struck through on its own, and when every variant is sold out
+the whole product is. In the product dialog, Enter adds the next variant and a pasted list
+("Orange, Apple, Guava") becomes several variants; a description written as such a list can
+be taken over as variants with one click. Product lists and product elements show the
+variants unless *Variants* is switched off in their fields.
+
 Product status:
 
 - **available** – shown normally;
@@ -71,7 +80,8 @@ Product status:
 - **not available** – not shown at all, without leaving a gap.
 
 The status is global and can be overridden per zone. Operators switch between available and
-sold out; only administrators set "not available".
+sold out; only administrators set "not available". Variants have the same statuses; in the
+operator view each variant is a button below its product.
 
 ## Playlists
 

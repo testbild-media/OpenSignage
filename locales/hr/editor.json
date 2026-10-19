@@ -59,6 +59,7 @@
   "field.name": "Naziv",
   "field.price": "Cijena",
   "field.quantity": "Količina",
+  "field.variants": "Vrste",
   "font.missingChars": "U ovom fontu nedostaju neki znakovi teksta; za njih se koristi zamjenski font.",
   "front": "U prednji plan",
   "grid": "Rešetka",

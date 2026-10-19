@@ -85,6 +85,8 @@
   "updateRepo": "Frissítési forrás",
   "username": "Felhasználónév",
   "variant": "Változat",
+  "variantName": "Fajta neve",
+  "variants": "Fajták",
   "version": "Verzió",
   "weightMax": "Vastagság (max.)",
   "weightMin": "Vastagság (min.)",

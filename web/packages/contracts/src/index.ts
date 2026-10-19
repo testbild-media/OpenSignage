@@ -158,6 +158,8 @@ export interface ProductFields {
   quantity: boolean;
   description: boolean;
   price: boolean;
+  /** The product's variants below the name, like the description (absent = shown). */
+  variants?: boolean;
 }
 export interface ProductOverrides {
   heading?: Marks;
@@ -424,6 +426,15 @@ export interface LiveProduct {
   /** Size of the image instead of the name, percent of the automatic size (absent = 100). */
   imageScale?: number;
   sort: number;
+  /** Variants share the price and are shown like the description (absent = none). */
+  variants?: LiveVariant[];
+}
+
+/** One variant of a product with its effective status (UNAVAILABLE ones are not shown). */
+export interface LiveVariant {
+  id: string;
+  name: string;
+  status: ProductStatus;
 }
 
 export interface LiveState {

@@ -85,6 +85,8 @@
   "updateRepo": "Uuenduste allikas",
   "username": "Kasutajanimi",
   "variant": "Variant",
+  "variantName": "Sordi nimi",
+  "variants": "Sordid",
   "version": "Versioon",
   "weightMax": "Paksus kuni",
   "weightMin": "Paksus alates",

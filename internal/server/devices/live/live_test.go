@@ -115,3 +115,68 @@ func TestStatusesStayDistinct(t *testing.T) {
 		t.Fatalf("empty: %+v", e)
 	}
 }
+
+// Variants carry their own effective status (zone override, else global), keep their order,
+// and a product whose offered variants are all sold out is sold out in that zone.
+func TestVariants(t *testing.T) {
+	d := openDB(t)
+	now := "2026-10-19T10:00:00Z"
+	exec(t, d, `INSERT INTO zones(id, name, state, created_at, updated_at) VALUES ('z1', 'Bar', 'OPEN', ?, ?)`, now, now)
+	exec(t, d, `INSERT INTO zones(id, name, state, created_at, updated_at) VALUES ('z2', 'Terrace', 'OPEN', ?, ?)`, now, now)
+	exec(t, d, `INSERT INTO categories(id, name, sort, created_at, updated_at) VALUES ('c1', 'Juices', 1, ?, ?)`, now, now)
+	exec(t, d, `INSERT INTO products(id, category_id, name, type, price_amount, currency, status, sort, created_at, updated_at)
+		VALUES ('juice', 'c1', 'Juices', 'drink', 400, 'EUR', 'AVAILABLE', 1, ?, ?)`, now, now)
+	exec(t, d, `INSERT INTO products(id, category_id, name, type, price_amount, currency, status, sort, created_at, updated_at)
+		VALUES ('cola', 'c1', 'Cola', 'drink', 300, 'EUR', 'AVAILABLE', 2, ?, ?)`, now, now)
+	variant := func(id, name string, sort int, status string) {
+		exec(t, d, `INSERT INTO product_variants(id, product_id, name, sort, status) VALUES (?, 'juice', ?, ?, ?)`, id, name, sort, status)
+	}
+	variant("v-apple", "Apple", 2, "AVAILABLE")
+	variant("v-orange", "Orange", 1, "SOLD_OUT")
+	variant("v-guava", "Guava", 3, "UNAVAILABLE")
+	exec(t, d, `INSERT INTO zone_variant_status(zone_id, variant_id, status) VALUES ('z2', 'v-apple', 'SOLD_OUT')`)
+	exec(t, d, `INSERT INTO zone_variant_status(zone_id, variant_id, status) VALUES ('z2', 'v-guava', 'AVAILABLE')`)
+
+	states, err := Compute(context.Background(), d.R, nil, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	juice := func(zone string) contracts.LiveProduct {
+		for _, p := range states[zone].Products {
+			if p.ID == "juice" {
+				return p
+			}
+		}
+		t.Fatalf("no juice in %s", zone)
+		return contracts.LiveProduct{}
+	}
+	got := func(p contracts.LiveProduct) string {
+		s := p.Status
+		for _, v := range p.Variants {
+			s += " " + v.Name + "=" + v.Status
+		}
+		return s
+	}
+	if g := got(juice("z1")); g != "AVAILABLE Orange=SOLD_OUT Apple=AVAILABLE Guava=UNAVAILABLE" {
+		t.Fatalf("z1: %s", g)
+	}
+	if g := got(juice("z2")); g != "AVAILABLE Orange=SOLD_OUT Apple=SOLD_OUT Guava=AVAILABLE" {
+		t.Fatalf("z2: %s", g)
+	}
+	for _, p := range states["z1"].Products {
+		if p.ID == "cola" && p.Variants != nil {
+			t.Fatalf("a product without variants has none: %+v", p)
+		}
+	}
+
+	// Apple sold out in the bar as well: every variant offered there is sold out (Guava is not
+	// carried), so the whole product is; on the terrace Guava is still there.
+	exec(t, d, `INSERT INTO zone_variant_status(zone_id, variant_id, status) VALUES ('z1', 'v-apple', 'SOLD_OUT')`)
+	states, err = Compute(context.Background(), d.R, nil, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if juice("z1").Status != "SOLD_OUT" || juice("z2").Status != "AVAILABLE" {
+		t.Fatalf("derived status: bar %s, terrace %s", juice("z1").Status, juice("z2").Status)
+	}
+}

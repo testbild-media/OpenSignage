@@ -85,6 +85,8 @@
   "updateRepo": "Updatebron",
   "username": "Gebruikersnaam",
   "variant": "Variant",
+  "variantName": "Naam van de soort",
+  "variants": "Soorten",
   "version": "Versie",
   "weightMax": "Dikte tot",
   "weightMin": "Dikte vanaf",

@@ -59,6 +59,7 @@
   "field.name": "Nimi",
   "field.price": "Hind",
   "field.quantity": "Kogus",
+  "field.variants": "Sordid",
   "font.missingChars": "Sellest fondist puuduvad mõned teksti märgid; nende jaoks kasutatakse asendusfonti.",
   "front": "Ette",
   "grid": "Ruudustik",

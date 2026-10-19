@@ -85,6 +85,8 @@
   "updateRepo": "Zdroj aktualizácií",
   "username": "Používateľské meno",
   "variant": "Variant",
+  "variantName": "Názov druhu",
+  "variants": "Druhy",
   "version": "Verzia",
   "weightMax": "Hrúbka do",
   "weightMin": "Hrúbka od",

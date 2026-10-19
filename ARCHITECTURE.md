@@ -156,7 +156,7 @@ Element =
 | shape     { shape: "rect"|"ellipse"|"line"|"arrow", fill?: color,
               stroke: { color, width, dash: "solid"|"dashed"|"dotted" }, radius }
 | productList { source: { kind: "all"|"categories"|"products", ids: [] },
-              columns: 1..4, fields: { name, quantity, description, price: bool },
+              columns: 1..4, fields: { name, quantity, description, price: bool, variants?: bool (absent = shown) },
               categoryHeadings: bool, subcategoryHeadings: bool, scale: 0.25..4,
               categorySpace?, subcategorySpace?: bool (a hidden heading keeps its space),
               rowGap, columnGap, priceAlign: "right"|"left", overrides?: {…TextStyle partials} }
@@ -257,11 +257,18 @@ LiveState {
                quantity?: { value, unit: "ml"|"cl"|"l"|"g"|"kg"|"pcs" },
                price: Money,                       // base price; schedule prices from rules
                status: "AVAILABLE"|"UNAVAILABLE"|"SOLD_OUT",   // effective (zone override → global)
-               imageAssetId?, showImageInsteadOfName: bool, sort }],
+               imageAssetId?, showImageInsteadOfName: bool, sort,
+               variants?: [{ id, name, status }] }],   // in order; status effective like products
   serverTime
 }
 TickerTemplate { font, size, color, background, speed, direction, height, position: "top"|"bottom" }
 ```
+Variants share the product's price and are shown below the name like the description,
+separated by commas (`fields.variants`); a sold-out variant is struck through on its own, an
+UNAVAILABLE one is left out. Their status is global with zone overrides like products
+(`product_variants`, `zone_variant_status`; `POST /api/v1/live/variants/{id}/status` with
+the rules of the product status). A product whose offered variants are all SOLD_OUT is sent
+as SOLD_OUT.
 
 ### 5.7 Device link messages (WS `/device/v1/ws`, JSON)
 
@@ -366,7 +373,7 @@ restarted on panic). Pattern to copy: `internal/server/users`.
 | `system` | settings, certificates, backup/restore, storage dashboard | settings |
 | `media` | media_*, blobs, uploads, font_faces | media, content |
 | `content` | presentations*, playlists*, content_refs | content |
-| `catalog` | categories, products, zone_product_status, zones, ticker_templates, schedule_* | products, zones, live, content |
+| `catalog` | categories, products, product_variants, zone_product_status, zone_variant_status, zones, ticker_templates, schedule_* | products, zones, live, content |
 | `devices` | devices, pairing_requests, deployments*, device_deployments, live hub, device link | devices |
 | `updates` | releases, update_runs, device_updates, device_platforms, settings.trustedKeys, `<data>/updates/` (incl. `update-state.json`) | updates |
 

@@ -59,6 +59,7 @@
   "field.name": "Nome",
   "field.price": "Preço",
   "field.quantity": "Quantidade",
+  "field.variants": "Variantes",
   "font.missingChars": "Este tipo de letra não tem alguns carateres do texto; para esses é utilizado um tipo de letra alternativo.",
   "front": "Para a frente",
   "grid": "Grelha",

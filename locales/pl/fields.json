@@ -85,6 +85,8 @@
   "updateRepo": "Źródło aktualizacji",
   "username": "Nazwa użytkownika",
   "variant": "Wariant",
+  "variantName": "Nazwa wariantu",
+  "variants": "Warianty",
   "version": "Wersja",
   "weightMax": "Grubość do",
   "weightMin": "Grubość od",

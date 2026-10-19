@@ -59,6 +59,7 @@
   "field.name": "Pavadinimas",
   "field.price": "Kaina",
   "field.quantity": "Kiekis",
+  "field.variants": "Rūšys",
   "font.missingChars": "Šiame šrifte trūksta kai kurių teksto simbolių; jiems naudojamas atsarginis šriftas.",
   "front": "Į priekį",
   "grid": "Tinklelis",

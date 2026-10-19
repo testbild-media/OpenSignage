@@ -59,6 +59,7 @@
   "field.name": "Namn",
   "field.price": "Pris",
   "field.quantity": "Antal",
+  "field.variants": "Sorter",
   "font.missingChars": "Teckensnittet saknar vissa tecken i texten; ett reservteckensnitt används för dem.",
   "front": "Längst fram",
   "grid": "Rutnät",

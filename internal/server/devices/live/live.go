@@ -1,6 +1,7 @@
 // Package live computes the full live state of zones (ARCHITECTURE §5.6): zone state,
 // ticker, the category tree and every non-archived product with its effective
-// three-valued status (zone override, else global). States are always complete, never
+// three-valued status (zone override, else global) and its variants, each with its own
+// effective status. A product whose offered variants are all sold out is sold out. States are always complete, never
 // deltas, so a device that missed messages is correct after the next one.
 package live
 
@@ -62,7 +63,13 @@ type zoneRow struct {
 }
 
 type productRow struct {
-	p      contracts.LiveProduct
+	p        contracts.LiveProduct
+	global   string
+	variants []variantRow
+}
+
+type variantRow struct {
+	v      contracts.LiveVariant
 	global string
 }
 
@@ -109,7 +116,14 @@ func ComputeWith(ctx context.Context, q Querier, zoneIDs []string, now time.Time
 	if err != nil {
 		return nil, err
 	}
-	overrides, err := loadOverrides(ctx, q, zones)
+	if err := loadVariants(ctx, q, prods); err != nil {
+		return nil, err
+	}
+	overrides, err := loadOverrides(ctx, q, zones, "zone_product_status", "product_id")
+	if err != nil {
+		return nil, err
+	}
+	variantOverrides, err := loadOverrides(ctx, q, zones, "zone_variant_status", "variant_id")
 	if err != nil {
 		return nil, err
 	}
@@ -125,12 +139,26 @@ func ComputeWith(ctx context.Context, q Querier, zoneIDs []string, now time.Time
 			Products:   make([]contracts.LiveProduct, len(prods)),
 			ServerTime: serverTime,
 		}
-		zo := overrides[z.id]
+		zo, vo := overrides[z.id], variantOverrides[z.id]
 		for i, pr := range prods {
 			p := pr.p
 			p.Status = pr.global
 			if s, ok := zo[p.ID]; ok {
 				p.Status = s
+			}
+			if len(pr.variants) > 0 {
+				p.Variants = make([]contracts.LiveVariant, len(pr.variants))
+				for j, vr := range pr.variants {
+					v := vr.v
+					v.Status = vr.global
+					if s, ok := vo[v.ID]; ok {
+						v.Status = s
+					}
+					p.Variants[j] = v
+				}
+				if p.Status == StatusAvailable && contracts.VariantsSoldOut(p.Variants) {
+					p.Status = StatusSoldOut
+				}
 			}
 			st.Products[i] = p
 		}
@@ -252,12 +280,43 @@ func loadProducts(ctx context.Context, q Querier) ([]productRow, error) {
 	return out, nil
 }
 
-func loadOverrides(ctx context.Context, q Querier, zones []zoneRow) (map[string]map[string]string, error) {
+// loadVariants attaches the variants (in their order) to the products.
+func loadVariants(ctx context.Context, q Querier, prods []productRow) error {
+	idx := make(map[string]int, len(prods))
+	for i, p := range prods {
+		idx[p.p.ID] = i
+	}
+	rows, err := q.QueryContext(ctx, `SELECT v.id, v.product_id, v.name, v.status FROM product_variants v
+		JOIN products p ON p.id = v.product_id WHERE p.archived_at IS NULL ORDER BY v.product_id, v.sort, v.id`)
+	if err != nil {
+		return fmt.Errorf("live: variants: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var r variantRow
+		var productID string
+		if err := rows.Scan(&r.v.ID, &productID, &r.v.Name, &r.global); err != nil {
+			return err
+		}
+		if !ValidStatus(r.global) {
+			slog.Error("live: variant with invalid status, treating as UNAVAILABLE", "variant", r.v.ID, "status", r.global)
+			r.global = StatusUnavailable
+		}
+		if i, ok := idx[productID]; ok {
+			prods[i].variants = append(prods[i].variants, r)
+		}
+	}
+	return rows.Err()
+}
+
+// loadOverrides reads the zone overrides of products or variants (table, id column):
+// zone id -> id -> status.
+func loadOverrides(ctx context.Context, q Querier, zones []zoneRow, table, idCol string) (map[string]map[string]string, error) {
 	args := make([]any, len(zones))
 	for i, z := range zones {
 		args[i] = z.id
 	}
-	rows, err := q.QueryContext(ctx, `SELECT zone_id, product_id, status FROM zone_product_status WHERE zone_id IN (`+placeholders(len(zones))+`)`, args...)
+	rows, err := q.QueryContext(ctx, `SELECT zone_id, `+idCol+`, status FROM `+table+` WHERE zone_id IN (`+placeholders(len(zones))+`)`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("live: zone overrides: %w", err)
 	}
@@ -269,7 +328,7 @@ func loadOverrides(ctx context.Context, q Querier, zones []zoneRow) (map[string]
 			return nil, err
 		}
 		if !ValidStatus(s) {
-			slog.Error("live: invalid zone override ignored", "zone", z, "product", p, "status", s)
+			slog.Error("live: invalid zone override ignored", "zone", z, "id", p, "status", s)
 			continue
 		}
 		if out[z] == nil {

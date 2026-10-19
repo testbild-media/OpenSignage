@@ -59,6 +59,7 @@
   "field.name": "Navn",
   "field.price": "Pris",
   "field.quantity": "Antal",
+  "field.variants": "Sorter",
   "font.missingChars": "Denne skrifttype mangler nogle af tekstens tegn; der bruges en reserveskrifttype til dem.",
   "front": "Forrest",
   "grid": "Gitter",

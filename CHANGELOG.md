@@ -11,6 +11,13 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   during happy hour. The price applies to every product of the category (also to products
   added later); a price for a subcategory or a single product in the same rule comes first.
   The server sends the players product prices, so players on older versions show them too.
+- Product variants: the kinds of a product that share its price, e.g. the juices "Orange,
+  Apple, Passion fruit". On the screens they stand below the name like the description,
+  separated by commas. Each variant can be marked as sold out on its own – in the operator
+  view with one tap – and only that variant is struck through; when every variant is sold
+  out, the whole product is. Product lists and product elements show the variants unless
+  switched off in their fields. A description written as a list can be taken over as
+  variants with one click. Players need the update to show variants.
 
 ## 1.1.0 – 2026-10-18
 

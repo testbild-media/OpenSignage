@@ -12,6 +12,8 @@ import { Segmented } from '../../components/controls';
 import { MediaPickerDialog, MediaThumb } from '../../components/MediaPicker';
 import { currencyDigits, decimalSeparator, formatMoneyInput, formatQuantityValue, parseMoney, parseQuantity, validCurrency } from './money';
 import { categoryOptions, PRODUCT_TYPES, QUANTITY_UNITS, type Category, type Product, type ProductType } from './types';
+import { duplicateNames, variantsBody, type VariantRow } from './variants';
+import { VariantsEditor } from './VariantsEditor';
 
 /** Edit a product, create one, or create a copy (copyOf: all fields taken over, saved as a
  *  new product right after the original). */
@@ -51,6 +53,8 @@ export function ProductDialog({
     showImage: src?.showImageInsteadOfName ?? false,
     imageScale: String(src?.imageScale ?? 100),
   }));
+  // A copy gets new variants with the same names (and every variant available).
+  const [variants, setVariants] = useState<VariantRow[]>(() => (src?.variants ?? []).map((v, i) => ({ key: i + 1, id: product ? v.id : undefined, name: v.name })));
   const [picking, setPicking] = useState(false);
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]): void => setForm((f) => ({ ...f, [k]: v }));
 
@@ -66,7 +70,7 @@ export function ProductDialog({
   const typed = /^\d{1,3}$/.test(form.imageScale.trim()) ? Number(form.imageScale.trim()) : NaN;
   const scaleBad = scaleShown && !(typed >= 25 && typed <= 400);
   const scale = scaleShown && !scaleBad ? typed : (src?.imageScale ?? 100);
-  const valid = form.name.trim() !== '' && form.categoryId !== '' && amount !== null && currencyOk && !qtyBad && !scaleBad;
+  const valid = form.name.trim() !== '' && form.categoryId !== '' && amount !== null && currencyOk && !qtyBad && !scaleBad && duplicateNames(variants).size === 0;
 
   const save = useAction(async () => {
     if (amount === null) return;
@@ -80,6 +84,7 @@ export function ProductDialog({
       imageAssetId: form.imageAssetId || null,
       showImageInsteadOfName: !!form.imageAssetId && form.showImage,
       imageScale: scale,
+      variants: variantsBody(variants),
     };
     const saved = product
       ? await patch<Product>(`/api/v1/products/${product.id}`, { ...body, revision: product.revision })
@@ -116,6 +121,9 @@ export function ProductDialog({
           <TextInput label={t('admin.products.field.name')} value={form.name} maxLength={200} onChange={(e) => set('name', e.target.value)} />
           <Field label={t('admin.products.field.description')} htmlFor="product-description">
             <textarea id="product-description" className="input" rows={3} maxLength={2000} value={form.description} onChange={(e) => set('description', e.target.value)} />
+          </Field>
+          <Field label={t('admin.products.field.variants')} hint={t('admin.products.variants.hint')} error={duplicateNames(variants).size > 0 ? t('admin.products.variants.duplicate') : null}>
+            <VariantsEditor rows={variants} onChange={setVariants} description={form.description} onTakeDescription={() => set('description', '')} />
           </Field>
           <Select label={t('admin.products.field.category')} value={form.categoryId} options={categoryOptions(categories)} onChange={(e) => set('categoryId', e.target.value)} />
           <Field label={t('admin.products.field.type')}>

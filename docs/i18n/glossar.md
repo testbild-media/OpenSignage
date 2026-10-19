@@ -69,6 +69,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | продукт |
 | category | категория |
 | subcategory | подкатегория |
+| variant | вид |
 | sold out | изчерпано |
 | unavailable | недостъпно |
 | available | налично |
@@ -148,6 +149,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkt |
 | category | kategorie |
 | subcategory | podkategorie |
+| variant | druh |
 | sold out | vyprodáno |
 | unavailable | nedostupné |
 | available | dostupné |
@@ -227,6 +229,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkt |
 | category | kategori |
 | subcategory | underkategori |
+| variant | sort |
 | sold out | udsolgt |
 | unavailable | ikke tilgængelig |
 | available | tilgængelig |
@@ -306,6 +309,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | Produkt |
 | category | Kategorie |
 | subcategory | Unterkategorie |
+| variant | Sorte |
 | sold out | ausverkauft |
 | unavailable | nicht verfügbar |
 | available | verfügbar |
@@ -355,6 +359,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | προϊόν |
 | category | κατηγορία |
 | subcategory | υποκατηγορία |
+| variant | παραλλαγή |
 | sold out | εξαντλήθηκε |
 | unavailable | μη διαθέσιμο |
 | available | διαθέσιμο |
@@ -434,6 +439,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | producto |
 | category | categoría |
 | subcategory | subcategoría |
+| variant | variante |
 | sold out | agotado |
 | unavailable | no disponible |
 | available | disponible |
@@ -513,6 +519,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | toode |
 | category | kategooria |
 | subcategory | alamkategooria |
+| variant | sort |
 | sold out | välja müüdud |
 | unavailable | pole saadaval |
 | available | saadaval |
@@ -592,6 +599,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | tuote |
 | category | kategoria |
 | subcategory | alakategoria |
+| variant | lajike |
 | sold out | loppuunmyyty |
 | unavailable | ei saatavilla |
 | available | saatavilla |
@@ -671,6 +679,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produit |
 | category | catégorie |
 | subcategory | sous-catégorie |
+| variant | variante |
 | sold out | épuisé |
 | unavailable | indisponible |
 | available | disponible |
@@ -750,6 +759,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | táirge |
 | category | catagóir |
 | subcategory | fochatagóir |
+| variant | cineál |
 | sold out | díolta amach |
 | unavailable | níl ar fáil |
 | available | ar fáil |
@@ -833,6 +843,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | proizvod |
 | category | kategorija |
 | subcategory | potkategorija |
+| variant | vrsta |
 | sold out | rasprodano |
 | unavailable | nedostupno |
 | available | dostupno |
@@ -916,6 +927,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | termék |
 | category | kategória |
 | subcategory | alkategória |
+| variant | fajta |
 | sold out | elfogyott |
 | unavailable | nem elérhető |
 | available | elérhető |
@@ -999,6 +1011,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | prodotto |
 | category | categoria |
 | subcategory | sottocategoria |
+| variant | variante |
 | sold out | esaurito |
 | unavailable | non disponibile |
 | available | disponibile |
@@ -1082,6 +1095,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produktas |
 | category | kategorija |
 | subcategory | subkategorija |
+| variant | rūšis |
 | sold out | išparduota |
 | unavailable | nepasiekiama |
 | available | prieinama |
@@ -1165,6 +1179,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkts |
 | category | kategorija |
 | subcategory | apakškategorija |
+| variant | veids |
 | sold out | izpārdots |
 | unavailable | nav pieejams |
 | available | pieejams |
@@ -1248,6 +1263,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | prodott |
 | category | kategorija |
 | subcategory | sottokategorija |
+| variant | varjetà |
 | sold out | mibjugħ kollu |
 | unavailable | mhux disponibbli |
 | available | disponibbli |
@@ -1331,6 +1347,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | product |
 | category | categorie |
 | subcategory | subcategorie |
+| variant | soort |
 | sold out | uitverkocht |
 | unavailable | niet beschikbaar |
 | available | beschikbaar |
@@ -1407,6 +1424,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkt |
 | category | kategoria |
 | subcategory | podkategoria |
+| variant | wariant |
 | sold out | wyprzedane |
 | unavailable | niedostępne |
 | available | dostępne |
@@ -1483,6 +1501,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produto |
 | category | categoria |
 | subcategory | subcategoria |
+| variant | variante |
 | sold out | esgotado |
 | unavailable | indisponível |
 | available | disponível |
@@ -1559,6 +1578,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produs |
 | category | categorie |
 | subcategory | subcategorie |
+| variant | variantă |
 | sold out | epuizat |
 | unavailable | indisponibil |
 | available | disponibil |
@@ -1635,6 +1655,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkt |
 | category | kategória |
 | subcategory | podkategória |
+| variant | druh |
 | sold out | vypredané |
 | unavailable | nedostupné |
 | available | dostupné |
@@ -1711,6 +1732,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | izdelek |
 | category | kategorija |
 | subcategory | podkategorija |
+| variant | vrsta |
 | sold out | razprodano |
 | unavailable | ni na voljo |
 | available | na voljo |
@@ -1787,6 +1809,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 | product | produkt |
 | category | kategori |
 | subcategory | underkategori |
+| variant | sort |
 | sold out | slutsåld |
 | unavailable | inte tillgänglig |
 | available | tillgänglig |
@@ -1857,6 +1880,7 @@ Column “EN” is the English source term. Verbs are given in the form used for
 - **screen**: the display that shows the content
 - **time schedule**: rules that switch playlists/prices by time; German keeps the English term
 - **product**: item of the drink/food menu
+- **variant**: one kind of a product that shares its price (Orange, Apple of a juice); shown like the description, each can be sold out on its own
 - **sold out**: product status
 - **unavailable**: product status
 - **available**: product status

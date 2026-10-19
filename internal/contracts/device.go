@@ -209,6 +209,16 @@ type LiveProduct struct {
 	// (absent = 100).
 	ImageScale int   `json:"imageScale,omitempty"`
 	Sort       int64 `json:"sort"`
+	// Variants share the price and are shown like the description, in this order
+	// (UNAVAILABLE ones not at all). Absent when the product has none.
+	Variants []LiveVariant `json:"variants,omitempty"`
+}
+
+// LiveVariant is one variant of a product with its effective status for the zone.
+type LiveVariant struct {
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Status string `json:"status"` // AVAILABLE | UNAVAILABLE | SOLD_OUT (zone override → global)
 }
 
 // ---------------------------------------------------------------- device link (WS)

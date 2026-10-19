@@ -150,6 +150,8 @@ type ProductFields struct {
 	Quantity    bool `json:"quantity"`
 	Description bool `json:"description"`
 	Price       bool `json:"price"`
+	// Variants: the product's variants below the name (absent = shown).
+	Variants *bool `json:"variants,omitempty"`
 }
 
 // ProductOverrides adjust the presentation typography for one element.

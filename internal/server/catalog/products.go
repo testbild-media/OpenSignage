@@ -17,7 +17,12 @@ import (
 	"opensignage/internal/server/modkit"
 )
 
-const maxDescriptionRunes = 2000
+const (
+	maxDescriptionRunes = 2000
+	// A product has at most this many variants with names of at most maxVariantRunes.
+	maxVariants     = 50
+	maxVariantRunes = 100
+)
 
 // Product is the API representation of a product with its global status and the per-zone
 // overrides (zoneId → status). The three states are never reduced.
@@ -34,12 +39,23 @@ type Product struct {
 	ImageAssetID           string              `json:"imageAssetId,omitempty"`
 	ShowImageInsteadOfName bool                `json:"showImageInsteadOfName"`
 	// ImageScale: size of the image instead of the name in percent of the automatic size.
-	ImageScale int    `json:"imageScale"`
-	Sort       int    `json:"sort"`
-	Archived   bool   `json:"archived"`
-	Revision   int64  `json:"revision"`
-	CreatedAt  string `json:"createdAt"`
-	UpdatedAt  string `json:"updatedAt"`
+	ImageScale int `json:"imageScale"`
+	// Variants share the price and are shown like the description; each has its own status.
+	Variants  []Variant `json:"variants"`
+	Sort      int       `json:"sort"`
+	Archived  bool      `json:"archived"`
+	Revision  int64     `json:"revision"`
+	CreatedAt string    `json:"createdAt"`
+	UpdatedAt string    `json:"updatedAt"`
+}
+
+// Variant is one variant of a product ("Orange") with its global status and the per-zone
+// overrides (zoneId → status), like a product.
+type Variant struct {
+	ID         string            `json:"id"`
+	Name       string            `json:"name"`
+	Status     string            `json:"status"`
+	ZoneStatus map[string]string `json:"zoneStatus"`
 }
 
 const productCols = `id, category_id, name, description, type, quantity_value, quantity_unit, price_amount, currency,
@@ -60,11 +76,12 @@ func scanProduct(sc interface{ Scan(...any) error }) (Product, error) {
 	p.ShowImageInsteadOfName = show == 1
 	p.Archived = archived == 1
 	p.ZoneStatus = map[string]string{}
+	p.Variants = []Variant{}
 	return p, nil
 }
 
 // loadProducts reads products matching the WHERE clause (including the keyword) ordered by
-// sort, name; zone overrides are attached.
+// sort, name; zone overrides and the variants (with their overrides) are attached.
 func loadProducts(ctx context.Context, q modkit.Queryer, where string, args ...any) ([]Product, error) {
 	rows, err := q.QueryContext(ctx, `SELECT `+productCols+` FROM products `+where+` ORDER BY sort, name COLLATE NOCASE, id`, args...)
 	if err != nil {
@@ -92,17 +109,68 @@ func loadProducts(ctx context.Context, q modkit.Queryer, where string, args ...a
 	if err != nil {
 		return nil, err
 	}
-	defer orows.Close()
 	for orows.Next() {
 		var pid, zid, st string
 		if err := orows.Scan(&pid, &zid, &st); err != nil {
+			orows.Close()
 			return nil, err
 		}
 		if i, ok := idx[pid]; ok {
 			out[i].ZoneStatus[zid] = st
 		}
 	}
-	return out, orows.Err()
+	orows.Close()
+	if err := orows.Err(); err != nil {
+		return nil, err
+	}
+	return out, loadVariants(ctx, q, out, idx, where, args)
+}
+
+// loadVariants attaches the variants of the products (in their order) with their zone
+// overrides.
+func loadVariants(ctx context.Context, q modkit.Queryer, ps []Product, idx map[string]int, where string, args []any) error {
+	rows, err := q.QueryContext(ctx, `SELECT id, product_id, name, status FROM product_variants
+		WHERE product_id IN (SELECT id FROM products `+where+`) ORDER BY product_id, sort, id`, args...)
+	if err != nil {
+		return err
+	}
+	at := map[string][2]int{} // variant id -> product index, variant index
+	for rows.Next() {
+		var v Variant
+		var pid string
+		if err := rows.Scan(&v.ID, &pid, &v.Name, &v.Status); err != nil {
+			rows.Close()
+			return err
+		}
+		if i, ok := idx[pid]; ok {
+			v.ZoneStatus = map[string]string{}
+			at[v.ID] = [2]int{i, len(ps[i].Variants)}
+			ps[i].Variants = append(ps[i].Variants, v)
+		}
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	if len(at) == 0 {
+		return nil
+	}
+	zrows, err := q.QueryContext(ctx, `SELECT zv.variant_id, zv.zone_id, zv.status FROM zone_variant_status zv
+		JOIN product_variants v ON v.id = zv.variant_id WHERE v.product_id IN (SELECT id FROM products `+where+`)`, args...)
+	if err != nil {
+		return err
+	}
+	defer zrows.Close()
+	for zrows.Next() {
+		var vid, zid, st string
+		if err := zrows.Scan(&vid, &zid, &st); err != nil {
+			return err
+		}
+		if pos, ok := at[vid]; ok {
+			ps[pos[0]].Variants[pos[1]].ZoneStatus[zid] = st
+		}
+	}
+	return zrows.Err()
 }
 
 func loadProduct(ctx context.Context, q modkit.Queryer, id string) (Product, error) {
@@ -144,11 +212,17 @@ func (m *Module) listProducts(w http.ResponseWriter, r *http.Request, p *core.Pr
 	}
 	if !p.Unrestricted() {
 		// Users and operators limited to zones see the overrides of their zones only (ARCHITECTURE §7).
-		for i := range ps {
-			for zone := range ps[i].ZoneStatus {
+		hide := func(zs map[string]string) {
+			for zone := range zs {
 				if !p.CanViewZone(zone) {
-					delete(ps[i].ZoneStatus, zone)
+					delete(zs, zone)
 				}
+			}
+		}
+		for i := range ps {
+			hide(ps[i].ZoneStatus)
+			for _, v := range ps[i].Variants {
+				hide(v.ZoneStatus)
 			}
 		}
 	}
@@ -176,10 +250,18 @@ type productReq struct {
 	ImageAssetID           modkit.Opt[string]             `json:"imageAssetId"`
 	ShowImageInsteadOfName *bool                          `json:"showImageInsteadOfName"`
 	ImageScale             *int                           `json:"imageScale"`
-	Sort                   *int                           `json:"sort"`
+	// Variants replaces the variants: entries with the id of an existing variant keep it
+	// (and its status), entries without id are new.
+	Variants *[]variantReq `json:"variants"`
+	Sort     *int          `json:"sort"`
 	// AfterID (create only, "Duplicate"): place the new product right after this one when
 	// both are in the same category; otherwise it goes to the end as usual.
 	AfterID *string `json:"afterId"`
+}
+
+type variantReq struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 // apply merges the request into p and checks the shape of every provided field.
@@ -251,7 +333,85 @@ func (req *productReq) apply(p *Product) error {
 	if req.Sort != nil {
 		p.Sort = *req.Sort
 	}
+	if req.Variants != nil {
+		vs, err := applyVariants(*req.Variants, p.Variants)
+		if err != nil {
+			return err
+		}
+		p.Variants = vs
+	}
 	return nil
+}
+
+// applyVariants builds the new variant list: known ids keep their variant (status and zone
+// overrides), entries without id become new variants. Names are unique (ignoring case).
+func applyVariants(req []variantReq, old []Variant) ([]Variant, error) {
+	if len(req) > maxVariants {
+		return nil, httpx.Invalid("variants", "too_many")
+	}
+	byID := make(map[string]Variant, len(old))
+	for _, v := range old {
+		byID[v.ID] = v
+	}
+	out := make([]Variant, 0, len(req))
+	names, seen := map[string]bool{}, map[string]bool{}
+	for _, r := range req {
+		name, ok := modkit.CleanName(r.Name, maxVariantRunes)
+		if !ok {
+			return nil, httpx.Invalid("variantName", "invalid")
+		}
+		key := strings.ToLower(name)
+		if names[key] {
+			return nil, httpx.Invalid("variantName", "duplicate")
+		}
+		names[key] = true
+		v := Variant{ID: ids.New(), Name: name, Status: contracts.StatusAvailable, ZoneStatus: map[string]string{}}
+		if r.ID != "" {
+			known, ok := byID[r.ID]
+			if !ok || seen[r.ID] {
+				return nil, httpx.Invalid("variants", "invalid")
+			}
+			seen[r.ID] = true
+			v.ID, v.Status, v.ZoneStatus = known.ID, known.Status, known.ZoneStatus
+		}
+		out = append(out, v)
+	}
+	return out, nil
+}
+
+// writeVariants stores the variants of a product in their order; variants that are gone are
+// deleted with their zone overrides.
+func writeVariants(ctx context.Context, tx *sql.Tx, productID string, old, next []Variant) error {
+	keep := make(map[string]bool, len(next))
+	for _, v := range next {
+		keep[v.ID] = true
+	}
+	for _, v := range old {
+		if !keep[v.ID] {
+			if _, err := tx.ExecContext(ctx, `DELETE FROM product_variants WHERE id = ?`, v.ID); err != nil {
+				return err
+			}
+		}
+	}
+	for i, v := range next {
+		if _, err := tx.ExecContext(ctx, `INSERT INTO product_variants(id, product_id, name, sort, status) VALUES (?, ?, ?, ?, ?)
+			ON CONFLICT(id) DO UPDATE SET name = excluded.name, sort = excluded.sort`, v.ID, productID, v.Name, i, v.Status); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func sameVariants(a, b []Variant) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i].ID != b[i].ID || a[i].Name != b[i].Name {
+			return false
+		}
+	}
+	return true
 }
 
 // Size of an image instead of the name, percent of the automatic size.
@@ -334,7 +494,7 @@ func (m *Module) createProduct(w http.ResponseWriter, r *http.Request, p *core.P
 	case req.Price == nil:
 		return httpx.Invalid("price", "required")
 	}
-	prod := Product{ID: ids.New(), Status: contracts.StatusAvailable, ZoneStatus: map[string]string{},
+	prod := Product{ID: ids.New(), Status: contracts.StatusAvailable, ZoneStatus: map[string]string{}, Variants: []Variant{},
 		Price: contracts.Money{Currency: m.app.Settings.Get().Currency}, ImageScale: 100, Revision: 1}
 	if err := req.apply(&prod); err != nil {
 		return err
@@ -360,6 +520,9 @@ func (m *Module) createProduct(w http.ResponseWriter, r *http.Request, p *core.P
 			return err
 		}
 		if err := syncProductRef(r.Context(), tx, prod.ID, prod.ImageAssetID); err != nil {
+			return err
+		}
+		if err := writeVariants(r.Context(), tx, prod.ID, nil, prod.Variants); err != nil {
 			return err
 		}
 		if req.AfterID != nil && req.Sort == nil {
@@ -463,6 +626,11 @@ func (m *Module) updateProduct(w http.ResponseWriter, r *http.Request, p *core.P
 		}
 		if next.ImageAssetID != old.ImageAssetID {
 			if err := syncProductRef(r.Context(), tx, id, next.ImageAssetID); err != nil {
+				return err
+			}
+		}
+		if !sameVariants(old.Variants, next.Variants) {
+			if err := writeVariants(r.Context(), tx, id, old.Variants, next.Variants); err != nil {
 				return err
 			}
 		}

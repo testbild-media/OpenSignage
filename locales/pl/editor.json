@@ -59,6 +59,7 @@
   "field.name": "Nazwa",
   "field.price": "Cena",
   "field.quantity": "Ilość",
+  "field.variants": "Warianty",
   "font.missingChars": "W tej czcionce brakuje niektórych znaków tekstu; w ich miejsce używana jest czcionka zastępcza.",
   "front": "Na wierzch",
   "grid": "Siatka",

@@ -59,6 +59,7 @@
   "field.name": "Név",
   "field.price": "Ár",
   "field.quantity": "Mennyiség",
+  "field.variants": "Fajták",
   "font.missingChars": "Ebből a betűtípusból hiányzik a szöveg néhány karaktere; ezekhez tartalék betűtípus lesz használva.",
   "front": "Legelőre",
   "grid": "Rács",

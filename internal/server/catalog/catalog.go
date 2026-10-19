@@ -49,6 +49,7 @@ func (m *Module) Routes(rt *core.Router) {
 	// Live operation (operator UI /control)
 	rt.Role("GET /api/v1/live/zones", core.RoleUser, m.liveZones)
 	rt.Role("POST /api/v1/live/products/{id}/status", core.RoleUser, m.setProductStatus)
+	rt.Role("POST /api/v1/live/variants/{id}/status", core.RoleUser, m.setVariantStatus)
 	rt.Role("POST /api/v1/live/zones/{id}/state", core.RoleUser, m.setZoneState)
 
 	// Zones

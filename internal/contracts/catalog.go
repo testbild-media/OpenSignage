@@ -23,6 +23,22 @@ func ValidStatus(s string) bool {
 	return s == StatusAvailable || s == StatusUnavailable || s == StatusSoldOut
 }
 
+// VariantsSoldOut reports whether a product with variants is sold out because every
+// variant it offers (not UNAVAILABLE) is: the screens then show the whole product as sold out.
+func VariantsSoldOut(variants []LiveVariant) bool {
+	offered := false
+	for _, v := range variants {
+		switch v.Status {
+		case StatusUnavailable:
+		case StatusSoldOut:
+			offered = true
+		default:
+			return false
+		}
+	}
+	return offered
+}
+
 // Product types and quantity units.
 var (
 	productTypes  = []string{"drink", "food", "other"}

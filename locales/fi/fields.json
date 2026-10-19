@@ -85,6 +85,8 @@
   "updateRepo": "Päivityslähde",
   "username": "Käyttäjätunnus",
   "variant": "Variantti",
+  "variantName": "Lajikkeen nimi",
+  "variants": "Lajikkeet",
   "version": "Versio",
   "weightMax": "Paino enintään",
   "weightMin": "Paino vähintään",

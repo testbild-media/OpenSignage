@@ -59,6 +59,7 @@
   "field.name": "Nimi",
   "field.price": "Hinta",
   "field.quantity": "Määrä",
+  "field.variants": "Lajikkeet",
   "font.missingChars": "Tästä fontista puuttuu joitakin tekstin merkkejä; niille käytetään varafonttia.",
   "front": "Eteen",
   "grid": "Ruudukko",

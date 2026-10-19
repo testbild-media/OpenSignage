@@ -50,7 +50,11 @@ export function StatusToggle({
   );
 }
 
-/** Sets global status (zoneId undefined) or a zone override (status null clears it). */
+/** What a status belongs to: a product or one of its variants. */
+export type StatusKind = 'product' | 'variant';
+
+/** Sets global status (zoneId undefined) or a zone override (status null clears it) of a
+ *  product or a variant. */
 export function useStatusChange(onDone: (r: StatusResult) => void) {
   const toast = useToast();
   const lock = useRef(new Set<string>());
@@ -58,17 +62,17 @@ export function useStatusChange(onDone: (r: StatusResult) => void) {
   const done = useRef(onDone);
   done.current = onDone;
   const run = useCallback(
-    async (productId: string, status: ProductStatus | null, zoneId?: string) => {
-      if (lock.current.has(productId)) return;
-      lock.current.add(productId);
+    async (id: string, status: ProductStatus | null, zoneId?: string, kind: StatusKind = 'product') => {
+      if (lock.current.has(id)) return;
+      lock.current.add(id);
       setBusy(new Set(lock.current));
       try {
-        const res = await post<StatusResult>(`/api/v1/live/products/${encodeURIComponent(productId)}/status`, zoneId ? { status, zoneId } : { status });
+        const res = await post<StatusResult>(`/api/v1/live/${kind === 'variant' ? 'variants' : 'products'}/${encodeURIComponent(id)}/status`, zoneId ? { status, zoneId } : { status });
         done.current(res);
       } catch (e) {
         toast(errorText(e), 'error');
       } finally {
-        lock.current.delete(productId);
+        lock.current.delete(id);
         setBusy(new Set(lock.current));
       }
     },

@@ -616,6 +616,54 @@ body {
 .ctl-product:last-child {
   border-bottom: 0;
 }
+.ctl-product.has-variants {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+/* Variants: one chip each below the product; a sold-out variant is red and struck through. */
+.ctl-variants {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.ctl-var {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--os-border-strong);
+  border-radius: 999px;
+  background: var(--os-surface-2);
+  color: var(--os-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ctl-var.st-available svg {
+  color: #6fd39a;
+}
+.ctl-var.st-sold_out {
+  border-color: rgba(214, 69, 69, 0.7);
+  background: rgba(214, 69, 69, 0.16);
+  color: #ff9c9c;
+}
+.ctl-var.st-sold_out .ctl-var-name {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.ctl-var:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.ctl-var-note {
+  font-size: 13px;
+  color: #ff9c9c;
+}
 .ctl-product-info {
   flex: 1;
   min-width: 0;

@@ -85,6 +85,8 @@
   "updateRepo": "Източник на актуализации",
   "username": "Потребителско име",
   "variant": "Вариант",
+  "variantName": "Име на вида",
+  "variants": "Видове",
   "version": "Версия",
   "weightMax": "Плътност до",
   "weightMin": "Плътност от",

@@ -32,6 +32,8 @@ export interface Product {
   showImageInsteadOfName: boolean;
   /** Logo size in percent of the automatic size (image instead of the name). */
   imageScale: number;
+  /** Variants share the price and are shown like the description; each has its own status. */
+  variants: Variant[];
   sort: number;
   archived: boolean;
   revision: number;
@@ -39,9 +41,20 @@ export interface Product {
   updatedAt: string;
 }
 
-/** Answer of POST /api/v1/live/products/{id}/status. */
+/** One variant of a product ("Orange") with its global status and zone overrides. */
+export interface Variant {
+  id: string;
+  name: string;
+  status: ProductStatus;
+  /** zoneId → override status. */
+  zoneStatus: Record<string, ProductStatus>;
+}
+
+/** Answer of POST /api/v1/live/products/{id}/status and /api/v1/live/variants/{id}/status. */
 export interface StatusResult {
   productId: string;
+  /** Set when the status of a variant changed. */
+  variantId?: string;
   zoneId?: string;
   status: ProductStatus;
   override: ProductStatus | null;

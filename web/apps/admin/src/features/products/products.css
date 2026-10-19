@@ -140,6 +140,23 @@ span.product-thumb-empty {
 .status-row-unavailable .product-text {
   opacity: 0.6;
 }
+/* Variants below their product: indented, no thumbnail, compact rows. */
+.product-table .variant-row td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-top: 0;
+}
+.variant-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding-left: 30px;
+  color: var(--os-text-muted);
+}
+.status-row-unavailable .variant-name {
+  opacity: 0.6;
+}
 
 /* Three-state status toggle: clear colours, the active state is filled. */
 .status-toggle {
@@ -237,6 +254,31 @@ span.product-thumb-empty {
 }
 .product-form-side {
   align-self: start;
+}
+.variant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.variant-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.variant-list .input {
+  flex: 1;
+  min-width: 0;
+}
+.variant-list .input.invalid {
+  border-color: var(--os-danger);
+}
+.variant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .product-form-error {
   grid-column: 1 / -1;

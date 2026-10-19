@@ -59,6 +59,7 @@
   "field.name": "Ime",
   "field.price": "Cena",
   "field.quantity": "Količina",
+  "field.variants": "Vrste",
   "font.missingChars": "Tej pisavi manjka nekaj znakov besedila; zanje se uporabi nadomestna pisava.",
   "front": "V ospredje",
   "grid": "Mreža",

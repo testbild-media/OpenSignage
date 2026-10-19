@@ -1,6 +1,7 @@
 import type {
   LiveCategory,
   LiveProduct,
+  LiveVariant,
   ProductElement,
   ProductFields,
   ProductListElement,
@@ -105,16 +106,46 @@ function cell(className: string): HTMLElement {
   return el;
 }
 
+/** The variants shown on the screens, in their order ("not available" ones are left out). */
+export function offeredVariants(p: Pick<LiveProduct, 'variants'>): LiveVariant[] {
+  return (p.variants ?? []).filter((v) => v.status !== 'UNAVAILABLE');
+}
+
+/** The status shown for a product: sold out as well when every variant it offers is. */
+export function shownStatus(p: Pick<LiveProduct, 'status' | 'variants'>): LiveProduct['status'] {
+  const offered = offeredVariants(p);
+  return p.status === 'AVAILABLE' && offered.length > 0 && offered.every((v) => v.status === 'SOLD_OUT') ? 'SOLD_OUT' : p.status;
+}
+
 function rowSignature(p: LiveProduct, price: string, fields: ProductFields): string {
-  return [p.id, p.name, p.status, price, fields.description ? p.description : '', p.imageAssetId ?? '', p.showImageInsteadOfName, p.imageScale ?? 100, p.quantity?.value, p.quantity?.unit].join('|');
+  const variants = fields.variants !== false ? offeredVariants(p).map((v) => `${v.name}:${v.status}`).join(',') : '';
+  return [p.id, p.name, shownStatus(p), price, fields.description ? p.description : '', variants, p.imageAssetId ?? '', p.showImageInsteadOfName, p.imageScale ?? 100, p.quantity?.value, p.quantity?.unit].join('|');
+}
+
+/** "Orange, Apple, Guava" in the description style; a sold-out variant is struck through. */
+function variantLine(variants: LiveVariant[], s: TextStyle): HTMLElement {
+  const line = document.createElement('div');
+  line.className = 'os-vars';
+  applyTextStyle(line, s);
+  variants.forEach((v, i) => {
+    if (i > 0) line.append(', ');
+    const item = document.createElement('span');
+    item.className = 'os-var' + (v.status === 'SOLD_OUT' ? ' os-var-soldout' : '');
+    const label = document.createElement('span');
+    label.textContent = v.name;
+    item.appendChild(label);
+    line.appendChild(item);
+  });
+  return line;
 }
 
 function buildRow(p: LiveProduct, st: Styles, fields: ProductFields, priceAlign: string, env: RenderEnv): HTMLElement {
   const row = document.createElement('div');
-  row.className = 'os-row' + (p.status === 'SOLD_OUT' ? ' os-soldout' : '');
+  row.className = 'os-row' + (shownStatus(p) === 'SOLD_OUT' ? ' os-soldout' : '');
   row.dataset.id = p.id;
   row.dataset.price = priceAlign;
   row.style.setProperty('--bar', fpx(Math.max(3, st.item.size * 0.14)));
+  row.style.setProperty('--vbar', fpx(Math.max(2, st.description.size * 0.12)));
   row.style.columnGap = fpx(st.item.size * 0.6);
   const price = formatMoney(env.live.price(p), env.live.language);
   // Empty cells keep their class: the grid places name, quantity and price explicitly in the
@@ -157,6 +188,8 @@ function buildRow(p: LiveProduct, st: Styles, fields: ProductFields, priceAlign:
   if (priceAlign === 'left') row.append(priceEl, name, qty);
   else row.append(name, qty, priceEl);
   if (fields.description && p.description) row.append(text('div', 'os-desc', st.description, p.description));
+  const variants = fields.variants !== false ? offeredVariants(p) : [];
+  if (variants.length > 0) row.append(variantLine(variants, st.description));
   row.dataset.sig = rowSignature(p, price, fields);
   return row;
 }

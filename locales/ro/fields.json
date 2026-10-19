@@ -85,6 +85,8 @@
   "updateRepo": "Sursa actualizărilor",
   "username": "Nume de utilizator",
   "variant": "Variantă",
+  "variantName": "Numele variantei",
+  "variants": "Variante",
   "version": "Versiune",
   "weightMax": "Grosime până la",
   "weightMin": "Grosime de la",

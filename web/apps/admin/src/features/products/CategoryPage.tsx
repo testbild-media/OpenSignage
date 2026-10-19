@@ -1,8 +1,8 @@
 // Products of one category (and its subcategories): fast three-state status toggle, zone
 // overrides, add/edit in a dialog, archive, drag & drop sorting inside a category.
-import { useCallback, useMemo, useState } from 'react';
+import { Fragment, type ReactNode, useCallback, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { Archive, ChevronRight, CopyPlus, FolderPlus, GripVertical, Pencil, Plus, X } from 'lucide-react';
+import { Archive, ChevronRight, CopyPlus, CornerDownRight, FolderPlus, GripVertical, Pencil, Plus, X } from 'lucide-react';
 import type { ProductStatus } from '@opensignage/contracts';
 import { formatMoney, getLanguage } from '@opensignage/i18n';
 import { errorText, post } from '../../lib/api';
@@ -16,7 +16,7 @@ import { useSortable } from '../../components/sortable';
 import type { Zone } from '../zones/types';
 import { CategoryDialog } from './CategoryDialog';
 import { ProductDialog } from './ProductDialog';
-import { StatusToggle, useStatusChange } from './StatusToggle';
+import { StatusToggle, useStatusChange, type StatusKind } from './StatusToggle';
 import { useRights } from '../../lib/rights';
 import { decimalSeparator, formatQuantityValue } from './money';
 import type { Category, Product, StatusResult } from './types';
@@ -27,22 +27,27 @@ export function quantityText(p: Pick<Product, 'quantity'>, t: (k: string) => str
   return `${formatQuantityValue(p.quantity.value, decimalSeparator(lang))} ${t(`admin.products.unit.${p.quantity.unit}`)}`;
 }
 
-/** Applies a status answer to the product list (only after the server confirmed it). */
+/** Applies a status answer to the product list (only after the server confirmed it): to the
+ *  product, or to one of its variants. */
 export function applyStatus(list: Product[], r: StatusResult): Product[] {
-  return list.map((p) => {
-    if (p.id !== r.productId) return p;
-    if (!r.zoneId) return { ...p, status: r.status };
-    const zoneStatus = { ...p.zoneStatus };
+  const apply = <T extends Pick<Product, 'status' | 'zoneStatus'>>(x: T): T => {
+    if (!r.zoneId) return { ...x, status: r.status };
+    const zoneStatus = { ...x.zoneStatus };
     if (r.override) zoneStatus[r.zoneId] = r.override;
     else delete zoneStatus[r.zoneId];
-    return { ...p, status: r.status, zoneStatus };
+    return { ...x, status: r.status, zoneStatus };
+  };
+  return list.map((p) => {
+    if (p.id !== r.productId) return p;
+    if (r.variantId) return { ...p, variants: p.variants.map((v) => (v.id === r.variantId ? apply(v) : v)) };
+    return apply(p);
   });
 }
 
 interface RowHandlers {
   zones: Zone[];
   busy: ReadonlySet<string>;
-  setStatus: (id: string, s: ProductStatus | null, zoneId?: string) => void;
+  setStatus: (id: string, s: ProductStatus | null, zoneId?: string, kind?: StatusKind) => void;
   onEdit: (p: Product) => void;
   onDuplicate: (p: Product) => void;
   onArchive: (p: Product) => void;
@@ -59,6 +64,25 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
   const ids = products.map((p) => p.id);
   const sort = useSortable(ids, onReorder);
   const zoneName = (id: string): string => h.zones.find((z) => z.id === id)?.name ?? '?';
+  // Zone overrides of a product or variant: one chip per zone, × resets it to the global status.
+  const overrideChips = (id: string, zoneStatus: Record<string, ProductStatus>, kind: StatusKind, busy: boolean): ReactNode => {
+    const overrides = Object.entries(zoneStatus);
+    if (overrides.length === 0) return null;
+    return (
+      <div className="override-list" aria-label={t('admin.products.overrides')}>
+        {overrides.map(([zoneId, st]) => (
+          <span key={zoneId} className={`override-chip st-${st.toLowerCase()}`} title={t('admin.products.overrideTitle')}>
+            <span className="ellipsis">
+              {zoneName(zoneId)}: {t(`admin.products.status.${st}`)}
+            </span>
+            <button type="button" disabled={busy || !rights.canEditZone(zoneId)} aria-label={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} title={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} onClick={() => h.setStatus(id, null, zoneId, kind)}>
+              <X size={12} />
+            </button>
+          </span>
+        ))}
+      </div>
+    );
+  };
   return (
     <table className="table product-table product-table-fixed">
       <thead>
@@ -74,9 +98,9 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
       <tbody>
         {products.map((p) => {
           const busy = h.busy.has(p.id);
-          const overrides = Object.entries(p.zoneStatus);
           return (
-            <tr key={p.id} {...sort.itemProps(p.id)} className={`status-row-${p.status.toLowerCase()}`}>
+            <Fragment key={p.id}>
+            <tr {...sort.itemProps(p.id)} className={`status-row-${p.status.toLowerCase()}`}>
               <td className="col-handle">
                 {edit && (
                   <button type="button" {...sort.handleProps(p.id, t('admin.products.dragToSort'))}>
@@ -100,20 +124,7 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
               <td className="nowrap num">{formatMoney(p.price.amount, p.price.currency, lang)}</td>
               <td>
                 <StatusToggle value={p.status} busy={busy} canHide={isAdmin} readOnly={!edit} label={t('admin.products.statusOf', { name: p.name })} onChange={(s) => h.setStatus(p.id, s)} />
-                {overrides.length > 0 && (
-                  <div className="override-list" aria-label={t('admin.products.overrides')}>
-                    {overrides.map(([zoneId, st]) => (
-                      <span key={zoneId} className={`override-chip st-${st.toLowerCase()}`} title={t('admin.products.overrideTitle')}>
-                        <span className="ellipsis">
-                          {zoneName(zoneId)}: {t(`admin.products.status.${st}`)}
-                        </span>
-                        <button type="button" disabled={busy || !rights.canEditZone(zoneId)} aria-label={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} title={t('admin.products.clearOverride', { zone: zoneName(zoneId) })} onClick={() => h.setStatus(p.id, null, zoneId)}>
-                          <X size={12} />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {overrideChips(p.id, p.zoneStatus, 'product', busy)}
               </td>
               <td className="row-actions">
                 {edit && (
@@ -131,6 +142,27 @@ function ProductTable({ products, onReorder, h }: { products: Product[]; onReord
                 )}
               </td>
             </tr>
+            {/* Variants below their product, each with its own status (same price). */}
+            {p.variants.map((v) => {
+              const vbusy = h.busy.has(v.id);
+              return (
+                <tr key={v.id} className={`variant-row status-row-${v.status.toLowerCase()}`}>
+                  <td className="col-handle" />
+                  <td colSpan={3}>
+                    <div className="variant-name">
+                      <CornerDownRight size={14} aria-hidden="true" />
+                      <span className="ellipsis">{v.name}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <StatusToggle value={v.status} busy={vbusy} canHide={isAdmin} readOnly={!edit} label={t('admin.products.statusOf', { name: `${p.name} – ${v.name}` })} onChange={(s) => h.setStatus(v.id, s, undefined, 'variant')} />
+                    {overrideChips(v.id, v.zoneStatus, 'variant', vbusy)}
+                  </td>
+                  <td />
+                </tr>
+              );
+            })}
+            </Fragment>
           );
         })}
       </tbody>
@@ -220,7 +252,7 @@ export function CategoryPage() {
   const handlers: RowHandlers = {
     zones: zones.data?.zones ?? [],
     busy: status.busy,
-    setStatus: (pid, s, zoneId) => void status.run(pid, s, zoneId),
+    setStatus: (id, s, zoneId, kind) => void status.run(id, s, zoneId, kind),
     onEdit: setEditing,
     onDuplicate: (p) => setEditing({ copyOf: p }),
     onArchive: (p) => void archive.run(p),

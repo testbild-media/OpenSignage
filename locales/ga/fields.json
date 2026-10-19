@@ -85,6 +85,8 @@
   "updateRepo": "Foinse na nuashonruithe",
   "username": "Ainm úsáideora",
   "variant": "Malairt",
+  "variantName": "Ainm an chineáil",
+  "variants": "Cineálacha",
   "version": "Leagan",
   "weightMax": "Meáchan go",
   "weightMin": "Meáchan ó",

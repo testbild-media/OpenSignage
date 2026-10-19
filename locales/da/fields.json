@@ -85,6 +85,8 @@
   "updateRepo": "Opdateringskilde",
   "username": "Brugernavn",
   "variant": "Variant",
+  "variantName": "Navn på sort",
+  "variants": "Sorter",
   "version": "Version",
   "weightMax": "Vægt til",
   "weightMin": "Vægt fra",

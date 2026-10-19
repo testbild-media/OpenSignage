@@ -235,3 +235,65 @@ describe('heading modes', () => {
     expect(none.querySelectorAll('.os-row').length).toBe(shown.querySelectorAll('.os-row').length);
   });
 });
+
+describe('variants', () => {
+  const juices = (statuses: Record<string, ProductStatus>, patch: Partial<LiveProduct> = {}): LiveState => {
+    const s = state();
+    const v = (id: string, name: string) => ({ id, name, status: statuses[id] ?? ('AVAILABLE' as ProductStatus) });
+    s.products = [...s.products, product('juice', 'wine', 2, 'AVAILABLE', { description: 'Fresh', variants: [v('o', 'Orange'), v('a', 'Apple'), v('g', 'Guava')], ...patch })];
+    return s;
+  };
+  const show = (el: Partial<ProductListElement> = {}): HTMLElement => {
+    const e = renderElement({ ...list, fields: { ...list.fields, description: true }, ...el }, testEnv(store)).el;
+    document.body.appendChild(e);
+    return e;
+  };
+  const line = (el: HTMLElement): HTMLElement | null => el.querySelector<HTMLElement>('.os-row[data-id="juice"] .os-vars');
+
+  it('shows the variants like the description, separated by commas, below the description', () => {
+    store.set(juices({}));
+    const el = show();
+    const vars = line(el)!;
+    expect(vars.textContent).toBe('Orange, Apple, Guava');
+    const desc = el.querySelector<HTMLElement>('.os-row[data-id="juice"] .os-desc')!;
+    expect(vars.style.fontSize).toBe(desc.style.fontSize); // description style
+    expect(desc.nextElementSibling).toBe(vars);
+    expect(rule('.os-row .os-vars').style.gridRow).toBe('2');
+    expect(rule('.os-row .os-desc~.os-vars').style.gridRow).toBe('3');
+    expect(rule('.os-var').style.whiteSpace).toBe('nowrap'); // breaks only between variants
+  });
+
+  it('strikes through a sold-out variant only and leaves out variants that are not carried', () => {
+    store.set(juices({ a: 'SOLD_OUT', g: 'UNAVAILABLE' }));
+    const el = show();
+    const vars = line(el)!;
+    expect(vars.textContent).toBe('Orange, Apple');
+    const items = [...vars.querySelectorAll<HTMLElement>('.os-var')];
+    expect(items.map((i) => i.classList.contains('os-var-soldout'))).toEqual([false, true]);
+    expect(el.querySelector('.os-row[data-id="juice"]')!.classList.contains('os-soldout')).toBe(false);
+    const bar = rule('.os-var-soldout::after').style;
+    expect(bar.background || bar.backgroundColor).toMatch(/#d64545|rgb\(214, 69, 69\)/);
+    expect(getComputedStyle(items[1]!.firstElementChild!).opacity).toBe('0.42');
+    expect(getComputedStyle(items[0]!.firstElementChild!).opacity).not.toBe('0.42');
+  });
+
+  it('updates live and shows the product sold out when every variant it offers is', () => {
+    store.set(juices({}));
+    const el = show();
+    store.set(juices({ o: 'SOLD_OUT', a: 'SOLD_OUT', g: 'UNAVAILABLE' }));
+    const juice = el.querySelector<HTMLElement>('.os-row[data-id="juice"]')!;
+    expect(juice.classList.contains('os-soldout')).toBe(true);
+    expect(line(el)!.querySelectorAll('.os-var-soldout')).toHaveLength(2);
+    store.set(juices({ o: 'SOLD_OUT' }));
+    expect(el.querySelector('.os-row[data-id="juice"]')!.classList.contains('os-soldout')).toBe(false);
+    expect(line(el)!.querySelectorAll('.os-var-soldout')).toHaveLength(1);
+  });
+
+  it('can be switched off per element and needs no description', () => {
+    store.set(juices({}, { description: '' }));
+    expect(line(show({ fields: { ...list.fields, variants: false } }))).toBeNull();
+    const el = show();
+    expect(el.querySelector('.os-row[data-id="juice"] .os-desc')).toBeNull();
+    expect(line(el)!.textContent).toBe('Orange, Apple, Guava');
+  });
+});

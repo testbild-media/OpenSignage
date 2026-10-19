@@ -39,6 +39,7 @@ describe('applyStatus', () => {
     price: { amount: 850, currency: 'EUR' },
     status: 'AVAILABLE',
     zoneStatus: { z1: 'SOLD_OUT' },
+    variants: [{ id: 'v', name: 'Mint', status: 'AVAILABLE', zoneStatus: {} }],
     showImageInsteadOfName: false,
     imageScale: 100,
     sort: 0,
@@ -56,6 +57,15 @@ describe('applyStatus', () => {
     const cleared = applyStatus([p], { productId: 'p', zoneId: 'z1', status: 'AVAILABLE', override: null, effective: 'AVAILABLE', changed: true });
     expect(cleared[0]?.zoneStatus).toEqual({});
     expect(p.zoneStatus).toEqual({ z1: 'SOLD_OUT' }); // input untouched
+  });
+  it('applies the status of a variant to that variant only', () => {
+    const [v] = applyStatus([p], { productId: 'p', variantId: 'v', zoneId: 'z1', status: 'AVAILABLE', override: 'SOLD_OUT', effective: 'SOLD_OUT', changed: true });
+    expect(v?.variants[0]?.zoneStatus).toEqual({ z1: 'SOLD_OUT' });
+    expect(v?.zoneStatus).toEqual({ z1: 'SOLD_OUT' });
+    expect(v?.status).toBe('AVAILABLE');
+    const [g] = applyStatus([p], { productId: 'p', variantId: 'v', status: 'SOLD_OUT', override: null, effective: 'SOLD_OUT', changed: true });
+    expect(g?.variants[0]?.status).toBe('SOLD_OUT');
+    expect(g?.status).toBe('AVAILABLE');
   });
 });
 

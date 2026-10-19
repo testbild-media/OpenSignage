@@ -85,6 +85,8 @@
   "updateRepo": "Update source",
   "username": "Username",
   "variant": "Variant",
+  "variantName": "Variant name",
+  "variants": "Variants",
   "version": "Version",
   "weightMax": "Weight to",
   "weightMin": "Weight from",

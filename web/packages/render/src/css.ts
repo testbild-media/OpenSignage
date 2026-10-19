@@ -31,6 +31,12 @@ export const RENDER_CSS = `
 .os-row[data-price=left]>.os-name{grid-column:2}
 .os-row[data-price=left]>.os-qty{grid-column:3}
 .os-row .os-desc{grid-row:2;grid-column:1 / -1}
+.os-row .os-vars{grid-row:2;grid-column:1 / -1}
+.os-row .os-desc~.os-vars{grid-row:3}
+.os-var{white-space:nowrap}
+.os-var-soldout{position:relative}
+.os-var-soldout>span{opacity:.42}
+.os-var-soldout::after{content:"";position:absolute;left:0;right:0;top:50%;height:var(--vbar,3px);margin-top:calc(var(--vbar,3px) / -2);background:#d64545}
 .os-row.os-soldout>*{opacity:.42}
 .os-row.os-soldout::after{content:"";grid-row:1;grid-column:1 / -1;align-self:center;height:var(--bar,4px);background:#d64545;opacity:1;z-index:1}
 .os-ticker{overflow:hidden;white-space:nowrap;display:flex;align-items:center}

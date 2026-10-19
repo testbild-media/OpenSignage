@@ -59,6 +59,7 @@
   "field.name": "Name",
   "field.price": "Price",
   "field.quantity": "Quantity",
+  "field.variants": "Variants",
   "font.missingChars": "This font lacks some characters of the text; a fallback font is used for them.",
   "front": "To front",
   "grid": "Grid",

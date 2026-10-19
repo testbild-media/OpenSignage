@@ -59,6 +59,7 @@
   "field.name": "Nosaukums",
   "field.price": "Cena",
   "field.quantity": "Daudzums",
+  "field.variants": "Veidi",
   "font.missingChars": "Šajā fontā trūkst dažu teksta rakstzīmju; tām tiek izmantots rezerves fonts.",
   "front": "Uz priekšplānu",
   "grid": "Režģis",

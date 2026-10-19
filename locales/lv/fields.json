@@ -85,6 +85,8 @@
   "updateRepo": "Atjauninājumu avots",
   "username": "Lietotājvārds",
   "variant": "Variants",
+  "variantName": "Veida nosaukums",
+  "variants": "Veidi",
   "version": "Versija",
   "weightMax": "Treknums līdz",
   "weightMin": "Treknums no",

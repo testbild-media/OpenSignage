@@ -59,6 +59,7 @@
   "field.name": "Nom",
   "field.price": "Prix",
   "field.quantity": "Quantité",
+  "field.variants": "Variantes",
   "font.missingChars": "Cette police ne contient pas certains caractères du texte ; une police de remplacement est utilisée pour ceux-ci.",
   "front": "Au premier plan",
   "grid": "Grille",

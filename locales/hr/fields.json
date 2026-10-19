@@ -85,6 +85,8 @@
   "updateRepo": "Izvor ažuriranja",
   "username": "Korisničko ime",
   "variant": "Varijanta",
+  "variantName": "Naziv vrste",
+  "variants": "Vrste",
   "version": "Verzija",
   "weightMax": "Debljina do",
   "weightMin": "Debljina od",

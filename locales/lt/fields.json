@@ -85,6 +85,8 @@
   "updateRepo": "Naujinimų šaltinis",
   "username": "Naudotojo vardas",
   "variant": "Variantas",
+  "variantName": "Rūšies pavadinimas",
+  "variants": "Rūšys",
   "version": "Versija",
   "weightMax": "Storis iki",
   "weightMin": "Storis nuo",

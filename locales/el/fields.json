@@ -85,6 +85,8 @@
   "updateRepo": "Πηγή ενημερώσεων",
   "username": "Όνομα χρήστη",
   "variant": "Παραλλαγή",
+  "variantName": "Όνομα παραλλαγής",
+  "variants": "Παραλλαγές",
   "version": "Έκδοση",
   "weightMax": "Πάχος έως",
   "weightMin": "Πάχος από",

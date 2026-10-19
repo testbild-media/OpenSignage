@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyZoneStatus, carriedProducts, categoryChoices, filterSections, productSections, type LiveZones } from './Control';
+import { applyZoneStatus, carriedProducts, categoryChoices, filterSections, productSections, zoneVariants, type LiveZones } from './Control';
 
 const data: LiveZones = {
   serverTime: '',
@@ -40,6 +40,51 @@ describe('applyZoneStatus', () => {
     expect(next.zones[0]?.products[0]).toEqual({ id: 'p1', status: 'SOLD_OUT', override: 'SOLD_OUT' });
     expect(next.zones[0]?.products[1]?.override).toBeNull();
     expect(data.zones[0]?.products[0]?.override).toBeNull();
+  });
+});
+
+describe('variants in the operator UI', () => {
+  const juices: LiveZones = {
+    ...data,
+    products: [
+      ...data.products,
+      {
+        id: 'p3',
+        name: 'Juices',
+        description: '',
+        categoryId: 'a',
+        price: { amount: 400, currency: 'EUR' },
+        status: 'AVAILABLE',
+        sort: 1,
+        variants: [
+          { id: 'o', name: 'Orange', status: 'AVAILABLE' },
+          { id: 'g', name: 'Guava', status: 'AVAILABLE' },
+          { id: 'm', name: 'Mango', status: 'SOLD_OUT' },
+        ],
+      },
+    ],
+    zones: [{ ...data.zones[0]!, variants: [{ id: 'g', status: 'UNAVAILABLE', override: 'UNAVAILABLE' }] }],
+  };
+  const juice = juices.products[2]!;
+
+  it('lists the variants carried in the zone with their effective and global status', () => {
+    expect(zoneVariants(juice, juices.zones[0]!)).toEqual([
+      { id: 'o', name: 'Orange', status: 'AVAILABLE', global: 'AVAILABLE' },
+      { id: 'm', name: 'Mango', status: 'SOLD_OUT', global: 'SOLD_OUT' },
+    ]);
+  });
+
+  it('applies a confirmed variant status to the zone and the global variant', () => {
+    const next = applyZoneStatus(juices, 'z', { productId: 'p3', variantId: 'o', zoneId: 'z', status: 'AVAILABLE', override: 'SOLD_OUT', effective: 'SOLD_OUT' });
+    expect(zoneVariants(next.products[2]!, next.zones[0]!).map((v) => v.status)).toEqual(['SOLD_OUT', 'SOLD_OUT']);
+    expect(next.zones[0]?.products).toEqual(juices.zones[0]?.products);
+    const global = applyZoneStatus(juices, 'z', { productId: 'p3', variantId: 'm', status: 'AVAILABLE', override: null, effective: 'AVAILABLE' });
+    expect(global.products[2]?.variants?.find((v) => v.id === 'm')?.status).toBe('AVAILABLE');
+  });
+
+  it('finds a product by the name of a variant', () => {
+    const found = filterSections(productSections(juices), { type: 'all', category: 'all', search: 'mang' });
+    expect(found.flatMap((s) => s.products.map((p) => p.id))).toEqual(['p3']);
   });
 });
 

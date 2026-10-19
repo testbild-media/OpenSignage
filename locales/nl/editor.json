@@ -59,6 +59,7 @@
   "field.name": "Naam",
   "field.price": "Prijs",
   "field.quantity": "Hoeveelheid",
+  "field.variants": "Soorten",
   "font.missingChars": "Dit lettertype mist enkele tekens van de tekst; daarvoor wordt een vervangend lettertype gebruikt.",
   "front": "Naar voorgrond",
   "grid": "Raster",

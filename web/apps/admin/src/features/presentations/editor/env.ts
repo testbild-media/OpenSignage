@@ -20,6 +20,7 @@ export const editorAssets: AssetResolver = {
 
 interface ProductRow {
   id: string;
+  variants?: { id: string; name: string; status: 'AVAILABLE' | 'UNAVAILABLE' | 'SOLD_OUT' }[];
   name: string;
   description: string;
   categoryId: string;
@@ -72,6 +73,7 @@ export function useEditorLive(): LiveStore {
             showImageInsteadOfName: !!x.showImageInsteadOfName,
             imageScale: x.imageScale ?? 100,
             sort: x.sort,
+            variants: x.variants?.length ? x.variants.map((v) => ({ id: v.id, name: v.name, status: v.status })) : undefined,
           })),
           serverTime: new Date().toISOString(),
         };

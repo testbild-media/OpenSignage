@@ -59,6 +59,7 @@
   "field.name": "Název",
   "field.price": "Cena",
   "field.quantity": "Množství",
+  "field.variants": "Druhy",
   "font.missingChars": "V tomto písmu chybí některé znaky textu; pro ně se použije náhradní písmo.",
   "front": "Do popředí",
   "grid": "Mřížka",
