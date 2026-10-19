@@ -4,7 +4,11 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.4.1 – 2026-10-19
+
+Wi-Fi can be set up in advance on the players. Installations on 1.x update from the web
+interface (Settings → Updates); on Raspberry Pi players run the client installer once more
+for it (the change is in the network helper, which only the installer replaces).
 
 ### Changed
 - Network settings of the players: a Wi-Fi network that is not in range can be set up in
