@@ -4,6 +4,12 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Fixed
+- Product variants: the bar through a sold-out variant runs through the middle of the small
+  letters of the font (it was too high).
+
 ## 1.2.0 – 2026-10-19
 
 Prices for whole categories in time schedules and product variants. Installations on 1.x

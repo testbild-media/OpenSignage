@@ -12,7 +12,7 @@ import type {
 import type { ElementHandle, RenderEnv } from './env';
 import { formatMoney, formatQuantity } from './live';
 import { applyTextStyle, fpx, mergeStyle, px } from './units';
-import { whenAscender } from './fontmetrics';
+import { whenAscender, whenStrike } from './fontmetrics';
 import { wordmarkBox, wordmarkOf } from './wordmark';
 
 interface Styles {
@@ -122,11 +122,15 @@ function rowSignature(p: LiveProduct, price: string, fields: ProductFields): str
   return [p.id, p.name, shownStatus(p), price, fields.description ? p.description : '', variants, p.imageAssetId ?? '', p.showImageInsteadOfName, p.imageScale ?? 100, p.quantity?.value, p.quantity?.unit].join('|');
 }
 
-/** "Orange, Apple, Guava" in the description style; a sold-out variant is struck through. */
+/** "Orange, Apple, Guava" in the description style; a sold-out variant is struck through in
+ *  the middle of its small letters (CSS fallback until the font is measured). */
 function variantLine(variants: LiveVariant[], s: TextStyle): HTMLElement {
   const line = document.createElement('div');
   line.className = 'os-vars';
   applyTextStyle(line, s);
+  if (variants.some((v) => v.status === 'SOLD_OUT')) {
+    whenStrike(s.font, s.bold ? '700' : '400', (top) => line.style.setProperty('--vtop', `${Math.round(top * 10000) / 10000}em`));
+  }
   variants.forEach((v, i) => {
     if (i > 0) line.append(', ');
     const item = document.createElement('span');

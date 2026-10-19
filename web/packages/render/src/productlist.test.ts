@@ -297,3 +297,29 @@ describe('variants', () => {
     expect(line(el)!.textContent).toBe('Orange, Apple, Guava');
   });
 });
+
+describe('variants, measured font', () => {
+  it('strikes a sold-out variant through the middle of the small letters', () => {
+    // Montserrat: ascent 0.968, x-height 0.517 of the font size.
+    const fonts = { check: () => true, load: () => Promise.resolve([]) };
+    Object.defineProperty(document, 'fonts', { value: fonts, configurable: true });
+    const origGetContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = (() => ({ font: '', measureText: () => ({ fontBoundingBoxAscent: 96.8, actualBoundingBoxAscent: 51.7 }) })) as never;
+    try {
+      resetFontMetrics();
+      const s = state();
+      s.products = [...s.products, product('juice', 'wine', 2, 'AVAILABLE', { variants: [{ id: 'o', name: 'Orange', status: 'SOLD_OUT' }, { id: 'a', name: 'Apple', status: 'AVAILABLE' }] })];
+      store.set(s);
+      const el = renderElement(list, testEnv(store)).el;
+      document.body.appendChild(el);
+      const vars = el.querySelector<HTMLElement>('.os-row[data-id="juice"] .os-vars')!;
+      expect(vars.style.getPropertyValue('--vtop')).toBe('0.7095em'); // 0.968 - 0.517 / 2
+      // Until the font is measured: a little below the middle of the text box.
+      expect(rule('.os-var-soldout::after').style.top).toMatch(/var\(--vtop, ?calc\(50% \+ 0?\.1em\)\)/);
+    } finally {
+      HTMLCanvasElement.prototype.getContext = origGetContext;
+      Reflect.deleteProperty(document, 'fonts');
+      resetFontMetrics();
+    }
+  });
+});

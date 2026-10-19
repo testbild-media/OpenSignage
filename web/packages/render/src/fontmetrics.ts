@@ -49,7 +49,53 @@ export function whenAscender(font: string, weight: string, fn: (ratio: number) =
     .catch(() => {});
 }
 
+// Where a strike-through bar belongs: through the middle of the small letters (x-height), as
+// a distance from the top of the text box in em. The box of an inline text starts the font's
+// ascent above the baseline, so the bar sits at ascent - x-height / 2. Measured like the
+// ascender, once the font is loaded.
+const strikeCache = new Map<string, number>();
+
+export function strikeTop(font: string, weight: string): number | null {
+  const key = `${font}|${weight}`;
+  const hit = strikeCache.get(key);
+  if (hit !== undefined) return hit;
+  if (typeof document === 'undefined' || !document.fonts) return null;
+  try {
+    if (!document.fonts.check(spec(font, weight))) return null;
+    const ctx = document.createElement('canvas').getContext('2d');
+    if (!ctx) return null;
+    ctx.font = spec(font, weight);
+    const m = ctx.measureText('x');
+    const ascent = m.fontBoundingBoxAscent / 100;
+    const x = m.actualBoundingBoxAscent / 100;
+    if (!(ascent > 0.4 && ascent < 2 && x > 0.2 && x < ascent)) return null; // no real text metrics
+    const top = ascent - x / 2;
+    strikeCache.set(key, top);
+    return top;
+  } catch {
+    return null;
+  }
+}
+
+/** Calls fn with strikeTop at once when the font is ready, else after it has loaded. */
+export function whenStrike(font: string, weight: string, fn: (top: number) => void): void {
+  const r = strikeTop(font, weight);
+  if (r !== null) {
+    fn(r);
+    return;
+  }
+  if (typeof document === 'undefined' || !document.fonts) return;
+  document.fonts
+    .load(spec(font, weight))
+    .then(() => {
+      const later = strikeTop(font, weight);
+      if (later !== null) fn(later);
+    })
+    .catch(() => {});
+}
+
 /** Tests only. */
 export function resetFontMetrics(): void {
   cache.clear();
+  strikeCache.clear();
 }
