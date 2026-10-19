@@ -4,6 +4,17 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.2 – 2026-10-19
+
+A login right after a network change on a player confirms it. Installations on 1.x update
+from the web interface (Settings → Updates); the players need no installer for this.
+
+### Fixed
+- Network settings of the players: a login right after applying a change – before it took
+  effect, which takes up to about 30 seconds on Debian when the Wi-Fi does not connect at
+  once – found nothing to confirm and showed the old settings. The login now waits for the
+  change and confirms it; if the change did not come up, the login leads to its error.
+
 ## 1.4.1 – 2026-10-19
 
 Wi-Fi can be set up in advance on the players. Installations on 1.x update from the web
