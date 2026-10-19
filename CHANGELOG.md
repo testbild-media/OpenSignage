@@ -4,6 +4,17 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.6 – 2026-10-20
+
+Video settings in presentations are kept. Installations on 1.x update from the web interface
+(Settings → Updates); the fix is in the server, the players need nothing.
+
+### Fixed
+- Presentation editor: a video switched to play once (*Loop* off) or with sound (*Muted* off)
+  lost that setting when it was saved – after reopening, and on the screens, it looped and
+  was muted again. Videos changed before this version need the setting once more (switch it
+  off and publish).
+
 ## 1.4.5 – 2026-10-19
 
 Raspberry Pi players on TVs that do not report themselves, and Wi-Fi networks on both bands.
