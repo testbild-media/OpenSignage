@@ -392,9 +392,13 @@ Config: `/etc/opensignage/agent.env`.
   updates do not replace it (they run without root): the agent asks for its protocol
   (`version`) and the WebGUI asks to run the installer again when it is missing or older.
 - **Backends:** the helper follows the system: NetworkManager when it runs (Raspberry Pi
-  OS), otherwise ifupdown with `wpa_supplicant` (Debian). For scans and Wi-Fi changes it
+  OS), otherwise ifupdown with `wpa_supplicant` (Debian). `ifup` runs in a systemd scope of
+  its own (`systemd-run --scope`): the daemons it starts (dhcpcd, wpa_supplicant) would
+  otherwise belong to the agent's service and stop with it at its next update or restart. For scans and Wi-Fi changes it
   switches the radio on – the rfkill soft block and NetworkManager's own Wi-Fi switch, both
-  off as Raspberry Pi OS ships – and sets the country of the radio rules (`iw reg set`).
+  off as Raspberry Pi OS ships – and sets the country of the radio rules (`iw reg set`; for a
+  scan the one in effect, else the one of the time zone: with the world rules 5 GHz networks
+  are missing).
 - **IPv6** stays as it was: NetworkManager profiles use `ipv6.method=auto`. The ifupdown
   stanza of OpenSignage replaces every stanza of the interface, so it carries the system's
   `inet6` stanza over; without one, a fixed IPv4 address gets `inet6 auto` (with DHCP,

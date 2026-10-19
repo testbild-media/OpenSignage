@@ -7,7 +7,7 @@
 //	opensignage-netctl confirm
 //	opensignage-netctl cleanup
 //	opensignage-netctl uninstall          (run by the client uninstaller)
-//	opensignage-netctl scan IFACE
+//	opensignage-netctl scan IFACE [COUNTRY]
 //	opensignage-netctl firmware
 //	opensignage-netctl install-firmware PACKAGE
 //
@@ -53,7 +53,7 @@ func run(args []string, in io.Reader, out io.Writer, root bool, h *netctl.Helper
 		return 1
 	}
 	if len(args) == 0 {
-		return fail(errors.New("usage: opensignage-netctl version|apply|confirm|cleanup|uninstall|scan IFACE|firmware|install-firmware PACKAGE"))
+		return fail(errors.New("usage: opensignage-netctl version|apply|confirm|cleanup|uninstall|scan IFACE [COUNTRY]|firmware|install-firmware PACKAGE"))
 	}
 	if args[0] == "version" {
 		return reply(map[string]any{"protocol": netcfg.HelperProtocol})
@@ -97,11 +97,14 @@ func run(args []string, in io.Reader, out io.Writer, root bool, h *netctl.Helper
 		}
 		return reply(map[string]any{"pending": pending})
 	case "scan":
-		iface, err := arg()
-		if err != nil {
-			return fail(err)
+		if len(args) < 2 || len(args) > 3 {
+			return fail(errors.New("scan needs an interface and optionally a country"))
 		}
-		aps, err := h.Scan(ctx, iface)
+		country := ""
+		if len(args) == 3 {
+			country = args[2]
+		}
+		aps, err := h.Scan(ctx, args[1], country)
 		if err != nil {
 			return fail(err)
 		}

@@ -188,8 +188,12 @@ func (m *Manager) Cleanup(ctx context.Context) error {
 }
 
 // Scan lists the wireless networks around.
-func (m *Manager) Scan(ctx context.Context, iface string) ([]netcfg.AP, error) {
-	r, err := m.call(ctx, time.Minute, nil, "scan", iface)
+func (m *Manager) Scan(ctx context.Context, iface, country string) ([]netcfg.AP, error) {
+	args := []string{"scan", iface}
+	if country != "" {
+		args = append(args, country)
+	}
+	r, err := m.call(ctx, time.Minute, nil, args...)
 	if err != nil {
 		return nil, err
 	}

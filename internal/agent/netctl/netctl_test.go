@@ -154,6 +154,21 @@ func TestIfupdownApplyConfirm(t *testing.T) {
 	}
 }
 
+// ifup starts dhcpcd and wpa_supplicant: they must not belong to the agent's service, or
+// they stop with it at its next update or restart.
+func TestIfupRunsInItsOwnScope(t *testing.T) {
+	s, h := newSys(t, netcfg.BackendIfupdown)
+	s.put("/run/systemd/system/.booted", "")
+	if err := h.Apply(context.Background(), static("10.20.3.200/22", "10.20.0.1")); err != nil {
+		t.Fatal(err)
+	}
+	scoped := "systemd-run --scope --quiet --collect --description=OpenSignage network settings: ifup enp2s0 " + netcfg.Tool("ifup") +
+		" -i /run/opensignage-net/interfaces-enp2s0 enp2s0"
+	if !s.ran(scoped) || s.ran("ifup -i /run/opensignage-net/interfaces-enp2s0 enp2s0") {
+		t.Fatalf("ifup must run in a scope of its own: %v", s.cmds)
+	}
+}
+
 func TestIfupdownRebootWithoutConfirmation(t *testing.T) {
 	s, h := newSys(t, netcfg.BackendIfupdown)
 	before := s.get("/etc/resolv.conf")
@@ -447,7 +462,7 @@ func TestValidation(t *testing.T) {
 			t.Errorf("%s accepted", name)
 		}
 	}
-	if _, err := h.Scan(ctx, "enp2s0"); err == nil {
+	if _, err := h.Scan(ctx, "enp2s0", ""); err == nil {
 		t.Error("scan of a wired interface")
 	}
 	if err := h.InstallFirmware(ctx, "openssh-server"); err == nil {
@@ -493,12 +508,20 @@ func TestNetworkManager(t *testing.T) {
 	s.out["nmcli radio wifi"] = "disabled\n"
 	s.out["nmcli -t -f DEVICE,STATE device"] = "eth0:connected\nwlan0:disconnected\n"
 	s.cmds = nil
-	aps, err := h.Scan(ctx, "wlan0")
+	aps, err := h.Scan(ctx, "wlan0", "AT")
 	if err != nil || len(aps) != 1 || aps[0].SSID != "Bar" {
 		t.Fatalf("scan: %v %+v", err, aps)
 	}
 	if !s.ran("nmcli radio wifi on") || s.get("/sys/class/net/wlan0/phy80211/rfkill0/soft") != "0" {
 		t.Fatalf("radio not switched on: %v", s.cmds)
+	}
+	// The radio rules of the country come first (5 GHz networks need them).
+	if !s.ran("iw reg set AT") {
+		t.Fatalf("country not set before the scan: %v", s.cmds)
+	}
+	s.cmds = nil
+	if _, err := h.Scan(ctx, "wlan0", "../x"); err != nil || s.ran("iw reg set ../x") {
+		t.Fatalf("an invalid country is ignored: %v %v", err, s.cmds)
 	}
 }
 

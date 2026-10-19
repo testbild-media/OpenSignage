@@ -237,7 +237,7 @@ func (h *Helper) revert(ctx context.Context, backend string, c netcfg.Config) {
 	}
 	switch backend {
 	case netcfg.BackendIfupdown:
-		_, _ = h.run(ctx, 90*time.Second, "ifup", iface)
+		_, _ = h.ifup(ctx, iface)
 	case netcfg.BackendNM:
 		_, _ = h.run(ctx, 90*time.Second, "nmcli", "--wait", "60", "device", "connect", iface)
 	}
@@ -322,7 +322,7 @@ func (h *Helper) applyIfupdown(ctx context.Context, c netcfg.Config) error {
 	if c.Kind == netcfg.KindWifi && c.Disabled {
 		_, _ = h.run(ctx, 10*time.Second, "ip", "link", "set", iface, "down")
 	} else {
-		_, err = h.run(ctx, 90*time.Second, "ifup", "-i", pendingStanza(iface), iface)
+		_, err = h.ifup(ctx, "-i", pendingStanza(iface), iface)
 	}
 	if derr := h.updateDNS(&c); derr != nil && err == nil {
 		err = derr
@@ -363,6 +363,19 @@ func (h *Helper) staticDNS(changed *netcfg.Config, withPending bool) []string {
 // resolvFiles hold the static DNS servers: /etc/resolv.conf.head (dhcpcd puts it on top of
 // the resolv.conf it writes) and /etc/resolv.conf itself.
 var resolvFiles = []string{"/etc/resolv.conf", "/etc/resolv.conf.head"}
+
+// ifup brings an interface up in a systemd scope of its own: ifup starts daemons (dhcpcd,
+// wpa_supplicant) that must outlive this helper. Started from the agent they would belong to
+// its service and be stopped with it – at the next update or restart the interface lost its
+// address (the lease ran out unrenewed).
+func (h *Helper) ifup(ctx context.Context, args ...string) ([]byte, error) {
+	if !h.exists("/run/systemd/system") { // not booted with systemd
+		return h.run(ctx, 90*time.Second, "ifup", args...)
+	}
+	scope := append([]string{"--scope", "--quiet", "--collect", "--description=OpenSignage network settings: ifup " + args[len(args)-1],
+		netcfg.Tool("ifup")}, args...)
+	return h.run(ctx, 90*time.Second, "systemd-run", scope...)
+}
 
 // updateDNS writes the static DNS servers (changed: the interface just changed, nil = none)
 // into the OpenSignage block of the resolv files. Every file is marked as touched first, so
@@ -692,13 +705,18 @@ func (h *Helper) restoreUnconfirmed() error {
 
 // ---------------------------------------------------------------- scan
 
-// Scan lists the wireless networks around the interface.
-func (h *Helper) Scan(ctx context.Context, iface string) ([]netcfg.AP, error) {
+// Scan lists the wireless networks around the interface. country (optional) sets the radio
+// rules first: with the world rules ("00", before any network was set up) the radio scans
+// 5 GHz channels too restrictively and 5 GHz networks are missing.
+func (h *Helper) Scan(ctx context.Context, iface, country string) ([]netcfg.AP, error) {
 	if !netcfg.ValidInterface(iface) || !(h.exists("/sys/class/net/"+iface+"/wireless") || h.exists("/sys/class/net/"+iface+"/phy80211")) {
 		return nil, &Error{Field: "interface", Reason: "unknown"}
 	}
 	backend := h.env().DetectBackend()
 	h.radioOn(ctx, backend, iface)
+	if netcfg.ValidCountry(country) {
+		_, _ = h.run(ctx, 10*time.Second, "iw", "reg", "set", country)
+	}
 	switch backend {
 	case netcfg.BackendNM:
 		out, err := h.run(ctx, 40*time.Second, "nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY,FREQ", "device", "wifi", "list", "ifname", iface, "--rescan", "yes")

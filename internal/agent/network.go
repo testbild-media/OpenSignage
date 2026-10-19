@@ -62,9 +62,15 @@ func (a *Agent) NetworkView(ctx context.Context) webgui.NetworkView {
 	return v
 }
 
-// ScanWifi implements webgui.NetworkBackend.
+// ScanWifi implements webgui.NetworkBackend: with the radio rules in effect, before the
+// first network with those of the time zone (5 GHz networks need them).
 func (a *Agent) ScanWifi(ctx context.Context, iface string) ([]netcfg.AP, error) {
-	return a.netMgr().Scan(ctx, iface)
+	m := a.netMgr()
+	country := m.Status(ctx).Country
+	if country == "" {
+		country = countryOfZone(a.sched.Location().String())
+	}
+	return m.Scan(ctx, iface, country)
 }
 
 // ApplyNetwork implements webgui.NetworkBackend: the change is applied shortly after the
