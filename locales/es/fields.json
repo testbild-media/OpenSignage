@@ -94,7 +94,9 @@
   "window": "Franja horaria",
   "window.days": "Días de la semana",
   "window.end": "Fin",
+  "window.from": "Fecha de inicio",
   "window.start": "Inicio",
+  "window.until": "Fecha de fin",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zonas"

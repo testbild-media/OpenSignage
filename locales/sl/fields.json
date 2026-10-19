@@ -94,7 +94,9 @@
   "window": "Časovno okno",
   "window.days": "Dnevi v tednu",
   "window.end": "Konec",
+  "window.from": "Začetni datum",
   "window.start": "Začetek",
+  "window.until": "Končni datum",
   "zone": "Cona",
   "zoneId": "Cona",
   "zoneIds": "Cone"

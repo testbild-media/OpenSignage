@@ -17,10 +17,37 @@ import type { Category, Product } from '../products/types';
 import { playablePlaylists, type PlaylistSummary, type Zone, type TickerTemplateList } from '../zones/types';
 import { NowPanel } from './NowPanel';
 import { RuleDialog, type RuleDialogData } from './RuleDialog';
-import { Timeline } from './WeekTimeline';
-import { formatDays, midnightInfo, weekdayLabels } from './windows';
+import { Timeline, useNowIn } from './WeekTimeline';
+import { formatDate, formatDays, hasPeriod, midnightInfo, nextOccurrence, periodState, weekdayLabels } from './windows';
 
 type Editing = { rule: Rule | null; preset?: { scope: Rule['scope']; zoneId?: string } } | null;
+
+/** The period of a dated rule, its state and – for a zone rule – a link to the zone preview at
+ *  its next occurrence (to check e.g. a happy hour weeks ahead). */
+function PeriodLine({ rule, today, lang }: { rule: Rule; today: string; lang: string }) {
+  const t = useT();
+  const w = rule.window!;
+  const label =
+    w.from && w.until
+      ? w.from === w.until
+        ? formatDate(w.from, lang)
+        : `${formatDate(w.from, lang)} – ${formatDate(w.until, lang)}`
+      : w.from
+        ? t('admin.schedules.periodFrom', { date: formatDate(w.from, lang) })
+        : t('admin.schedules.periodUntil', { date: formatDate(w.until!, lang) });
+  const state = periodState(w, today);
+  const next = state === 'expired' ? null : nextOccurrence(w, today);
+  return (
+    <div className="rule-period">
+      <span>{label}</span>
+      {state === 'expired' && <Badge tone="warning">{t('admin.schedules.expired')}</Badge>}
+      {state === 'upcoming' && <Badge tone="primary">{t('admin.schedules.upcoming')}</Badge>}
+      {next && rule.scope === 'zone' && rule.zoneId && (
+        <Link to={`/zones/${encodeURIComponent(rule.zoneId)}/preview?at=${next}T${w.start}`}>{t('admin.schedules.previewOn', { date: formatDate(next, lang, false) })}</Link>
+      )}
+    </div>
+  );
+}
 
 function RulesTable({
   rules,
@@ -32,6 +59,7 @@ function RulesTable({
   busyId,
   deleting,
   canEdit,
+  today,
 }: {
   rules: Rule[];
   playlists: PlaylistSummary[] | undefined;
@@ -43,6 +71,8 @@ function RulesTable({
   deleting: boolean;
   /** Rules the user may change (operators limited to zones: rules of their zones). */
   canEdit: (r: Rule) => boolean;
+  /** Today in the server time zone (YYYY-MM-DD). */
+  today: string;
 }) {
   const t = useT();
   const lang = getLanguage();
@@ -91,6 +121,7 @@ function RulesTable({
                       {r.window.start}–{r.window.end} {info === 'crosses' && <Badge>{t('admin.schedules.nextDay')}</Badge>}
                       {info === 'full_day' && <Badge>{t('admin.schedules.fullDay')}</Badge>}
                     </div>
+                    {hasPeriod(r.window) && <PeriodLine rule={r} today={today} lang={lang} />}
                   </>
                 ) : (
                   <span className="muted">{t('admin.schedules.always')}</span>
@@ -155,6 +186,7 @@ export function SchedulesPage() {
   const location = useLocation();
   const { server } = useSession();
   const tz = server?.timezone || 'UTC';
+  const today = useNowIn(tz).date;
   const rulesQ = useQuery<{ schedules: Rule[] }>('/api/v1/schedules');
   const zonesQ = useQuery<{ zones: Zone[] }>('/api/v1/zones');
   const playlistsQ = useQuery<{ playlists: PlaylistSummary[] }>('/api/v1/playlists');
@@ -229,6 +261,7 @@ export function SchedulesPage() {
   }, [location.hash, zonesQ.data]);
 
   const tableProps = {
+    today,
     playlists: playlistsQ.data?.playlists,
     zones,
     onEdit: open,

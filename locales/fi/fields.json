@@ -94,7 +94,9 @@
   "window": "Aikaikkuna",
   "window.days": "Viikonpäivät",
   "window.end": "Loppu",
+  "window.from": "Alkupäivämäärä",
   "window.start": "Alku",
+  "window.until": "Loppupäivämäärä",
   "zone": "Vyöhyke",
   "zoneId": "Vyöhyke",
   "zoneIds": "Vyöhykkeet"

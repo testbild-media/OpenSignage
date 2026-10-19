@@ -94,7 +94,9 @@
   "window": "Tijdvenster",
   "window.days": "Weekdagen",
   "window.end": "Einde",
+  "window.from": "Begindatum",
   "window.start": "Begin",
+  "window.until": "Einddatum",
   "zone": "Zone",
   "zoneId": "Zone",
   "zoneIds": "Zones"

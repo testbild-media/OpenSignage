@@ -68,7 +68,7 @@ func TestEvaluateGroupsAndAnchors(t *testing.T) {
 	}
 }
 
-func TestChangesAndWindowStart(t *testing.T) {
+func TestChangesAndOccurrence(t *testing.T) {
 	a := contracts.Rule{PlaylistID: "x", Prices: []contracts.PriceOverride{{ProductID: "beer"}}}
 	b := contracts.Rule{GroupPlaylists: []contracts.GroupPlaylist{{GroupID: "menu", PlaylistID: "y"}}, Ticker: &contracts.RuleTicker{Text: "t"}}
 	c := contracts.Rule{Prices: []contracts.PriceOverride{{ProductID: "beer"}}}
@@ -80,10 +80,10 @@ func TestChangesAndWindowStart(t *testing.T) {
 	}
 	loc := berlin(t)
 	win := contracts.Window{Days: []int{5}, Start: "20:00", End: "20:00"} // Friday 24 h
-	if got := WindowStart(win, at(loc, "2026-10-17 08:00")); !got.Equal(at(loc, "2026-10-16 20:00")) {
+	if got, ok := Occurrence(win, at(loc, "2026-10-17 08:00")); !ok || !got.Equal(at(loc, "2026-10-16 20:00")) {
 		t.Fatalf("24 h window from Friday 20:00, Saturday morning: %v", got)
 	}
-	if got := WindowStart(win, at(loc, "2026-10-16 21:00")); !got.Equal(at(loc, "2026-10-16 20:00")) {
+	if got, ok := Occurrence(win, at(loc, "2026-10-16 21:00")); !ok || !got.Equal(at(loc, "2026-10-16 20:00")) {
 		t.Fatalf("same evening: %v", got)
 	}
 }

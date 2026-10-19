@@ -94,7 +94,9 @@
   "window": "Okno czasowe",
   "window.days": "Dni tygodnia",
   "window.end": "Koniec",
+  "window.from": "Data początkowa",
   "window.start": "Początek",
+  "window.until": "Data końcowa",
   "zone": "Strefa",
   "zoneId": "Strefa",
   "zoneIds": "Strefy"

@@ -94,7 +94,9 @@
   "window": "Времеви прозорец",
   "window.days": "Дни от седмицата",
   "window.end": "Край",
+  "window.from": "Начална дата",
   "window.start": "Начало",
+  "window.until": "Крайна дата",
   "zone": "Зона",
   "zoneId": "Зона",
   "zoneIds": "Зони"

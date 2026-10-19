@@ -94,7 +94,9 @@
   "window": "Time window",
   "window.days": "Weekdays",
   "window.end": "End",
+  "window.from": "Start date",
   "window.start": "Start",
+  "window.until": "End date",
   "zone": "Zone",
   "zoneId": "Zone",
   "zoneIds": "Zones"

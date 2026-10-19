@@ -94,7 +94,9 @@
   "window": "Vremenski prozor",
   "window.days": "Dani u tjednu",
   "window.end": "Kraj",
+  "window.from": "Početni datum",
   "window.start": "Početak",
+  "window.until": "Završni datum",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zone"

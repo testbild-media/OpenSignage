@@ -94,7 +94,9 @@
   "window": "Časové okno",
   "window.days": "Dny v týdnu",
   "window.end": "Konec",
+  "window.from": "Počáteční datum",
   "window.start": "Začátek",
+  "window.until": "Koncové datum",
   "zone": "Zóna",
   "zoneId": "Zóna",
   "zoneIds": "Zóny"

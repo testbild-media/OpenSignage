@@ -94,7 +94,9 @@
   "window": "Interval orar",
   "window.days": "Zilele săptămânii",
   "window.end": "Sfârșit",
+  "window.from": "Data de început",
   "window.start": "Început",
+  "window.until": "Data de sfârșit",
   "zone": "Zonă",
   "zoneId": "Zonă",
   "zoneIds": "Zone"

@@ -94,7 +94,9 @@
   "window": "Tidsfönster",
   "window.days": "Veckodagar",
   "window.end": "Slut",
+  "window.from": "Startdatum",
   "window.start": "Start",
+  "window.until": "Slutdatum",
   "zone": "Zon",
   "zoneId": "Zon",
   "zoneIds": "Zoner"

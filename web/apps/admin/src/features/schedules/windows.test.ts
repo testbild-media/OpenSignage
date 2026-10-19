@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  addDays,
   dayRanges,
   formatDays,
+  inPeriod,
+  isDate,
+  isoWeekdayOf,
+  nextOccurrence,
+  periodProblem,
+  periodState,
   formatHHMM,
   midnightInfo,
   nowInTimezone,
@@ -106,7 +113,44 @@ describe('nowInTimezone', () => {
   it('converts an instant to weekday and minute in the zone', () => {
     // 2026-10-11 is a Sunday; 22:30 UTC is 00:30 on Monday in Berlin (CEST, UTC+2).
     const at = new Date(Date.UTC(2026, 9, 11, 22, 30));
-    expect(nowInTimezone(at, 'UTC')).toEqual({ day: 7, minute: 22 * 60 + 30 });
-    expect(nowInTimezone(at, 'Europe/Berlin')).toEqual({ day: 1, minute: 30 });
+    expect(nowInTimezone(at, 'UTC')).toEqual({ day: 7, minute: 22 * 60 + 30, date: '2026-10-11' });
+    expect(nowInTimezone(at, 'Europe/Berlin')).toEqual({ day: 1, minute: 30, date: '2026-10-12' });
+  });
+});
+
+describe('periods of dates', () => {
+  // 2026-11-07 is a Saturday.
+  const hh = { days: [6], start: '17:00', end: '19:00', from: '2026-11-07', until: '2026-11-07' };
+
+  it('does calendar arithmetic', () => {
+    expect(addDays('2026-11-07', 1)).toBe('2026-11-08');
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
+    expect(addDays('2026-10-25', 1)).toBe('2026-10-26'); // daylight saving ends: still one day
+    expect(isoWeekdayOf('2026-11-07')).toBe(6);
+    expect(isoWeekdayOf('2026-11-08')).toBe(7);
+    expect(isDate('2026-11-07')).toBe(true);
+    expect(isDate('2026-02-30')).toBe(false);
+    expect(isDate('7.11.2026')).toBe(false);
+  });
+
+  it('checks a period like the server', () => {
+    expect(inPeriod(hh, '2026-11-07')).toBe(true);
+    expect(inPeriod(hh, '2026-11-14')).toBe(false);
+    expect(inPeriod({ ...hh, from: undefined }, '2020-01-04')).toBe(true);
+    expect(periodProblem([6], '2026-11-07', '2026-11-07')).toBe(null);
+    expect(periodProblem([6], '2026-11-08', '2026-11-07')).toBe('order');
+    expect(periodProblem([1], '2026-11-07', '2026-11-08')).toBe('days');
+    expect(periodProblem([1], '2026-11-07', '2026-11-13')).toBe(null);
+    expect(periodProblem([1], '2026-11-07', '')).toBe(null);
+  });
+
+  it('finds the next occurrence and the state', () => {
+    expect(nextOccurrence(hh, '2026-10-19')).toBe('2026-11-07');
+    expect(nextOccurrence(hh, '2026-11-08')).toBe(null);
+    expect(nextOccurrence({ days: [6], start: '17:00', end: '19:00', from: '2026-10-01' }, '2026-10-19')).toBe('2026-10-24');
+    expect(periodState(hh, '2026-10-19')).toBe('upcoming');
+    expect(periodState(hh, '2026-11-07')).toBe('current');
+    expect(periodState(hh, '2026-11-08')).toBe('expired');
+    expect(periodState({ days: [6], start: '17:00', end: '19:00' }, '2026-11-08')).toBe(null);
   });
 });

@@ -301,6 +301,10 @@ export interface Window {
   days: number[]; // ISO weekday of the window start (1 = Monday)
   start: string; // HH:MM
   end: string; // HH:MM; <= start crosses midnight
+  /** Period of dates (YYYY-MM-DD, server time zone, inclusive; absent = open): an occurrence
+   *  counts when it starts on a day of the period. */
+  from?: string;
+  until?: string;
 }
 
 /**

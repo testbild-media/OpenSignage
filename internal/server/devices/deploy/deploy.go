@@ -274,7 +274,8 @@ func (b *Builder) parseTickerStyle(ruleID, style string) contracts.TickerTemplat
 
 func (b *Builder) loadRules(ctx context.Context, q querier, zoneID string) ([]contracts.Rule, error) {
 	rows, err := q.QueryContext(ctx, `SELECT id, name, scope, COALESCE(zone_id, ''), days, start_time, end_time,
-			COALESCE(playlist_id, ''), revision, ticker_text, COALESCE(ticker_template_id, ''), ticker_hide
+			COALESCE(date_from, ''), COALESCE(date_until, ''), COALESCE(playlist_id, ''), revision, ticker_text,
+			COALESCE(ticker_template_id, ''), ticker_hide
 		FROM schedule_rules
 		WHERE enabled = 1 AND (scope = 'global' OR (scope IN ('zone', 'default') AND zone_id = ?))
 		ORDER BY id`, zoneID)
@@ -286,9 +287,9 @@ func (b *Builder) loadRules(ctx context.Context, q querier, zoneID string) ([]co
 	for rows.Next() {
 		var r contracts.Rule
 		var days, start, end, tickerText sql.NullString
-		var tickerTemplate string
+		var tickerTemplate, from, until string
 		var tickerHide int
-		if err := rows.Scan(&r.ID, &r.Name, &r.Scope, &r.ZoneID, &days, &start, &end, &r.PlaylistID, &r.Revision,
+		if err := rows.Scan(&r.ID, &r.Name, &r.Scope, &r.ZoneID, &days, &start, &end, &from, &until, &r.PlaylistID, &r.Revision,
 			&tickerText, &tickerTemplate, &tickerHide); err != nil {
 			rows.Close()
 			return nil, err
@@ -302,7 +303,7 @@ func (b *Builder) loadRules(ctx context.Context, q querier, zoneID string) ([]co
 		r.Enabled = true
 		r.Prices = []contracts.PriceOverride{}
 		if r.Scope != contracts.ScopeDefault {
-			w := contracts.Window{Days: []int{}, Start: start.String, End: end.String}
+			w := contracts.Window{Days: []int{}, Start: start.String, End: end.String, From: from, Until: until}
 			if days.Valid && days.String != "" {
 				if err := json.Unmarshal([]byte(days.String), &w.Days); err != nil {
 					b.log().Error("deploy: rule with unreadable days skipped", "rule", r.ID, "err", err)

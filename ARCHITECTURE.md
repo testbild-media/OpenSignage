@@ -198,7 +198,8 @@ the screen at place n plays track n, a place beyond the tracks track 1.
 
 ```jsonc
 Rule { id, revision, name, scope: "zone"|"global"|"default", zoneId?,
-       window?: { days: [1..7] (ISO, 1=Mon, day of window start), start: "HH:MM", end: "HH:MM" },
+       window?: { days: [1..7] (ISO, 1=Mon, day of window start), start: "HH:MM", end: "HH:MM",
+                  from?: "YYYY-MM-DD", until?: "YYYY-MM-DD" },
        playlistId?: string, groupPlaylists?: [{ groupId | "ungrouped", playlistId }],
        prices: [{ productId | categoryId, price: Money }],
        ticker?: { hide?, text, templateId?, template?: TickerTemplate (resolved in manifests) }, enabled }
@@ -220,6 +221,15 @@ with valid playlist, 2) active global window with valid playlist, 3) zone defaul
 valid playlist, 4) nothing → cleared. Price per product: zone window → global window →
 default rule → base price. A deleted/archived playlist does not count; the rest of the rule
 (prices, ticker) still applies. `end <= start` crosses midnight.
+Period: `from`/`until` are dates in the server time zone, inclusive, either may be open; without
+both the window repeats every week. An occurrence counts when it starts on a day of the period
+(22:00–02:00 on the last day still runs into the next day). `until` before `from` is
+`before_from`; a period shorter than a week must contain one of the weekdays
+(`no_day_in_range`). The overlap check compares the weekly pattern first, then the actual
+occurrences on the days both periods share, so two happy hours on different Saturdays do not
+collide (`schedule.Overlaps`). Agents evaluate the period themselves; an agent older than the
+manifest's `minAgentVersion` keeps its last deployment, so it never repeats a dated window
+every week.
 A category price applies to every product of the category and of its subcategories in the
 server currency (other currencies keep their price); inside a rule the product's own price
 comes before its subcategory's, which comes before its category's. The server expands category

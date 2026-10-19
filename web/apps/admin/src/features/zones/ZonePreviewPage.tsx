@@ -2,7 +2,7 @@
 // (the time runs on from there), with the real or a chosen zone state. Works without any
 // device online: the server evaluates the schedule from the deployment like the players.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useSearchParams } from 'react-router';
 import { ArrowLeft, CalendarClock } from 'lucide-react';
 import type { Typography } from '@opensignage/contracts';
 import { LiveStore, contentFromManifest } from '@opensignage/render';
@@ -22,8 +22,11 @@ export function ZonePreviewPage() {
   const t = useT();
   const { id = '' } = useParams();
   const lang = getLanguage();
-  const [mode, setMode] = useState<'now' | 'at'>('now');
-  const [atInput, setAtInput] = useState('');
+  // ?at=YYYY-MM-DDTHH:MM opens the preview at that moment (e.g. from a dated schedule rule).
+  const [params] = useSearchParams();
+  const linked = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(params.get('at') ?? '') ? params.get('at')! : '';
+  const [mode, setMode] = useState<'now' | 'at'>(linked ? 'at' : 'now');
+  const [atInput, setAtInput] = useState(linked);
   const [stateChoice, setStateChoice] = useState<StateChoice>('');
   const [data, setData] = useState<ZonePreview | null>(null);
   const [error, setError] = useState<unknown>(null);

@@ -123,6 +123,12 @@
   color: var(--os-primary);
   font-weight: 600;
 }
+.tl-date {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--os-text-faint);
+}
 .tl-hours {
   position: relative;
   height: 16px;
@@ -425,4 +431,25 @@
   margin-left: 10px;
   font-size: 12px;
   font-weight: 500;
+}
+
+/* Week navigation above the timeline; the period of a dated rule in the table. */
+.tl-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.tl-nav .link-btn {
+  color: var(--os-accent);
+  font-size: 13px;
+}
+.rule-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 2px;
+  font-size: 13px;
 }

@@ -77,14 +77,20 @@ func Evaluate(in Input) Result {
 		}
 		switch r.Scope {
 		case contracts.ScopeZone:
-			if r.ZoneID == in.ZoneID && r.Window != nil && WindowActive(*r.Window, local) {
+			if r.ZoneID != in.ZoneID || r.Window == nil {
+				continue
+			}
+			if at, ok := Occurrence(*r.Window, local); ok {
 				zoneWin = append(zoneWin, r)
-				since[r.ID] = WindowStart(*r.Window, local)
+				since[r.ID] = at
 			}
 		case contracts.ScopeGlobal:
-			if r.Window != nil && WindowActive(*r.Window, local) {
+			if r.Window == nil {
+				continue
+			}
+			if at, ok := Occurrence(*r.Window, local); ok {
 				globalWin = append(globalWin, r)
-				since[r.ID] = WindowStart(*r.Window, local)
+				since[r.ID] = at
 			}
 		case contracts.ScopeDefault:
 			if r.ZoneID == in.ZoneID {
@@ -216,54 +222,146 @@ func SharedChange(a, b contracts.Rule) string {
 	return ""
 }
 
-// WindowStart is the start of the occurrence of an active window that contains local (the
-// same day, or the day before for a window across midnight).
-func WindowStart(w contracts.Window, local time.Time) time.Time {
-	start, _ := contracts.ParseHHMM(w.Start)
-	day := local
-	if local.Hour()*60+local.Minute() < start || !hasDay(w.Days, isoWeekday(local)) {
-		day = local.AddDate(0, 0, -1) // the occurrence started the day before (across midnight)
-	}
-	return time.Date(day.Year(), day.Month(), day.Day(), start/60, start%60, 0, 0, local.Location())
-}
-
 func midnight(local time.Time) time.Time {
 	return time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, local.Location())
 }
 
-// WindowActive reports whether the window contains the given local wall-clock time.
-func WindowActive(w contracts.Window, local time.Time) bool {
+// Occurrence returns the start of the occurrence of the window that contains the local
+// wall-clock time: the same day, or the day before for a window across midnight. An
+// occurrence counts only when it starts on a day of the window's period (From/Until).
+func Occurrence(w contracts.Window, local time.Time) (time.Time, bool) {
 	start, err1 := contracts.ParseHHMM(w.Start)
 	end, err2 := contracts.ParseHHMM(w.End)
 	if err1 != nil || err2 != nil {
-		return false
+		return time.Time{}, false
 	}
-	day := isoWeekday(local)
-	prevDay := day - 1
-	if prevDay == 0 {
-		prevDay = 7
+	today := midnight(local)
+	yesterday := today.AddDate(0, 0, -1)
+	at := func(d time.Time) time.Time {
+		return time.Date(d.Year(), d.Month(), d.Day(), start/60, start%60, 0, 0, local.Location())
 	}
 	m := local.Hour()*60 + local.Minute()
 	if start < end {
-		return hasDay(w.Days, day) && m >= start && m < end
+		if hasDay(w.Days, isoWeekday(local)) && m >= start && m < end && InPeriod(w, today) {
+			return at(today), true
+		}
+		return time.Time{}, false
 	}
 	// Crosses midnight (end == start: 24 hours).
-	return (hasDay(w.Days, day) && m >= start) || (hasDay(w.Days, prevDay) && m < end)
+	if hasDay(w.Days, isoWeekday(local)) && m >= start && InPeriod(w, today) {
+		return at(today), true
+	}
+	if hasDay(w.Days, isoWeekday(yesterday)) && m < end && InPeriod(w, yesterday) {
+		return at(yesterday), true
+	}
+	return time.Time{}, false
+}
+
+// WindowActive reports whether the window contains the given local wall-clock time.
+func WindowActive(w contracts.Window, local time.Time) bool {
+	_, ok := Occurrence(w, local)
+	return ok
+}
+
+// InPeriod reports whether an occurrence starting on the given day (its date counts, the
+// time is ignored) lies in the window's period.
+func InPeriod(w contracts.Window, day time.Time) bool {
+	d := day.Format("2006-01-02")
+	return (w.From == "" || d >= w.From) && (w.Until == "" || d <= w.Until)
 }
 
 const minutesPerWeek = 7 * 24 * 60
 
-// Overlaps reports whether two weekly windows share at least one minute.
+// Overlaps reports whether two windows share at least one minute: in the weekly pattern
+// and – for windows with a period – on actual dates.
 func Overlaps(a, b contracts.Window) bool {
-	ia, ib := intervals(a), intervals(b)
-	for _, x := range ia {
-		for _, y := range ib {
+	weekly := false
+	for _, x := range intervals(a) {
+		for _, y := range intervals(b) {
 			if x[0] < y[1] && y[0] < x[1] {
+				weekly = true
+			}
+		}
+	}
+	if !weekly {
+		return false
+	}
+	if a.From == "" && a.Until == "" && b.From == "" && b.Until == "" {
+		return true
+	}
+	return datedOverlap(a, b)
+}
+
+// datedOverlap compares the occurrences of two windows (whose weekly patterns overlap) on
+// the days both periods share. When they share an open-ended stretch or more than two
+// weeks, every weekday combination occurs and the weekly overlap is real.
+func datedOverlap(a, b contracts.Window) bool {
+	fromA, untilA, okA := periodDays(a)
+	fromB, untilB, okB := periodDays(b)
+	if !okA || !okB {
+		return false // invalid dates never apply
+	}
+	lo, hi := max(fromA, fromB), min(untilA, untilB)
+	if lo == openFrom || hi == openUntil || hi-lo > 14 {
+		return hi >= lo-1
+	}
+	startA, lenA := span(a)
+	startB, lenB := span(b)
+	valid := func(w contracts.Window, from, until, day int) bool {
+		return day >= from && day <= until && hasDay(w.Days, contracts.ISOWeekdayOfDay(day))
+	}
+	// Occurrences that start more than a day apart cannot overlap (a window is at most 24 h).
+	for x := lo - 1; x <= hi+1; x++ {
+		if !valid(a, fromA, untilA, x) {
+			continue
+		}
+		for y := x - 1; y <= x+1; y++ {
+			if !valid(b, fromB, untilB, y) {
+				continue
+			}
+			sa, sb := x*24*60+startA, y*24*60+startB
+			if sa < sb+lenB && sb < sa+lenA {
 				return true
 			}
 		}
 	}
 	return false
+}
+
+const (
+	openFrom  = -1 << 30
+	openUntil = 1 << 30
+)
+
+// periodDays returns the period of a window as day numbers (open ends as openFrom/openUntil).
+func periodDays(w contracts.Window) (from, until int, ok bool) {
+	from, until = openFrom, openUntil
+	if w.From != "" {
+		d, err := contracts.DayNumber(w.From)
+		if err != nil {
+			return 0, 0, false
+		}
+		from = d
+	}
+	if w.Until != "" {
+		d, err := contracts.DayNumber(w.Until)
+		if err != nil {
+			return 0, 0, false
+		}
+		until = d
+	}
+	return from, until, true
+}
+
+// span returns the start minute and the length of a window (end <= start wraps).
+func span(w contracts.Window) (start, length int) {
+	start, _ = contracts.ParseHHMM(w.Start)
+	end, _ := contracts.ParseHHMM(w.End)
+	length = end - start
+	if length <= 0 {
+		length += 24 * 60
+	}
+	return start, length
 }
 
 // intervals expands a window into half-open minute-of-week intervals without wrap.

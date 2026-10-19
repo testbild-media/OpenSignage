@@ -94,7 +94,9 @@
   "window": "Χρονικό παράθυρο",
   "window.days": "Ημέρες της εβδομάδας",
   "window.end": "Λήξη",
+  "window.from": "Ημερομηνία έναρξης",
   "window.start": "Έναρξη",
+  "window.until": "Ημερομηνία λήξης",
   "zone": "Ζώνη",
   "zoneId": "Ζώνη",
   "zoneIds": "Ζώνες"

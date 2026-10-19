@@ -3,6 +3,7 @@ package contracts
 import (
 	"fmt"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -24,11 +25,32 @@ const (
 
 // Window is a recurring weekly time window. Days are ISO weekdays (1=Mon..7=Sun) of the
 // day the window starts. End <= Start means the window crosses midnight; End == Start
-// means 24 hours.
+// means 24 hours. From and Until limit it to a period of dates (YYYY-MM-DD in the server time
+// zone, inclusive, "" = open): an occurrence counts when it starts on a day of the period –
+// a window from 22:00 to 02:00 on the 7th runs until 02:00 on the 8th.
 type Window struct {
 	Days  []int  `json:"days"`
 	Start string `json:"start"`
 	End   string `json:"end"`
+	From  string `json:"from,omitempty"`
+	Until string `json:"until,omitempty"`
+}
+
+// DayNumber parses a date "YYYY-MM-DD" into days since 1970-01-01.
+func DayNumber(s string) (int, error) {
+	if len(s) != 10 {
+		return 0, fmt.Errorf("invalid date %q (expected YYYY-MM-DD)", s)
+	}
+	t, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return 0, fmt.Errorf("invalid date %q (expected YYYY-MM-DD)", s)
+	}
+	return int(t.Unix() / 86400), nil
+}
+
+// ISOWeekdayOfDay is the ISO weekday (1=Mon..7=Sun) of a day number (1970-01-01 = Thursday).
+func ISOWeekdayOfDay(day int) int {
+	return ((day%7+7)%7+3)%7 + 1
 }
 
 // PriceOverride replaces the base price of one product, or of every product of a category
@@ -81,6 +103,44 @@ type Rule struct {
 	Prices         []PriceOverride `json:"prices"`
 	Ticker         *RuleTicker     `json:"ticker,omitempty"`
 	Enabled        bool            `json:"enabled"`
+}
+
+// validatePeriod checks From and Until: valid dates, Until not before From, and – for a
+// period shorter than a week – at least one of the weekdays inside it (else the window
+// would never apply).
+func (w *Window) validatePeriod() error {
+	from, until := -1, -1
+	if w.From != "" {
+		d, err := DayNumber(w.From)
+		if err != nil {
+			return fieldErr("window.from", "invalid")
+		}
+		from = d
+	}
+	if w.Until != "" {
+		d, err := DayNumber(w.Until)
+		if err != nil {
+			return fieldErr("window.until", "invalid")
+		}
+		until = d
+	}
+	if from < 0 || until < 0 {
+		return nil
+	}
+	if until < from {
+		return fieldErr("window.until", "before_from")
+	}
+	if until-from < 6 {
+		for d := from; d <= until; d++ {
+			for _, x := range w.Days {
+				if x == ISOWeekdayOfDay(d) {
+					return nil
+				}
+			}
+		}
+		return fieldErr("window.days", "no_day_in_range")
+	}
+	return nil
 }
 
 // ParseHHMM parses "HH:MM" (00:00..23:59) into minutes since midnight. Exactly two ASCII
@@ -151,6 +211,9 @@ func (r *Rule) Validate() error {
 		}
 		if _, err := ParseHHMM(r.Window.End); err != nil {
 			return fieldErr("window.end", "invalid")
+		}
+		if err := r.Window.validatePeriod(); err != nil {
+			return err
 		}
 	}
 	if r.PlaylistID == "" && len(r.GroupPlaylists) == 0 && len(r.Prices) == 0 && r.Ticker == nil {

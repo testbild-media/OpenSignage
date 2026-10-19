@@ -94,7 +94,9 @@
   "window": "Időablak",
   "window.days": "A hét napjai",
   "window.end": "Befejezés",
+  "window.from": "Kezdő dátum",
   "window.start": "Kezdés",
+  "window.until": "Záró dátum",
   "zone": "Zóna",
   "zoneId": "Zóna",
   "zoneIds": "Zónák"

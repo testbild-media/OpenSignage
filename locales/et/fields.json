@@ -94,7 +94,9 @@
   "window": "Ajaaken",
   "window.days": "Nädalapäevad",
   "window.end": "Lõpp",
+  "window.from": "Alguskuupäev",
   "window.start": "Algus",
+  "window.until": "Lõppkuupäev",
   "zone": "Tsoon",
   "zoneId": "Tsoon",
   "zoneIds": "Tsoonid"

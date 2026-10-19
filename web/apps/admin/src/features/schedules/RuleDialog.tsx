@@ -18,7 +18,7 @@ import { categoryPath, type Category, type Product } from '../products/types';
 import { playlistOptions, type PlaylistSummary, type TickerTemplateRecord, type Zone } from '../zones/types';
 import { TickerPreview } from '../zones/TickerPreview';
 import { catalogOrder, moneyRange, productsIn, sortPrices, targetOf } from './prices';
-import { midnightInfo, parseHHMM, weekdayLabels } from './windows';
+import { formatDate, isDate, isoWeekdayOf, midnightInfo, parseHHMM, periodProblem, weekdayLabels } from './windows';
 
 type Scope = Rule['scope'];
 type TickerMode = 'keep' | 'show' | 'hide';
@@ -112,6 +112,10 @@ export function RuleDialog({
   const [days, setDays] = useState<number[]>(rule?.window?.days ?? [1, 2, 3, 4, 5]);
   const [start, setStart] = useState(rule?.window?.start ?? '17:00');
   const [end, setEnd] = useState(rule?.window?.end ?? '19:00');
+  // Every week, or only between two dates (either may stay open).
+  const [dated, setDated] = useState(!!(rule?.window?.from || rule?.window?.until));
+  const [from, setFrom] = useState(rule?.window?.from ?? '');
+  const [until, setUntil] = useState(rule?.window?.until ?? '');
   const [playlistId, setPlaylistId] = useState(rule?.playlistId ?? '');
   const [enabled, setEnabled] = useState(rule?.enabled ?? true);
   const [tickerMode, setTickerMode] = useState<TickerMode>(rule?.ticker ? (rule.ticker.hide ? 'hide' : 'show') : 'keep');
@@ -152,6 +156,11 @@ export function RuleDialog({
   if (scope !== 'global' && !zoneId) problems.push(t('admin.schedules.problem.zone'));
   if (windowed && days.length === 0) problems.push(t('admin.schedules.problem.days'));
   if (windowed && (parseHHMM(start) === null || parseHHMM(end) === null)) problems.push(t('admin.schedules.problem.time'));
+  const period = windowed && dated ? periodProblem(days, from, until) : null;
+  if (windowed && dated && !from && !until) problems.push(t('admin.schedules.problem.periodEmpty'));
+  if (windowed && dated && ((from && !isDate(from)) || (until && !isDate(until)))) problems.push(t('admin.schedules.problem.periodDate'));
+  if (period === 'order') problems.push(t('admin.schedules.problem.period'));
+  if (period === 'days') problems.push(t('admin.schedules.problem.periodDays'));
   if (!playlistId && groupPlaylists.length === 0 && prices.length === 0 && tickerMode === 'keep') problems.push(t('admin.schedules.problem.content'));
   if (tickerOn && !tickerText.trim()) problems.push(t('admin.schedules.problem.tickerText'));
   if (!pricesOk) problems.push(t('admin.schedules.problem.prices'));
@@ -161,7 +170,9 @@ export function RuleDialog({
       name: name.trim(),
       scope,
       zoneId: scope === 'global' ? null : zoneId,
-      window: windowed ? { days: [...days].sort((a, b) => a - b), start, end } : null,
+      window: windowed
+        ? { days: [...days].sort((a, b) => a - b), start, end, ...(dated && from ? { from } : {}), ...(dated && until ? { until } : {}) }
+        : null,
       playlistId: playlistId || null,
       groupPlaylists,
       prices: parsed.map((p): PriceOverride => ({ ...(p.row.target.startsWith('c:') ? { categoryId: p.id } : { productId: p.id }), price: { amount: p.amount ?? 0, currency: p.currency } })),
@@ -266,6 +277,33 @@ export function RuleDialog({
                   {t(`admin.schedules.midnight.${info}`, { start, end })}
                   {info !== 'same_day' && <div className="faint">{t('admin.schedules.midnight.daysNote')}</div>}
                 </div>
+              )}
+              <Field label={t('admin.schedules.field.period')}>
+                <Segmented
+                  value={dated ? 'dates' : 'weekly'}
+                  onChange={(v) => setDated(v === 'dates')}
+                  options={[
+                    { value: 'weekly', label: t('admin.schedules.period.weekly') },
+                    { value: 'dates', label: t('admin.schedules.period.dates') },
+                  ]}
+                />
+              </Field>
+              {dated && (
+                <>
+                  <div className="form-row">
+                    <TextInput label={t('admin.schedules.field.from')} type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+                    <TextInput label={t('admin.schedules.field.until')} type="date" value={until} min={from || undefined} onChange={(e) => setUntil(e.target.value)} />
+                  </div>
+                  <div className="faint">{t('admin.schedules.period.hint')}</div>
+                  {period === 'days' && from && isDate(from) && (
+                    <div className="midnight-hint emphasis">
+                      {t('admin.schedules.problem.periodDays')}{' '}
+                      <button type="button" className="link-btn" onClick={() => setDays([isoWeekdayOf(from)])}>
+                        {t('admin.schedules.period.useDay', { day: `${longLabels[isoWeekdayOf(from)]} ${formatDate(from, lang)}` })}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

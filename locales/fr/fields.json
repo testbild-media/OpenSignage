@@ -94,7 +94,9 @@
   "window": "Plage horaire",
   "window.days": "Jours de la semaine",
   "window.end": "Fin",
+  "window.from": "Date de début",
   "window.start": "Début",
+  "window.until": "Date de fin",
   "zone": "Zone",
   "zoneId": "Zone",
   "zoneIds": "Zones"

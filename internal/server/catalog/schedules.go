@@ -33,7 +33,8 @@ const ruleOrder = ` ORDER BY CASE scope WHEN 'global' THEN 0 WHEN 'zone' THEN 1 
 // including their price overrides.
 func loadRules(ctx context.Context, q modkit.Queryer, where string, args ...any) ([]contracts.Rule, error) {
 	rows, err := q.QueryContext(ctx, `SELECT id, revision, name, scope, COALESCE(zone_id, ''), days, start_time, end_time,
-		COALESCE(playlist_id, ''), enabled, ticker_text, COALESCE(ticker_template_id, ''), ticker_hide FROM schedule_rules `+where+ruleOrder, args...)
+		COALESCE(date_from, ''), COALESCE(date_until, ''), COALESCE(playlist_id, ''), enabled, ticker_text,
+		COALESCE(ticker_template_id, ''), ticker_hide FROM schedule_rules `+where+ruleOrder, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +43,9 @@ func loadRules(ctx context.Context, q modkit.Queryer, where string, args ...any)
 	for rows.Next() {
 		var r contracts.Rule
 		var days, start, end, tickerText sql.NullString
-		var tickerTemplate string
+		var tickerTemplate, from, until string
 		var enabled, tickerHide int
-		if err := rows.Scan(&r.ID, &r.Revision, &r.Name, &r.Scope, &r.ZoneID, &days, &start, &end, &r.PlaylistID, &enabled,
+		if err := rows.Scan(&r.ID, &r.Revision, &r.Name, &r.Scope, &r.ZoneID, &days, &start, &end, &from, &until, &r.PlaylistID, &enabled,
 			&tickerText, &tickerTemplate, &tickerHide); err != nil {
 			rows.Close()
 			return nil, err
@@ -56,7 +57,7 @@ func loadRules(ctx context.Context, q modkit.Queryer, where string, args ...any)
 			r.Ticker = &contracts.RuleTicker{Text: tickerText.String, TemplateID: tickerTemplate}
 		}
 		if days.Valid {
-			w := &contracts.Window{Start: start.String, End: end.String}
+			w := &contracts.Window{Start: start.String, End: end.String, From: from, Until: until}
 			if err := json.Unmarshal([]byte(days.String), &w.Days); err != nil {
 				rows.Close()
 				return nil, err
@@ -427,6 +428,21 @@ func ruleDays(r *contracts.Rule) (days, start, end any) {
 	return string(b), r.Window.Start, r.Window.End
 }
 
+// rulePeriod returns the period columns (NULL = open).
+func rulePeriod(r *contracts.Rule) (from, until any) {
+	if r.Window == nil {
+		return nil, nil
+	}
+	return nullIfEmpty(r.Window.From), nullIfEmpty(r.Window.Until)
+}
+
+func nullIfEmpty(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
+}
+
 func writeGroupPlaylists(ctx context.Context, tx *sql.Tx, r *contracts.Rule) error {
 	if _, err := tx.ExecContext(ctx, `DELETE FROM schedule_group_playlists WHERE rule_id = ?`, r.ID); err != nil {
 		return err
@@ -501,12 +517,13 @@ func (m *Module) createSchedule(w http.ResponseWriter, r *http.Request, p *core.
 			return err
 		}
 		days, start, end := ruleDays(&rule)
+		from, until := rulePeriod(&rule)
 		now := db.Now()
 		tickerText, tickerTemplate, tickerHide := ruleTickerCols(&rule)
 		if _, err := tx.ExecContext(r.Context(), `INSERT INTO schedule_rules(id, name, scope, zone_id, days, start_time, end_time,
-			playlist_id, enabled, ticker_text, ticker_template_id, ticker_hide, revision, created_at, updated_at)
-			VALUES (?, ?, ?, NULLIF(?, ''), ?, ?, ?, NULLIF(?, ''), ?, ?, NULLIF(?, ''), ?, 1, ?, ?)`,
-			rule.ID, rule.Name, rule.Scope, rule.ZoneID, days, start, end, rule.PlaylistID, db.Bool(rule.Enabled),
+			date_from, date_until, playlist_id, enabled, ticker_text, ticker_template_id, ticker_hide, revision, created_at, updated_at)
+			VALUES (?, ?, ?, NULLIF(?, ''), ?, ?, ?, ?, ?, NULLIF(?, ''), ?, ?, NULLIF(?, ''), ?, 1, ?, ?)`,
+			rule.ID, rule.Name, rule.Scope, rule.ZoneID, days, start, end, from, until, rule.PlaylistID, db.Bool(rule.Enabled),
 			tickerText, tickerTemplate, tickerHide, now, now); err != nil {
 			return err
 		}
@@ -566,13 +583,14 @@ func (m *Module) updateSchedule(w http.ResponseWriter, r *http.Request, p *core.
 			return err
 		}
 		days, start, end := ruleDays(&next)
+		from, until := rulePeriod(&next)
 		// The revision rises on every change, including price changes, so clients that
 		// compare id and revision notice edits of the currently active rule.
 		tickerText, tickerTemplate, tickerHide := ruleTickerCols(&next)
 		if _, err := tx.ExecContext(r.Context(), `UPDATE schedule_rules SET name = ?, scope = ?, zone_id = NULLIF(?, ''), days = ?,
-			start_time = ?, end_time = ?, playlist_id = NULLIF(?, ''), enabled = ?, ticker_text = ?,
+			start_time = ?, end_time = ?, date_from = ?, date_until = ?, playlist_id = NULLIF(?, ''), enabled = ?, ticker_text = ?,
 			ticker_template_id = NULLIF(?, ''), ticker_hide = ?, revision = revision + 1, updated_at = ? WHERE id = ?`,
-			next.Name, next.Scope, next.ZoneID, days, start, end, next.PlaylistID, db.Bool(next.Enabled),
+			next.Name, next.Scope, next.ZoneID, days, start, end, from, until, next.PlaylistID, db.Bool(next.Enabled),
 			tickerText, tickerTemplate, tickerHide, db.Now(), id); err != nil {
 			return err
 		}

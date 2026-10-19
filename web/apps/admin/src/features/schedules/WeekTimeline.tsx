@@ -1,13 +1,17 @@
-// Weekly timeline (CSS grid, no chart library): one row per weekday, zone windows in the
-// upper lane, global windows in the lower lane, a marker at "now" in the server time zone.
+// Weekly timeline (CSS grid, no chart library): one row per day of a calendar week (this
+// week, or browsed forward and back), zone windows in the upper lane, global windows in the
+// lower lane, a marker at "now" in the server time zone. Windows with a period of dates show
+// only in the weeks of their period.
 import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Rule } from '@opensignage/contracts';
 import { getLanguage } from '@opensignage/i18n';
 import { useT } from '../../lib/hooks';
-import { DAY_MINUTES, nowInTimezone, weekdayLabels, windowSegments } from './windows';
+import { IconButton } from '../../components/ui';
+import { DAY_MINUTES, addDays, formatDate, hasPeriod, inPeriod, nowInTimezone, weekdayLabels, windowSegments } from './windows';
 
-/** Current weekday/minute in the zone, refreshed every 30 s. */
-export function useNowIn(timeZone: string): { day: number; minute: number } {
+/** Current weekday/minute/date in the zone, refreshed every 30 s. */
+export function useNowIn(timeZone: string): { day: number; minute: number; date: string } {
   const [now, setNow] = useState(() => nowInTimezone(new Date(), timeZone));
   useEffect(() => {
     setNow(nowInTimezone(new Date(), timeZone));
@@ -35,6 +39,9 @@ export function Timeline({ rules, timeZone, onOpen, showZoneLane }: { rules: Rul
   const lang = getLanguage();
   const labels = useMemo(() => weekdayLabels(lang), [lang]);
   const now = useNowIn(timeZone);
+  const [week, setWeek] = useState(0); // 0 = this week
+  const monday = addDays(now.date, 1 - now.day + week * 7);
+  const dateOf = (day: number): string => addDays(monday, day - 1);
   const blocks = useMemo(() => {
     const out: Block[] = [];
     for (const r of rules) {
@@ -47,68 +54,90 @@ export function Timeline({ rules, timeZone, onOpen, showZoneLane }: { rules: Rul
   }, [rules]);
   const pct = (m: number): string => `${(m / DAY_MINUTES) * 100}%`;
   const lanes = showZoneLane ? 'two-lanes' : 'one-lane';
+  // A window with a period shows when its occurrence starts in the period (the part after
+  // midnight belongs to the day before).
+  const shown = (b: Block, date: string): boolean => !b.rule.window || !hasPeriod(b.rule.window) || inPeriod(b.rule.window, b.continued ? addDays(date, -1) : date);
   return (
-    <div className={`tl ${lanes}`} role="table" aria-label={t('admin.schedules.timeline')}>
-      <div className="tl-row tl-head" role="row">
-        <span className="tl-day" />
-        <div className="tl-hours">
-          {HOURS.map((h) => (
-            <span key={h} style={{ left: pct(h * 60) }}>
-              {String(h).padStart(2, '0')}
-            </span>
-          ))}
-        </div>
+    <>
+      <div className="tl-nav">
+        <IconButton label={t('admin.schedules.week.prev')} onClick={() => setWeek((w) => w - 1)}>
+          <ChevronLeft size={16} />
+        </IconButton>
+        <span>
+          {formatDate(monday, lang)} – {formatDate(addDays(monday, 6), lang)}
+        </span>
+        <IconButton label={t('admin.schedules.week.next')} onClick={() => setWeek((w) => w + 1)}>
+          <ChevronRight size={16} />
+        </IconButton>
+        {week !== 0 && (
+          <button type="button" className="link-btn" onClick={() => setWeek(0)}>
+            {t('admin.schedules.week.current')}
+          </button>
+        )}
       </div>
-      {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-        <div key={day} className={`tl-row ${now.day === day ? 'today' : ''}`} role="row">
-          <span className="tl-day" role="rowheader">
-            {labels[day]}
-          </span>
-          <div className="tl-track" role="cell">
-            {HOURS.slice(1, -1).map((h) => (
-              <span key={h} className="tl-grid" style={{ left: pct(h * 60) }} />
+      <div className={`tl ${lanes}`} role="table" aria-label={t('admin.schedules.timeline')}>
+        <div className="tl-row tl-head" role="row">
+          <span className="tl-day" />
+          <div className="tl-hours">
+            {HOURS.map((h) => (
+              <span key={h} style={{ left: pct(h * 60) }}>
+                {String(h).padStart(2, '0')}
+              </span>
             ))}
-            {blocks
-              .filter((b) => b.day === day)
-              .map((b) => {
-                const r = b.rule;
-                const time = `${r.window!.start}–${r.window!.end}`;
-                const kind = r.playlistId ? '' : ` · ${t('admin.schedules.pricesOnly')}`;
-                const state = r.enabled ? '' : ` · ${t('admin.schedules.disabled')}`;
-                return (
-                  <button
-                    key={b.key}
-                    type="button"
-                    className={`tl-block lane-${b.lane} ${r.playlistId ? '' : 'prices-only'} ${r.enabled ? '' : 'disabled'} ${b.continued ? 'continued' : ''} ${b.continues ? 'continues' : ''}`}
-                    style={{ left: pct(b.start), width: pct(b.end - b.start) }}
-                    title={`${r.name} · ${time}${kind}${state}`}
-                    onClick={() => onOpen(r)}
-                  >
-                    <span>{r.name}</span>
-                  </button>
-                );
-              })}
-            {now.day === day && <span className="tl-now" style={{ left: pct(now.minute) }} title={t('admin.schedules.nowMarker')} />}
           </div>
         </div>
-      ))}
-      <div className="tl-legend">
-        {showZoneLane && (
+        {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+          <div key={day} className={`tl-row ${week === 0 && now.day === day ? 'today' : ''}`} role="row">
+            <span className="tl-day" role="rowheader">
+              {labels[day]}
+              <span className="tl-date">{formatDate(dateOf(day), lang, false)}</span>
+            </span>
+            <div className="tl-track" role="cell">
+              {HOURS.slice(1, -1).map((h) => (
+                <span key={h} className="tl-grid" style={{ left: pct(h * 60) }} />
+              ))}
+              {blocks
+                .filter((b) => b.day === day && shown(b, dateOf(day)))
+                .map((b) => {
+                  const r = b.rule;
+                  const time = `${r.window!.start}–${r.window!.end}`;
+                  const kind = r.playlistId ? '' : ` · ${t('admin.schedules.pricesOnly')}`;
+                  const state = r.enabled ? '' : ` · ${t('admin.schedules.disabled')}`;
+                  return (
+                    <button
+                      key={b.key}
+                      type="button"
+                      className={`tl-block lane-${b.lane} ${r.playlistId ? '' : 'prices-only'} ${r.enabled ? '' : 'disabled'} ${b.continued ? 'continued' : ''} ${b.continues ? 'continues' : ''}`}
+                      style={{ left: pct(b.start), width: pct(b.end - b.start) }}
+                      title={`${r.name} · ${time}${kind}${state}`}
+                      onClick={() => onOpen(r)}
+                    >
+                      <span>{r.name}</span>
+                    </button>
+                  );
+                })}
+              {week === 0 && now.day === day && <span className="tl-now" style={{ left: pct(now.minute) }} title={t('admin.schedules.nowMarker')} />}
+            </div>
+          </div>
+        ))}
+        <div className="tl-legend">
+          {showZoneLane && (
+            <span>
+              <i className="lane-zone" /> {t('admin.schedules.scope.zone')}
+            </span>
+          )}
           <span>
-            <i className="lane-zone" /> {t('admin.schedules.scope.zone')}
+            <i className="lane-global" /> {t('admin.schedules.scope.global')}
           </span>
-        )}
-        <span>
-          <i className="lane-global" /> {t('admin.schedules.scope.global')}
-        </span>
-        <span>
-          <i className="prices-only" /> {t('admin.schedules.pricesOnly')}
-        </span>
-        <span>
-          <i className="disabled" /> {t('admin.schedules.disabled')}
-        </span>
-        <span className="faint">{t('admin.schedules.timezoneNote', { tz: timeZone })}</span>
+          <span>
+            <i className="prices-only" /> {t('admin.schedules.pricesOnly')}
+          </span>
+          <span>
+            <i className="disabled" /> {t('admin.schedules.disabled')}
+          </span>
+          <span className="faint">{t('admin.schedules.timezoneNote', { tz: timeZone })}</span>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

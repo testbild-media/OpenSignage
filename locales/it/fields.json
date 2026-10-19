@@ -94,7 +94,9 @@
   "window": "Fascia oraria",
   "window.days": "Giorni della settimana",
   "window.end": "Fine",
+  "window.from": "Data di inizio",
   "window.start": "Inizio",
+  "window.until": "Data di fine",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zone"

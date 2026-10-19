@@ -94,7 +94,9 @@
   "window": "Fuinneog ama",
   "window.days": "Laethanta na seachtaine",
   "window.end": "Deireadh",
+  "window.from": "Dáta tosaigh",
   "window.start": "Tús",
+  "window.until": "Dáta deiridh",
   "zone": "Crios",
   "zoneId": "Crios",
   "zoneIds": "Criosanna"

@@ -94,7 +94,9 @@
   "window": "Laiko intervalas",
   "window.days": "Savaitės dienos",
   "window.end": "Pabaiga",
+  "window.from": "Pradžios data",
   "window.start": "Pradžia",
+  "window.until": "Pabaigos data",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zonos"

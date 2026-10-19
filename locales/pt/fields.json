@@ -94,7 +94,9 @@
   "window": "Janela horária",
   "window.days": "Dias da semana",
   "window.end": "Fim",
+  "window.from": "Data de início",
   "window.start": "Início",
+  "window.until": "Data de fim",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zonas"

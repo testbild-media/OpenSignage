@@ -106,20 +106,90 @@ export function weekdayLabels(lang: string, style: 'short' | 'long' = 'short'): 
   return out;
 }
 
-/** Weekday (ISO) and minute of day of an instant in an IANA time zone. */
-export function nowInTimezone(at: Date, timeZone: string): { day: number; minute: number } {
+/** Weekday (ISO), minute of day and date (YYYY-MM-DD) of an instant in an IANA time zone. */
+export function nowInTimezone(at: Date, timeZone: string): { day: number; minute: number; date: string } {
+  const opts: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
   let parts: Intl.DateTimeFormatPart[];
   try {
-    parts = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(at);
+    parts = new Intl.DateTimeFormat('en-US', { ...opts, timeZone }).formatToParts(at);
   } catch {
-    parts = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(at);
+    parts = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'UTC' }).formatToParts(at);
   }
   const get = (type: string): string => parts.find((p) => p.type === type)?.value ?? '';
   const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const day = names.indexOf(get('weekday')) + 1 || 1;
   const hour = Number(get('hour')) % 24;
   const minute = Number(get('minute'));
-  return { day, minute: hour * 60 + minute };
+  return { day, minute: hour * 60 + minute, date: `${get('year')}-${get('month')}-${get('day')}` };
+}
+
+// ---- periods of dates (YYYY-MM-DD; calendar arithmetic in UTC, no time zone involved)
+
+const DAY_MS = 86_400_000;
+
+/** The date n days after (or before) a date. */
+export function addDays(date: string, n: number): string {
+  return new Date(Date.parse(`${date}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
+}
+
+/** ISO weekday (1 = Monday) of a date. */
+export function isoWeekdayOf(date: string): number {
+  const d = new Date(Date.parse(`${date}T00:00:00Z`)).getUTCDay();
+  return d === 0 ? 7 : d;
+}
+
+/** Whether s is a real date "YYYY-MM-DD" (not 2026-02-30). */
+export function isDate(s: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`)) && addDays(s, 0) === s;
+}
+
+export function hasPeriod(w: Window): boolean {
+  return !!(w.from || w.until);
+}
+
+/** Whether an occurrence starting on the date lies in the window's period (internal/schedule.InPeriod). */
+export function inPeriod(w: Window, date: string): boolean {
+  return (!w.from || date >= w.from) && (!w.until || date <= w.until);
+}
+
+/** What is wrong with a period (same rules as the server): the end before the start, or none
+ *  of the weekdays inside a period shorter than a week. */
+export function periodProblem(days: number[], from: string, until: string): 'order' | 'days' | null {
+  if (!from || !until) return null;
+  if (until < from) return 'order';
+  if ((Date.parse(`${until}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY_MS < 6) {
+    for (let d = from; d <= until; d = addDays(d, 1)) if (days.includes(isoWeekdayOf(d))) return null;
+    return 'days';
+  }
+  return null;
+}
+
+/** The first day from today on which the window starts within its period (null: none left). */
+export function nextOccurrence(w: Window, today: string): string | null {
+  let d = w.from && w.from > today ? w.from : today;
+  for (let i = 0; i < 7; i++, d = addDays(d, 1)) {
+    if (w.until && d > w.until) return null;
+    if (w.days.includes(isoWeekdayOf(d))) return d;
+  }
+  return null;
+}
+
+/** Where today lies relative to the window's period (null: no period). */
+export function periodState(w: Window, today: string): 'expired' | 'upcoming' | 'current' | null {
+  if (!hasPeriod(w)) return null;
+  if (w.until && w.until < today) return 'expired';
+  if (w.from && w.from > today) return 'upcoming';
+  return 'current';
+}
+
+/** A date as the language writes it ("7.11.2026"). */
+export function formatDate(date: string, lang: string, withYear = true): string {
+  const opts: Intl.DateTimeFormatOptions = withYear ? { day: 'numeric', month: 'numeric', year: 'numeric', timeZone: 'UTC' } : { day: 'numeric', month: 'numeric', timeZone: 'UTC' };
+  try {
+    return new Intl.DateTimeFormat(lang, opts).format(new Date(`${date}T00:00:00Z`));
+  } catch {
+    return date;
+  }
 }
 
 /** Whether a window is active at weekday/minute (same rule as internal/schedule). */

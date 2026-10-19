@@ -94,7 +94,9 @@
   "window": "Laika logs",
   "window.days": "Nedēļas dienas",
   "window.end": "Beigas",
+  "window.from": "Sākuma datums",
   "window.start": "Sākums",
+  "window.until": "Beigu datums",
   "zone": "Zona",
   "zoneId": "Zona",
   "zoneIds": "Zonas"

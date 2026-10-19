@@ -94,7 +94,9 @@
   "window": "Tidsvindue",
   "window.days": "Ugedage",
   "window.end": "Slut",
+  "window.from": "Startdato",
   "window.start": "Start",
+  "window.until": "Slutdato",
   "zone": "Zone",
   "zoneId": "Zone",
   "zoneIds": "Zoner"

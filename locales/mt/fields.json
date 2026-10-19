@@ -94,7 +94,9 @@
   "window": "Intervall tal-ħin",
   "window.days": "Jiem tal-ġimgħa",
   "window.end": "Tmiem",
+  "window.from": "Data tal-bidu",
   "window.start": "Bidu",
+  "window.until": "Data tat-tmiem",
   "zone": "Żona",
   "zoneId": "Żona",
   "zoneIds": "Żoni"

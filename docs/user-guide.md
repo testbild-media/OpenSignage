@@ -106,6 +106,14 @@ all zones. A rule changes only what it sets:
   price for a subcategory or a single product in the same rule comes first;
 - a **ticker** – show one (text and ticker template) or hide it.
 
+A time window runs **every week** or only **between two dates** (*Period*) – e.g. a happy hour
+on one Saturday in two weeks: weekday Saturday, *From* and *Until* that date. One date may
+stay open (from a day on, or up to a day). A window counts on the days of the period on which
+it starts, in the time zone of the server. The rules table shows the period, *planned* or
+*expired*, and a link to the preview of the zone at the next time of the rule, so a happy hour
+can be checked today. The week view above the table goes forward and back by week (arrows)
+and shows a dated rule only in its weeks.
+
 For each of these things the first active rule wins in this order: zone window → global
 window → default rule. Rules may overlap as long as they do not change the same thing. A
 zone that is **CLOSED** shows its CLOSED playlist (a display group may have its own).
