@@ -4,7 +4,10 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.2.0 – 2026-10-19
+
+Prices for whole categories in time schedules and product variants. Installations on 1.x
+update from the web interface (Settings → Updates); variants need the updated players.
 
 ### Added
 - Time schedules: prices for whole categories and subcategories, e.g. "all long drinks 5 €"
