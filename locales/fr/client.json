@@ -23,6 +23,7 @@
   "display.height": "Hauteur",
   "display.lastError": "Dernière erreur",
   "display.mode": "Résolution et fréquence",
+  "display.noScreen": "Aucun écran détecté. Vérifiez le câble et allumez l’écran. Certains téléviseurs ne se signalent pas au lecteur et l’image reste noire après le démarrage : sur un Raspberry Pi, relancez l’installateur – il active la sortie HDMI en permanence (le port à côté de l’alimentation) – puis redémarrez.",
   "display.notAvailable": "Le contrôle de l’affichage n’est pas disponible sur cet appareil.",
   "display.output": "Sortie",
   "display.refresh": "Fréquence (Hz)",

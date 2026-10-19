@@ -23,6 +23,7 @@
   "display.height": "Visina",
   "display.lastError": "Posljednja pogreška",
   "display.mode": "Razlučivost i frekvencija osvježavanja",
+  "display.noScreen": "Nije prepoznat zaslon. Provjerite kabel i uključite zaslon. Neki televizori se ne javljaju playeru pa slika nakon pokretanja ostaje crna: na Raspberry Piju ponovno pokrenite instalacijski program – on trajno uključuje HDMI izlaz (priključak pokraj napajanja) – i ponovno pokrenite uređaj.",
   "display.notAvailable": "Upravljanje zaslonom nije dostupno na ovom uređaju.",
   "display.output": "Izlaz",
   "display.refresh": "Frekvencija osvježavanja (Hz)",

@@ -222,6 +222,14 @@ func TestParsers(t *testing.T) {
 	if len(aps) != 3 || aps[0].SSID != "Bar" || aps[0].SignalPct != 84 || aps[0].Security != SecWPA23 || aps[1].SSID != "Office:2" || aps[1].Security != SecEnterprise || aps[2].Security != SecOpen {
 		t.Errorf("nmcli: %+v", aps)
 	}
+	// One network on both bands: the strongest entry, with the signal on each band (a weaker
+	// 5 GHz signal must not vanish behind the 2.4 GHz one).
+	aps = ParseNmcliWifi("Bar:72:WPA2:2437 MHz\nBar:42:WPA2:2412 MHz\nBar:57:WPA2:5200 MHz\nBar:34:WPA2:5540 MHz\nCafe:40:WPA2:2462 MHz\n")
+	if len(aps) != 2 || aps[0].SSID != "Bar" || aps[0].SignalPct != 72 || len(aps[0].Bands) != 2 ||
+		aps[0].Bands[0] != (BandSignal{FreqMHz: 2437, SignalPct: 72}) || aps[0].Bands[1] != (BandSignal{FreqMHz: 5200, SignalPct: 57}) ||
+		len(aps[1].Bands) != 1 || aps[1].Bands[0].FreqMHz != 2462 {
+		t.Errorf("bands: %+v", aps)
+	}
 	if ParseRegCountry("global\ncountry DE: DFS-ETSI\n\t(2400 - 2483 @ 40)\n") != "DE" || ParseRegCountry("global\ncountry 00: DFS-UNSET\n") != "" {
 		t.Error("reg country")
 	}

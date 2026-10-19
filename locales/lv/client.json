@@ -23,6 +23,7 @@
   "display.height": "Augstums",
   "display.lastError": "Pēdējā kļūda",
   "display.mode": "Izšķirtspēja un atsvaidzes intensitāte",
+  "display.noScreen": "Ekrāns netika atrasts. Pārbaudiet kabeli un ieslēdziet ekrānu. Daži televizori nepiesakās atskaņotājam, un pēc palaišanas attēls paliek melns: Raspberry Pi gadījumā vēlreiz palaidiet instalētāju – tas pastāvīgi ieslēdz HDMI izeju (pieslēgvietu blakus barošanai) – un restartējiet.",
   "display.notAvailable": "Displeja vadība šajā ierīcē nav pieejama.",
   "display.output": "Izeja",
   "display.refresh": "Atsvaidzes intensitāte (Hz)",

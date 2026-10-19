@@ -4,6 +4,7 @@
 #
 # Usage: sudo ./install.sh [--server HOST[:PORT]] [--webgui-password PW] [--binary PATH]
 #                          [--trusted-key osk1:KEY ...] [--no-video-drivers] [--no-gpu-memory]
+#                          [--no-force-hdmi]
 #
 # Every system change is recorded in /var/lib/opensignage-agent-install/install-manifest
 # (root only) so uninstall.sh can revert all of them. Re-running the installer upgrades
@@ -36,6 +37,7 @@ BINARY=""
 TRUSTED_KEYS=""
 VIDEO_DRIVERS=1
 GPU_MEMORY=1
+FORCE_HDMI=1
 
 say()  { printf '%s\n' "==> $*"; }
 warn() { printf '%s\n' "WARNING: $*" >&2; }
@@ -60,6 +62,9 @@ Usage: sudo $0 [options]
                            "hardware video decoding" is "on" or "auto")
   --no-gpu-memory          leave the GPU memory pool of a Raspberry Pi 2/3 as it is
                            (default: raised to 384 MB in config.txt, see below)
+  --no-force-hdmi          do not switch the HDMI output of a Raspberry Pi on for good
+                           (default: on in cmdline.txt, for TVs that do not report
+                           themselves, see below)
   -h, --help               this help
 EOF
 }
@@ -87,6 +92,7 @@ while [ $# -gt 0 ]; do
 	--trusted-key=*) add_key "${1#*=}"; shift ;;
 	--no-video-drivers) VIDEO_DRIVERS=0; shift ;;
 	--no-gpu-memory) GPU_MEMORY=0; shift ;;
+	--no-force-hdmi) FORCE_HDMI=0; shift ;;
 	-h|--help) usage; exit 0 ;;
 	*) usage >&2; die "unknown option: $1" ;;
 	esac
@@ -386,6 +392,39 @@ if [ "$GPU_MEMORY" -eq 1 ]; then
 	esac
 fi
 
+# Raspberry Pi: the HDMI output is switched on for good. Many TVs do not report a connected
+# screen (hot plug) to the Pi – the boot screen shows, then the kernel switches the output
+# off and the screen stays black; the same happens when the TV is switched on after the
+# player. The TV still reports its resolutions, so the display page (custom resolutions
+# included) works as with any screen. Switched on: the port that reports a screen, else
+# HDMI 0 (next to the power supply). Left alone when the boot line sets an HDMI output
+# already or a DSI/DPI screen is connected. Takes effect after the next reboot;
+# uninstall.sh removes it.
+if [ "$FORCE_HDMI" -eq 1 ] && pi_model | grep -q '^Raspberry Pi'; then
+	CMDLINE=""
+	for f in /boot/firmware/cmdline.txt /boot/cmdline.txt; do
+		if [ -f "$f" ] && [ ! -L "$f" ]; then CMDLINE=$f; break; fi
+	done
+	# drm_connected NAME: a connector NAME (glob) reports a connected screen.
+	drm_connected() { cat /sys/class/drm/card*-$1/status 2>/dev/null | grep -qx connected; }
+	if [ -z "$CMDLINE" ]; then
+		warn "cmdline.txt not found – HDMI output left as it is"
+	elif grep -q 'video=HDMI-A-' "$CMDLINE"; then
+		: # set already (by an earlier run or by hand)
+	elif drm_connected 'DSI-*' || drm_connected 'DPI-*'; then
+		: # a DSI/DPI screen: a second, forced output would take its place
+	else
+		HDMI_PORT=HDMI-A-1
+		if drm_connected HDMI-A-2 && ! drm_connected HDMI-A-1; then
+			HDMI_PORT=HDMI-A-2
+		fi
+		say "Switching the HDMI output $HDMI_PORT on for good in $CMDLINE (active after a reboot)"
+		sed -i "1 s/\$/ video=$HDMI_PORT:D/" "$CMDLINE"
+		record "hdmiforce $CMDLINE $HDMI_PORT"
+		REBOOT_NEEDED=1
+	fi
+fi
+
 # ---------------------------------------------------------------- service user
 
 if ! id "$SVCUSER" >/dev/null 2>&1; then
@@ -645,6 +684,6 @@ else
 	echo "    The device searches the server automatically and then shows a PIN on the screen."
 fi
 if [ "$REBOOT_NEEDED" -eq 1 ]; then
-	echo "    Reboot the device once (sudo systemctl reboot) to activate the larger GPU memory pool."
+	echo "    Reboot the device once (sudo systemctl reboot): the boot settings changed (see above)."
 fi
 echo "    Uninstall: sudo $LIBDIR/uninstall.sh"

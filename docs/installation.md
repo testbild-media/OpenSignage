@@ -203,6 +203,15 @@ systems listed in section 1, including a Raspberry Pi (arm64).
 - Use the 64-bit Raspberry Pi OS; Lite is enough. `/boot/firmware/config.txt` must contain
   `dtoverlay=vc4-kms-v3d` (the default of current releases); for 4K on the Pi 4 add
   `hdmi_enable_4kp60=1`.
+- **HDMI output always on:** many TVs do not report themselves to the Pi – the boot screen
+  shows, then the screen stays black (the display page of the player says "No screen
+  detected"), also when the TV is switched on after the player. The installer therefore
+  switches the HDMI output on for good (`video=HDMI-A-1:D` in `/boot/firmware/cmdline.txt`,
+  active after a reboot): the port next to the power supply, or the other one when only that
+  one reports a screen during the installation. The TV still reports its resolutions, so the
+  display page – custom resolutions included – works as usual. An HDMI setting already in the
+  boot line is kept; `--no-force-hdmi` leaves the boot line alone, and the uninstaller
+  removes the setting again. Players installed before 1.4.5 get it with the installer.
 - **Raspberry Pi 3 and 2 are not supported.** Their hardware video decoder fails about every
   15–20 minutes when videos change often (the player recovers by itself). The installer and
   the device page point this out. If you use one anyway: use the official 5.1 V / 2.5 A power

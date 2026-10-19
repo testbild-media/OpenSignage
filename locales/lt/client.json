@@ -23,6 +23,7 @@
   "display.height": "Aukštis",
   "display.lastError": "Paskutinė klaida",
   "display.mode": "Skyra ir atnaujinimo dažnis",
+  "display.noScreen": "Ekranas neaptiktas. Patikrinkite kabelį ir įjunkite ekraną. Kai kurie televizoriai neprisistato grotuvui, todėl po paleidimo vaizdas lieka juodas: Raspberry Pi įrenginyje dar kartą paleiskite diegimo programą – ji visam laikui įjungia HDMI išvestį (prievadą šalia maitinimo) – ir paleiskite iš naujo.",
   "display.notAvailable": "Ekrano valdymas šiame įrenginyje nepasiekiamas.",
   "display.output": "Išvestis",
   "display.refresh": "Atnaujinimo dažnis (Hz)",

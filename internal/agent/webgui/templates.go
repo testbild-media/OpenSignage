@@ -286,7 +286,7 @@ const templates = `
   <p><button class="danger" type="submit">{{t .L "pairing.resetButton"}}</button></p></form></div>{{end}}
 
 {{define "display"}}{{$d := .Data}}
-{{if not $d.Available}}<div class="card"><p>{{t .L "display.notAvailable"}}</p>{{if $d.Error}}<p class="note">{{$d.Error}}</p>{{end}}</div>
+{{if not $d.Available}}<div class="card"><p>{{if $d.NoScreen}}{{t .L "display.noScreen"}}{{else}}{{t .L "display.notAvailable"}}{{end}}</p>{{if $d.Error}}<p class="note">{{$d.Error}}</p>{{end}}</div>
 {{else}}
 <div class="card"><dl class="grid">
   <dt>{{t .L "display.output"}}</dt><dd>{{$d.Output.Name}}</dd>

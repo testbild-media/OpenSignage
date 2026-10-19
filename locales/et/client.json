@@ -23,6 +23,7 @@
   "display.height": "Kõrgus",
   "display.lastError": "Viimane viga",
   "display.mode": "Eraldusvõime ja värskendussagedus",
+  "display.noScreen": "Ekraani ei tuvastatud. Kontrolli kaablit ja lülita ekraan sisse. Mõned telerid ei anna end mängijale teada ja pilt jääb pärast käivitamist mustaks: Raspberry Pi puhul käivita paigaldaja veel kord – see lülitab HDMI-väljundi püsivalt sisse (toitepistiku kõrval olev port) – ja taaskäivita.",
   "display.notAvailable": "Ekraani juhtimine pole selles seadmes saadaval.",
   "display.output": "Väljund",
   "display.refresh": "Värskendussagedus (Hz)",

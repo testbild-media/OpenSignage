@@ -23,6 +23,7 @@
   "display.height": "Korkeus",
   "display.lastError": "Viimeisin virhe",
   "display.mode": "Tarkkuus ja virkistystaajuus",
+  "display.noScreen": "Näyttöä ei tunnistettu. Tarkista kaapeli ja kytke näyttö päälle. Jotkin televisiot eivät ilmoittaudu soittimelle, ja kuva jää käynnistyksen jälkeen mustaksi: suorita Raspberry Pillä asennusohjelma uudelleen – se kytkee HDMI-lähdön pysyvästi päälle (virtaliitännän vieressä oleva portti) – ja käynnistä uudelleen.",
   "display.notAvailable": "Näytön ohjaus ei ole käytettävissä tässä laitteessa.",
   "display.output": "Lähtö",
   "display.refresh": "Virkistystaajuus (Hz)",

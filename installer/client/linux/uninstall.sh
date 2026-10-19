@@ -176,6 +176,19 @@ for line in $(printf '%s\n' "$ENTRIES" | tr ' ' '|'); do
 		*) warn "ignoring manifest entry: bootcma $arg1" ;;
 		esac
 		;;
+	hdmiforce)
+		case "$arg1:$arg2" in
+		/boot/firmware/cmdline.txt:HDMI-A-1 | /boot/firmware/cmdline.txt:HDMI-A-2 | /boot/cmdline.txt:HDMI-A-1 | /boot/cmdline.txt:HDMI-A-2)
+			if [ -f "$arg1" ] && grep -Eq " video=$arg2:D( |\$)" "$arg1"; then
+				sed -i -E "1 s/ video=$arg2:D( |\$)/\1/" "$arg1"
+				say "removed the forced HDMI output from $arg1 (active after a reboot)"
+			else
+				warn "the HDMI setting in $arg1 was changed meanwhile – left as it is"
+			fi
+			;;
+		*) warn "ignoring manifest entry: hdmiforce $arg1 $arg2" ;;
+		esac
+		;;
 	hostname)
 		case "$arg1" in
 		'' | -* | *[!A-Za-z0-9.-]*) warn "ignoring manifest entry: hostname $arg1" ;;

@@ -34,6 +34,7 @@ type fakeBackend struct {
 	confirmed     int
 	confirmErr    error
 	scan          []netcfg.AP
+	outputs       []display.Output // nil: one fake 1920×1080 screen
 }
 
 func (f *fakeBackend) NetworkView(context.Context) NetworkView { return f.net }
@@ -71,6 +72,9 @@ func (f *fakeBackend) SetServerAddress(a string) error               { f.address
 func (f *fakeBackend) Repair() error                                 { f.repaired++; return nil }
 func (f *fakeBackend) FactoryReset() error                           { return nil }
 func (f *fakeBackend) DisplayOutputs(ctx context.Context) ([]display.Output, error) {
+	if f.outputs != nil {
+		return f.outputs, nil
+	}
 	return display.NewFake().Outputs(ctx)
 }
 func (f *fakeBackend) DisplaySetting() (wire.Display, string) { return f.display, "" }

@@ -43,7 +43,7 @@ const networkTemplates = `
 {{if $i.Scanned}}{{if $i.ScanError}}<p class="error">{{t $L "network.scanFailed" "error" $i.ScanError}}</p>{{else if not $i.Scan}}<p class="note">{{t $L "network.scanEmpty"}}</p>{{else}}
 <table class="aps"><tr><th>{{t $L "network.ssid"}}</th><th>{{t $L "network.signal"}}</th><th>{{t $L "network.security"}}</th><th>{{t $L "network.bandShort"}}</th><th></th></tr>
 {{range $i.Scan}}<tr{{if not .Supported}} class="unsupported"{{end}}><td>{{.SSID}}</td><td>{{.SignalPct}} %{{if .SignalDBM}} <span class="note">{{.SignalDBM}} dBm</span>{{end}}</td>
-<td>{{t $L (printf "network.security.%s" .SecKey)}}</td><td>{{if .Band}}{{.Band}} GHz{{end}}</td>
+<td>{{t $L (printf "network.security.%s" .SecKey)}}</td><td>{{.Bands}}</td>
 <td>{{if .Supported}}<a href="/network?iface={{$i.Name}}&amp;ssid={{.SSID}}&amp;sec={{.Security}}#form-{{$i.Name}}">{{t $L "network.select"}}</a>{{else}}{{t $L "network.unsupported"}}{{end}}</td></tr>{{end}}
 </table>{{end}}{{end}}{{end}}
 <form method="post" action="/network" class="net-form">

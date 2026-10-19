@@ -23,6 +23,7 @@
   "display.height": "Înălțime",
   "display.lastError": "Ultima eroare",
   "display.mode": "Rezoluție și rată de reîmprospătare",
+  "display.noScreen": "Nu a fost detectat niciun ecran. Verificați cablul și porniți ecranul. Unele televizoare nu se anunță playerului, iar imaginea rămâne neagră după pornire: pe un Raspberry Pi rulați din nou programul de instalare – acesta activează permanent ieșirea HDMI (portul de lângă alimentare) – și reporniți.",
   "display.notAvailable": "Controlul afișajului nu este disponibil pe acest dispozitiv.",
   "display.output": "Ieșire",
   "display.refresh": "Rată de reîmprospătare (Hz)",

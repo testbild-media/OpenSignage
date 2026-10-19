@@ -23,6 +23,7 @@
   "display.height": "Höjd",
   "display.lastError": "Senaste fel",
   "display.mode": "Upplösning och uppdateringsfrekvens",
+  "display.noScreen": "Ingen skärm hittades. Kontrollera kabeln och slå på skärmen. Vissa tv-apparater anmäler sig inte till spelaren och bilden förblir svart efter starten: kör installationsprogrammet en gång till på en Raspberry Pi – det slår på HDMI-utgången permanent (porten bredvid strömförsörjningen) – och starta om.",
   "display.notAvailable": "Skärmstyrning är inte tillgänglig på den här enheten.",
   "display.output": "Utgång",
   "display.refresh": "Uppdateringsfrekvens (Hz)",

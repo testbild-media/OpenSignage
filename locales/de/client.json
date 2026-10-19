@@ -23,6 +23,7 @@
   "display.height": "Höhe",
   "display.lastError": "Letzter Fehler",
   "display.mode": "Auflösung und Bildwiederholrate",
+  "display.noScreen": "Kein Bildschirm erkannt. Kabel prüfen und den Bildschirm einschalten. Manche Fernseher melden sich nicht beim Player, dann bleibt das Bild nach dem Start schwarz: auf einem Raspberry Pi den Installer noch einmal ausführen – er schaltet den HDMI-Ausgang fest ein (Anschluss neben der Stromversorgung) – und neu starten.",
   "display.notAvailable": "Die Anzeigesteuerung ist auf diesem Gerät nicht verfügbar.",
   "display.output": "Ausgang",
   "display.refresh": "Bildwiederholrate (Hz)",

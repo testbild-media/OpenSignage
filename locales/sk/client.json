@@ -23,6 +23,7 @@
   "display.height": "Výška",
   "display.lastError": "Posledná chyba",
   "display.mode": "Rozlíšenie a obnovovacia frekvencia",
+  "display.noScreen": "Nebola rozpoznaná žiadna obrazovka. Skontrolujte kábel a zapnite obrazovku. Niektoré televízory sa prehrávaču nehlásia a obraz po štarte zostane čierny: na Raspberry Pi spustite inštalátor ešte raz – zapne výstup HDMI natrvalo (konektor vedľa napájania) – a reštartujte.",
   "display.notAvailable": "Ovládanie displeja nie je na tomto zariadení k dispozícii.",
   "display.output": "Výstup",
   "display.refresh": "Obnovovacia frekvencia (Hz)",

@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"opensignage/internal/agent/display"
 	"opensignage/internal/agent/netcfg"
 	"opensignage/internal/common/passwords"
 	"opensignage/locales"
@@ -79,6 +80,8 @@ func TestNetworkScan(t *testing.T) {
 	e.be.scan = []netcfg.AP{
 		{SSID: "Bar & Lounge", SignalDBM: -50, SignalPct: 100, FreqMHz: 5180, Security: netcfg.SecWPA23},
 		{SSID: "Legacy", SignalDBM: -80, SignalPct: 40, FreqMHz: 2412, Security: netcfg.SecWEP},
+		{SSID: "Hall", SignalPct: 72, FreqMHz: 2437, Security: netcfg.SecWPA2,
+			Bands: []netcfg.BandSignal{{FreqMHz: 2437, SignalPct: 72}, {FreqMHz: 5200, SignalPct: 57}}},
 	}
 	_, body := e.get(t, "/network")
 	resp, body := e.post(t, "/network", url.Values{"csrf": {csrf(t, body)}, "do": {"scan"}, "iface": {"wlan0"}})
@@ -86,6 +89,7 @@ func TestNetworkScan(t *testing.T) {
 		t.Fatalf("scan: %d", resp.StatusCode)
 	}
 	for _, want := range []string{"Bar &amp; Lounge", "ssid=Bar%20%26%20Lounge", "sec=wpa2%2fwpa3", e.en(t, "network.security.wpa2wpa3"),
+		"<td>5 GHz</td>", "<td>2.4 GHz 72 % · 5 GHz 57 %</td>",
 		`class="unsupported"`, e.en(t, "network.unsupported")} {
 		if !strings.Contains(body, want) {
 			t.Errorf("scan result without %q", want)
@@ -276,6 +280,17 @@ func TestNetworkFailedChange(t *testing.T) {
 	_, body := e.get(t, "/network")
 	if !strings.Contains(body, "ifup enp2s0: exit status 1") || !strings.Contains(body, e.en(t, "network.reverted")) {
 		t.Fatalf("failure not shown: %s", body)
+	}
+}
+
+// A screen that does not report itself to the player (many TVs on a Raspberry Pi): the
+// display page says that no screen was detected, not that display control is missing.
+func TestDisplayNoScreen(t *testing.T) {
+	e := netEnv(t)
+	e.be.outputs = []display.Output{{Name: "HDMI-1"}, {Name: "HDMI-2"}}
+	_, body := e.get(t, "/display")
+	if !strings.Contains(body, e.en(t, "display.noScreen")) || strings.Contains(body, e.en(t, "display.notAvailable")) {
+		t.Fatal("no hint about the missing screen")
 	}
 }
 

@@ -23,6 +23,7 @@
   "display.height": "Għoli",
   "display.lastError": "L-aħħar żball",
   "display.mode": "Riżoluzzjoni u rata ta' aġġornament",
+  "display.noScreen": "Ma nstab l-ebda skrin. Iċċekkja l-kejbil u ixgħel l-iskrin. Xi televiżjonijiet ma jirrappurtawx lilhom infushom lill-player u l-istampa tibqa’ sewda wara l-bidu: fuq Raspberry Pi ħaddem l-installer darb’oħra – jixgħel l-output HDMI b’mod fiss (il-port ħdejn il-provvista tal-enerġija) – u erġa’ ibda.",
   "display.notAvailable": "Il-kontroll tal-iskrin mhux disponibbli fuq dan l-apparat.",
   "display.output": "Output",
   "display.refresh": "Rata ta' aġġornament (Hz)",

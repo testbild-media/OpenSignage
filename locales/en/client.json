@@ -23,6 +23,7 @@
   "display.height": "Height",
   "display.lastError": "Last error",
   "display.mode": "Resolution and refresh rate",
+  "display.noScreen": "No screen detected. Check the cable and switch the screen on. Some TVs do not report themselves to the player, and the picture stays black after the start: on a Raspberry Pi run the installer once more – it switches the HDMI output on for good (the port next to the power supply) – and restart.",
   "display.notAvailable": "Display control is not available on this device.",
   "display.output": "Output",
   "display.refresh": "Refresh rate (Hz)",

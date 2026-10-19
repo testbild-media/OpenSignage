@@ -23,6 +23,7 @@
   "display.height": "Altezza",
   "display.lastError": "Ultimo errore",
   "display.mode": "Risoluzione e frequenza di aggiornamento",
+  "display.noScreen": "Nessuno schermo rilevato. Controlla il cavo e accendi lo schermo. Alcuni televisori non si annunciano al player e l’immagine resta nera dopo l’avvio: su un Raspberry Pi esegui di nuovo l’installer – attiva l’uscita HDMI in modo fisso (la porta accanto all’alimentazione) – e riavvia.",
   "display.notAvailable": "Il controllo dello schermo non è disponibile su questo dispositivo.",
   "display.output": "Uscita",
   "display.refresh": "Frequenza di aggiornamento (Hz)",

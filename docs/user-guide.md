@@ -185,8 +185,9 @@ for all players can be set under Settings → Defaults.
 - Every wired and Wi-Fi adapter with its state, address, gateway, DNS servers and – for
   Wi-Fi – network, signal strength, band and channel. Without a Wi-Fi adapter the page says
   so; a supported USB Wi-Fi stick appears as soon as it is plugged in.
-- **Wi-Fi:** *Search networks* lists the networks around with signal and security;
-  *Choose* fills in the network. Enter the password (WPA2 or WPA3; open networks without
+- **Wi-Fi:** *Search networks* lists the networks around with signal, security and band – a
+  network on 2.4 and 5 GHz shows the signal on both; the player joins on the band it finds
+  best. *Choose* fills in the network. Enter the password (WPA2 or WPA3; open networks without
   one) and the country of the radio rules (e.g. DE) – it decides which channels the player
   may use. A hidden network is entered by hand. *Switch Wi-Fi off* ends a connection set up
   here. WEP and enterprise networks (802.1X) are not supported.

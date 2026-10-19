@@ -23,6 +23,7 @@
   "display.height": "Alto",
   "display.lastError": "Último error",
   "display.mode": "Resolución y frecuencia de refresco",
+  "display.noScreen": "No se detecta ninguna pantalla. Compruebe el cable y encienda la pantalla. Algunos televisores no se anuncian al reproductor y la imagen se queda en negro tras el arranque: en una Raspberry Pi ejecute de nuevo el instalador – activa la salida HDMI de forma fija (el puerto junto a la alimentación) – y reinicie.",
   "display.notAvailable": "El control de la pantalla no está disponible en este dispositivo.",
   "display.output": "Salida",
   "display.refresh": "Frecuencia de refresco (Hz)",

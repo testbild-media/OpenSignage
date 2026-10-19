@@ -25,14 +25,26 @@ type AP struct {
 	SignalPct int    `json:"signalPct"`
 	FreqMHz   int    `json:"freqMHz,omitempty"`
 	Security  string `json:"security"`
+	// Bands: the strongest signal of the network on each band it was seen on (2.4 GHz
+	// first) – a network on 2.4 and 5 GHz is one entry with both.
+	Bands []BandSignal `json:"bands,omitempty"`
+}
+
+// BandSignal is the strongest signal of a network on one band.
+type BandSignal struct {
+	FreqMHz   int `json:"freqMHz"`
+	SignalPct int `json:"signalPct"`
+	SignalDBM int `json:"signalDbm,omitempty"`
 }
 
 // Supported reports whether the WebGUI can join the network (personal or open).
 func (a AP) Supported() bool { return a.Security != SecWEP && a.Security != SecEnterprise }
 
-// Joinable networks: keep the strongest entry per SSID, drop hidden ones, strongest first.
+// Joinable networks: one entry per SSID with its strongest signal and the strongest signal
+// on each band, hidden ones dropped, strongest first.
 func dedupe(aps []AP) []AP {
 	best := map[string]AP{}
+	bands := map[string]map[string]BandSignal{}
 	for _, a := range aps {
 		if a.SSID == "" {
 			continue
@@ -40,9 +52,22 @@ func dedupe(aps []AP) []AP {
 		if b, ok := best[a.SSID]; !ok || a.SignalPct > b.SignalPct {
 			best[a.SSID] = a
 		}
+		if band := Band(a.FreqMHz); band != "" {
+			if bands[a.SSID] == nil {
+				bands[a.SSID] = map[string]BandSignal{}
+			}
+			if b, ok := bands[a.SSID][band]; !ok || a.SignalPct > b.SignalPct {
+				bands[a.SSID][band] = BandSignal{FreqMHz: a.FreqMHz, SignalPct: a.SignalPct, SignalDBM: a.SignalDBM}
+			}
+		}
 	}
 	out := make([]AP, 0, len(best))
-	for _, a := range best {
+	for ssid, a := range best {
+		a.Bands = nil
+		for _, b := range bands[ssid] {
+			a.Bands = append(a.Bands, b)
+		}
+		sort.Slice(a.Bands, func(i, j int) bool { return a.Bands[i].FreqMHz < a.Bands[j].FreqMHz })
 		out = append(out, a)
 	}
 	sort.Slice(out, func(i, j int) bool {

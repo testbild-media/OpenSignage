@@ -23,6 +23,7 @@
   "display.height": "Hoogte",
   "display.lastError": "Laatste fout",
   "display.mode": "Resolutie en verversingsfrequentie",
+  "display.noScreen": "Geen scherm gedetecteerd. Controleer de kabel en zet het scherm aan. Sommige tv’s melden zich niet bij de speler en het beeld blijft na het starten zwart: voer op een Raspberry Pi het installatieprogramma nog eens uit – het zet de HDMI-uitgang vast aan (de poort naast de voeding) – en herstart.",
   "display.notAvailable": "Beeldschermbesturing is op dit apparaat niet beschikbaar.",
   "display.output": "Uitgang",
   "display.refresh": "Verversingsfrequentie (Hz)",

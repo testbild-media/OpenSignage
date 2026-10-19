@@ -23,6 +23,7 @@
   "display.height": "Wysokość",
   "display.lastError": "Ostatni błąd",
   "display.mode": "Rozdzielczość i częstotliwość odświeżania",
+  "display.noScreen": "Nie wykryto ekranu. Sprawdź kabel i włącz ekran. Niektóre telewizory nie zgłaszają się odtwarzaczowi i obraz po starcie pozostaje czarny: na Raspberry Pi uruchom instalator jeszcze raz – na stałe włącza wyjście HDMI (port obok zasilania) – i uruchom ponownie.",
   "display.notAvailable": "Sterowanie ekranem nie jest dostępne na tym urządzeniu.",
   "display.output": "Wyjście",
   "display.refresh": "Częstotliwość odświeżania (Hz)",

@@ -287,6 +287,8 @@ type modeOption struct {
 
 type displayData struct {
 	Available bool
+	// NoScreen: the display runs, but no output reports a connected screen.
+	NoScreen  bool
 	Output    display.Output
 	Modes     []modeOption
 	Saved     wire.Display
@@ -319,6 +321,7 @@ func (s *Server) displayData(r *http.Request) displayData {
 	}
 	o, ok := display.Primary(outs)
 	if !ok {
+		d.NoScreen = true
 		return d
 	}
 	d.Available, d.Output = true, o

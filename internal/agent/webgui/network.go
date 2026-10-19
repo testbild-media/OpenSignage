@@ -3,6 +3,7 @@ package webgui
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/netip"
@@ -84,9 +85,25 @@ type netForm struct {
 
 type netAP struct {
 	netcfg.AP
-	Band      string
 	Supported bool
 	SecKey    string
+	// Bands: "2.4 GHz" or, on several bands, "2.4 GHz 72 % · 5 GHz 57 %".
+	Bands string
+}
+
+// bandsText describes the bands of a network (helpers before 1.4.5 report only the strongest).
+func bandsText(a netcfg.AP) string {
+	if len(a.Bands) < 2 {
+		if b := netcfg.Band(a.FreqMHz); b != "" {
+			return b + " GHz"
+		}
+		return ""
+	}
+	parts := make([]string, 0, len(a.Bands))
+	for _, b := range a.Bands {
+		parts = append(parts, fmt.Sprintf("%s GHz %d %%", netcfg.Band(b.FreqMHz), b.SignalPct))
+	}
+	return strings.Join(parts, " · ")
 }
 
 type networkData struct {
@@ -156,7 +173,7 @@ func (s *Server) networkData(r *http.Request, scanIface string, scan []netcfg.AP
 				ni.ScanError = scanErr.Error()
 			}
 			for _, a := range scan {
-				ni.Scan = append(ni.Scan, netAP{AP: a, Band: netcfg.Band(a.FreqMHz), Supported: a.Supported(), SecKey: strings.ReplaceAll(a.Security, "/", "")})
+				ni.Scan = append(ni.Scan, netAP{AP: a, Supported: a.Supported(), SecKey: strings.ReplaceAll(a.Security, "/", ""), Bands: bandsText(a)})
 			}
 		}
 		if it.Kind == netcfg.KindWifi {

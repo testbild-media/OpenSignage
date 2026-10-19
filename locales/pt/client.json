@@ -23,6 +23,7 @@
   "display.height": "Altura",
   "display.lastError": "Último erro",
   "display.mode": "Resolução e taxa de atualização",
+  "display.noScreen": "Nenhum ecrã detetado. Verifique o cabo e ligue o ecrã. Alguns televisores não se anunciam ao leitor e a imagem fica preta após o arranque: num Raspberry Pi execute novamente o instalador – ativa a saída HDMI de forma fixa (a porta junto à alimentação) – e reinicie.",
   "display.notAvailable": "O controlo do ecrã não está disponível neste dispositivo.",
   "display.output": "Saída",
   "display.refresh": "Taxa de atualização (Hz)",

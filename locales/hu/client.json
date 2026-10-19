@@ -23,6 +23,7 @@
   "display.height": "Magasság",
   "display.lastError": "Utolsó hiba",
   "display.mode": "Felbontás és frissítési gyakoriság",
+  "display.noScreen": "Nem észlelhető képernyő. Ellenőrizze a kábelt, és kapcsolja be a képernyőt. Egyes tévék nem jelentkeznek be a lejátszónál, és a kép indítás után fekete marad: Raspberry Pi esetén futtassa újra a telepítőt – az tartósan bekapcsolja a HDMI-kimenetet (a tápcsatlakozó melletti portot) –, majd indítsa újra.",
   "display.notAvailable": "A kijelző vezérlése ezen az eszközön nem érhető el.",
   "display.output": "Kimenet",
   "display.refresh": "Frissítési gyakoriság (Hz)",

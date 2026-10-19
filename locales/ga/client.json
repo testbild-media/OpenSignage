@@ -23,6 +23,7 @@
   "display.height": "Airde",
   "display.lastError": "Earráid dheireanach",
   "display.mode": "Taifeach agus ráta athnuachana",
+  "display.noScreen": "Níor aimsíodh scáileán. Seiceáil an cábla agus cas air an scáileán. Ní fhógraíonn roinnt teilifíseán iad féin don seinnteoir agus fanann an pictiúr dubh tar éis an tosaithe: ar Raspberry Pi rith an suiteálaí arís – casann sé an t-aschur HDMI air go buan (an port in aice leis an soláthar cumhachta) – agus atosaigh.",
   "display.notAvailable": "Níl rialú taispeána ar fáil ar an ngléas seo.",
   "display.output": "Aschur",
   "display.refresh": "Ráta athnuachana (Hz)",

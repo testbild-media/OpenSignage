@@ -23,6 +23,7 @@
   "display.height": "Višina",
   "display.lastError": "Zadnja napaka",
   "display.mode": "Ločljivost in osveževanje",
+  "display.noScreen": "Zaslon ni zaznan. Preverite kabel in vklopite zaslon. Nekateri televizorji se predvajalniku ne javijo in slika po zagonu ostane črna: na Raspberry Pi znova zaženite namestitveni program – trajno vklopi izhod HDMI (vrata ob napajanju) – in znova zaženite napravo.",
   "display.notAvailable": "Upravljanje zaslona na tej napravi ni na voljo.",
   "display.output": "Izhod",
   "display.refresh": "Hitrost osveževanja (Hz)",
