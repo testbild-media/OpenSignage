@@ -143,7 +143,7 @@ var fontRefRe = regexp.MustCompile(`"font"\s*:\s*("(?:[^"\\]|\\.)*")`)
 
 // fontUser is content that uses a font family.
 type fontUser struct {
-	Type   string   `json:"type"` // presentation | template | ticker
+	Type   string   `json:"type"` // presentation | template | ticker | settings (defaults)
 	ID     string   `json:"id"`
 	Name   string   `json:"name"`
 	States []string `json:"states,omitempty"` // draft, published (presentations and templates)
@@ -151,7 +151,8 @@ type fontUser struct {
 
 // fontUsage lists, per lower-cased family, the content whose JSON names the family in a
 // "font" field: the draft and the published version of every presentation and template
-// that is not deleted, and every ticker template. Like media usage, older versions in the
+// that is not deleted, every ticker template and the presentation defaults of the settings.
+// Like media usage, older versions in the
 // version history and deleted presentations do not count – nobody could find them to change
 // the font. Restoring such a version with a deleted font warns, and publishing it is
 // refused until the font is changed (restoreVersion, document validation).
@@ -213,7 +214,18 @@ func fontUsage(ctx context.Context, q queryer) (map[string][]fontUser, error) {
 		}
 		add(style, "ticker", id, name, "")
 	}
-	return out, trows.Err()
+	if err := trows.Err(); err != nil {
+		return nil, err
+	}
+	trows.Close()
+	// The defaults of new presentations (settings) name fonts as well.
+	var settings string
+	err = q.QueryRowContext(ctx, `SELECT value FROM settings WHERE key = 'settings'`).Scan(&settings)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+	add(settings, "settings", "defaults", "", "")
+	return out, nil
 }
 
 // ---- upload validation -----------------------------------------------------------------

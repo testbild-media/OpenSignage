@@ -20,12 +20,22 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   network and signal strength, a change waiting for its confirmation.
 - Client installer: Wi-Fi packages (`wpasupplicant`, `iw`, `wireless-regdb`) and the network
   firmware the adapters miss (Debian `non-free-firmware`).
+- Settings → Defaults → Presentations: format of new presentations, background and transition
+  of new slides, font and color of new texts, clocks and tickers, and the product typography
+  of new presentations (with the controls of the editor). A font named there counts as used
+  and cannot be deleted.
 
 ### Changed
+- Device page: two columns (what the device reports, what you do with it) instead of up to
+  three narrow ones in which badges and buttons ran out of their cards.
 - Supported systems: Debian 12/13 and Raspberry Pi OS; Ubuntu is no longer listed (it was
   never tested).
 - Client uninstaller: network settings made in the web interface, network firmware and – while
   Wi-Fi is in use – the Wi-Fi packages stay, so the device stays reachable.
+
+### Fixed
+- The default slide duration of the settings applies to slides added in the editor too (they
+  always got 10 seconds).
 
 ## 1.3.0 – 2026-10-19
 

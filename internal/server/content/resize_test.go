@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"opensignage/internal/contracts"
+	"opensignage/internal/server/core"
 )
 
 func loadFixture(t *testing.T) contracts.Presentation {
@@ -124,7 +125,7 @@ func TestResizeRoundTripAndLimits(t *testing.T) {
 }
 
 func TestNewDocumentDefaults(t *testing.T) {
-	d := newDocument("id", "Menu", 1280, 720, 10000)
+	d := newDocument("id", "Menu", 1280, 720, core.DefaultSettings())
 	if err := d.Validate(nil); err != nil {
 		t.Fatal(err)
 	}

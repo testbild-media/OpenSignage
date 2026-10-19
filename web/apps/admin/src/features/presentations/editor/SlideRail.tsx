@@ -8,7 +8,7 @@ import { useT } from '../../../lib/hooks';
 import { useConfirm } from '../../../components/feedback';
 import type { EditorStore } from './store';
 import { useEditor } from './useEditor';
-import { createSlide } from './factory';
+import { createSlide, type ContentDefaults } from './factory';
 import { ContextMenu, menuPointFor, type MenuState } from './ContextMenu';
 import { railMenu, slideMenu } from './menus';
 import { SlideBackgroundDialog } from './Panel';
@@ -32,7 +32,7 @@ function menuPoint(ev: React.MouseEvent): { x: number; y: number } {
   return { x: ev.clientX, y: ev.clientY };
 }
 
-export function SlideRail({ store, env, defaultSlideMs }: { store: EditorStore; env: RenderEnv; defaultSlideMs: number }) {
+export function SlideRail({ store, env, defaults }: { store: EditorStore; env: RenderEnv; defaults: ContentDefaults }) {
   const t = useT();
   const confirm = useConfirm();
   const snap = useEditor(store);
@@ -48,7 +48,7 @@ export function SlideRail({ store, env, defaultSlideMs }: { store: EditorStore; 
     const ok = await confirm({ title: t('editor.slide.delete'), message: t('editor.slide.deleteConfirm', { name: s.name || t('editor.slide.number', { n: doc.slides.indexOf(s) + 1 }) }), danger: true, confirmLabel: t('common.action.delete') });
     if (ok) store.deleteSlide(s.id);
   };
-  const newSlide = (afterId: string): void => store.addSlide(createSlide(defaultSlideMs), afterId);
+  const newSlide = (afterId: string): void => store.addSlide(createSlide(defaults), afterId);
   const openSlideMenu = (ev: React.MouseEvent, s: Slide): void => {
     ev.preventDefault();
     ev.stopPropagation();

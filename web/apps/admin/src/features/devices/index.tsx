@@ -366,9 +366,12 @@ function DeviceDetail() {
       <DataState loading={!d && !q.error} error={q.error} onRetry={q.reload}>
         {d && form && disp && (
           <div className="device-grid">
-            <MonitorCard d={d} />
+            <div className="device-col">
+              <MonitorCard d={d} />
+              <StorageCard d={d} onChanged={q.reload} control={rights.canControlDevice(d.zoneId)} />
+            </div>
+            <div className="device-col">
             <ActionsCard d={d} onChanged={q.reload} onScreenshot={() => setShot(Date.now())} shot={shot} control={rights.canControlDevice(d.zoneId)} />
-            <StorageCard d={d} onChanged={q.reload} control={rights.canControlDevice(d.zoneId)} />
             {rights.canManageGlobal && (
             <>
             <div className="card form">
@@ -498,6 +501,7 @@ function DeviceDetail() {
             </div>
             </>
             )}
+            </div>
           </div>
         )}
       </DataState>

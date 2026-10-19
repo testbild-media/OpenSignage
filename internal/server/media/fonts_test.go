@@ -243,9 +243,19 @@ func TestFontListServeDeleteAndUsage(t *testing.T) {
 		t.Fatalf("ticker template usage: %d %v", code, o)
 	}
 	h.exec(`DELETE FROM presentations WHERE id = 'p3'`)
+	h.exec(`DELETE FROM ticker_templates`)
+
+	// the presentation defaults of the settings do too
+	h.exec(`INSERT INTO settings(key, value, updated_at) VALUES ('settings', ?, 'x')`, `{"presentations":{"text":{"font":"Bar Script","color":"#ffffff"}}}`)
+	if got := usedBy(); got != `[{"id":"defaults","name":"","type":"settings"}]` {
+		t.Fatalf("presentation defaults: %s", got)
+	}
+	if code, o = admin.do("DELETE", "/api/v1/fonts/"+id, nil); code != 409 {
+		t.Fatalf("defaults usage: %d %v", code, o)
+	}
+	h.exec(`DELETE FROM settings WHERE key = 'settings'`)
 
 	// free → deletable; the blob is collected
-	h.exec(`DELETE FROM ticker_templates`)
 	if code, _ = admin.do("DELETE", "/api/v1/fonts/"+id, nil); code != 204 {
 		t.Fatalf("delete: %d", code)
 	}

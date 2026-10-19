@@ -244,11 +244,7 @@ func (m *Module) createPresentation(w http.ResponseWriter, r *http.Request, p *c
 				}
 			}
 		} else {
-			w, h := req.Width, req.Height
-			if w == 0 {
-				w, h = defaultWidth, defaultHeight
-			}
-			doc = newDocument(id, name, w, h, m.app.Settings.Get().Defaults.SlideMS)
+			doc = newDocument(id, name, req.Width, req.Height, m.app.Settings.Get())
 		}
 		if err := doc.Validate(nil); err != nil {
 			return err

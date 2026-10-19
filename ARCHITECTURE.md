@@ -370,6 +370,12 @@ Server (`/var/lib/opensignage`): `db/opensignage.db`, `blobs/sha256/xx/<hash>`,
 `current`, `previous`.
 Config: `/etc/opensignage/server.env` (validated).
 
+Settings (`settings` table, one JSON row, factory values for missing fields) include the
+presentation defaults: format, background and transition of new slides, font and color of
+new texts, typography of new presentations. The server builds new presentations from them;
+the editor reads them (`GET /api/v1/settings`, operators and up) for new slides and texts.
+They are validated like a document, their fonts must exist and count as used.
+
 Client (`/var/lib/opensignage-agent`): `state/*.json`, `cache/blobs/<sha256>`, `logs/`,
 `chromium/` (profile). Binaries: `/opt/opensignage-agent/releases/<v>/` + symlinks.
 Config: `/etc/opensignage/agent.env`.

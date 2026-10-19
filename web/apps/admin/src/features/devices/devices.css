@@ -7,8 +7,9 @@
 }
 .state-line {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
   font-size: 13px;
   margin-top: 6px;
 }
@@ -53,6 +54,14 @@
 }
 .align-block p {
   margin: 0;
+}
+/* A long button text wraps instead of running out of the card. */
+.align-block .btn {
+  max-width: 100%;
+  height: auto;
+  min-height: 36px;
+  white-space: normal;
+  text-align: left;
 }
 .dev-banner {
   display: flex;

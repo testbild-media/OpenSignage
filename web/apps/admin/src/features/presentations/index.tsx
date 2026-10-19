@@ -13,7 +13,7 @@ import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, DataState, Dialog, ErrorText, IconButton, PageHeader, Select, TextInput } from '../../components/ui';
 import { EditorPage } from './editor/Editor';
 import { editorAssets, useEditorLive } from './editor/env';
-import { ASPECTS, RESOLUTION_PRESETS, resolutionForAspect } from './editor/factory';
+import { ASPECTS, RESOLUTION_PRESETS, resolutionForAspect, type PresentationDefaults } from './editor/factory';
 
 interface PresSummary {
   id: string;
@@ -113,8 +113,13 @@ function NewDialog({ onClose }: { onClose: () => void }) {
   const t = useT();
   const navigate = useNavigate();
   const templates = useQuery<{ presentations: PresSummary[] }>('/api/v1/presentations?templates=1');
+  const settings = useQuery<{ presentations?: PresentationDefaults }>('/api/v1/settings');
   const [name, setName] = useState('');
-  const [size, setSize] = useState({ w: 1920, h: 1080 });
+  const [chosen, setSize] = useState<{ w: number; h: number } | null>(null);
+  // The format of Settings → Defaults until another one is chosen.
+  const def = settings.data?.presentations;
+  const size = chosen ?? (def ? { w: def.width, h: def.height } : { w: 1920, h: 1080 });
+  const preset = RESOLUTION_PRESETS.some((p) => p.w === size.w && p.h === size.h);
   const [templateId, setTemplateId] = useState('');
   const create = useAction(async () => {
     // A template keeps its own design size; otherwise the chosen resolution is used.
@@ -143,7 +148,10 @@ function NewDialog({ onClose }: { onClose: () => void }) {
             const [w, h] = e.target.value.split('x').map(Number);
             setSize({ w: w!, h: h! });
           }}
-          options={[...RESOLUTION_PRESETS.map((p) => ({ value: `${p.w}x${p.h}`, label: `${p.label} (${p.w}×${p.h})` }))]}
+          options={[
+            ...(preset ? [] : [{ value: `${size.w}x${size.h}`, label: `${t('editor.pres.custom')} (${size.w}×${size.h})` }]),
+            ...RESOLUTION_PRESETS.map((p) => ({ value: `${p.w}x${p.h}`, label: `${p.label} (${p.w}×${p.h})` })),
+          ]}
         />
         <Select
           label={t('editor.pres.aspect')}

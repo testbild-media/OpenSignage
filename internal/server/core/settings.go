@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"opensignage/internal/common/ids"
+	"opensignage/internal/contracts"
 	"opensignage/internal/server/db"
 	"opensignage/locales"
 )
@@ -16,18 +18,19 @@ import (
 // Settings are the runtime settings stored in the database (no restart needed).
 // Restart-only values live in the config file and are shown read-only.
 type Settings struct {
-	ServerName         string          `json:"serverName"`
-	Language           string          `json:"language"` // default UI language
-	Timezone           string          `json:"timezone"` // IANA, evaluated explicitly
-	Currency           string          `json:"currency"`
-	Defaults           PlaylistDefault `json:"defaults"`
-	TrashRetentionDays int             `json:"trashRetentionDays"` // 0 = never purge
-	DeviceDefaults     DeviceDefaults  `json:"deviceDefaults"`
-	ClientWebPassword  string          `json:"-"` // Argon2 hash pushed to devices ("" = local)
-	AutoAlignVersions  bool            `json:"autoAlignVersions"`
-	UpdateCheck        bool            `json:"updateCheck"`
-	UpdateRepo         string          `json:"updateRepo"` // "" = build default
-	TrustedKeys        []string        `json:"trustedKeys"`
+	ServerName         string               `json:"serverName"`
+	Language           string               `json:"language"` // default UI language
+	Timezone           string               `json:"timezone"` // IANA, evaluated explicitly
+	Currency           string               `json:"currency"`
+	Defaults           PlaylistDefault      `json:"defaults"`
+	Presentations      PresentationDefaults `json:"presentations"`
+	TrashRetentionDays int                  `json:"trashRetentionDays"` // 0 = never purge
+	DeviceDefaults     DeviceDefaults       `json:"deviceDefaults"`
+	ClientWebPassword  string               `json:"-"` // Argon2 hash pushed to devices ("" = local)
+	AutoAlignVersions  bool                 `json:"autoAlignVersions"`
+	UpdateCheck        bool                 `json:"updateCheck"`
+	UpdateRepo         string               `json:"updateRepo"` // "" = build default
+	TrustedKeys        []string             `json:"trustedKeys"`
 }
 
 // PlaylistDefault holds defaults for new playlist items.
@@ -37,6 +40,56 @@ type PlaylistDefault struct {
 	Repeat     int    `json:"repeat"`
 	Fit        string `json:"fit"` // contain | cover | fill
 	SlideMS    int64  `json:"slideMs"`
+}
+
+// PresentationDefaults are the start values of new presentations, their new slides and new
+// texts (the slide duration is Defaults.SlideMS). Existing content keeps its values.
+type PresentationDefaults struct {
+	Width      int                  `json:"width"`
+	Height     int                  `json:"height"`
+	Background string               `json:"background"` // color of new slides
+	Transition contracts.Transition `json:"transition"`
+	// Text: font and color of new texts, clocks and tickers ("font" like in documents, so
+	// the font usage finds it).
+	Text       TextDefault          `json:"text"`
+	Typography contracts.Typography `json:"typography"`
+}
+
+// TextDefault is the font and color of new text elements.
+type TextDefault struct {
+	Font  string `json:"font"`
+	Color string `json:"color"`
+}
+
+// Document is a new presentation with these values: one empty slide.
+func (d PresentationDefaults) Document(id, name string, width, height int, slideMS int64) contracts.Presentation {
+	return contracts.Presentation{
+		ID: id, Name: name, Width: width, Height: height,
+		Typography: d.Typography,
+		Slides: []contracts.Slide{{
+			ID:         ids.New(),
+			Duration:   contracts.Duration{Mode: "fixed", MS: slideMS},
+			Background: contracts.Background{Type: "color", Color: d.Background},
+			Transition: d.Transition,
+			Elements:   []contracts.Element{},
+		}},
+	}
+}
+
+// Fonts lists the font families the defaults name.
+func (d PresentationDefaults) Fonts() []string { return append(d.Typography.Fonts(), d.Text.Font) }
+
+// validate checks the values with the rules of a presentation. Whether the fonts exist is
+// checked where the settings are changed (the settings do not know the uploaded fonts).
+func (d PresentationDefaults) validate(slideMS int64) error {
+	doc := d.Document("defaults", "defaults", d.Width, d.Height, slideMS)
+	if err := doc.Validate(nil); err != nil {
+		return errors.New("presentations")
+	}
+	if d.Text.Font == "" || !contracts.ValidColor(d.Text.Color) {
+		return errors.New("presentations.text")
+	}
+	return nil
 }
 
 // DeviceDefaults apply to newly paired devices.
@@ -53,6 +106,10 @@ func DefaultSettings() Settings {
 		Currency:   "EUR",
 		Defaults: PlaylistDefault{Mode: "duration", DurationMS: 10000, Repeat: 1, Fit: "contain",
 			SlideMS: 10000},
+		Presentations: PresentationDefaults{Width: 1920, Height: 1080, Background: "#000000",
+			Transition: contracts.Transition{Type: "fade", MS: 600},
+			Text:       TextDefault{Font: "Montserrat", Color: "#ffffff"},
+			Typography: contracts.DefaultTypography()},
 		TrashRetentionDays: 30,
 		DeviceDefaults:     DeviceDefaults{ScaleMode: "contain"},
 		UpdateCheck:        true,
@@ -89,6 +146,9 @@ func (s *Settings) Validate() error {
 	case "contain", "cover", "fill":
 	default:
 		return errors.New("defaults.fit")
+	}
+	if err := s.Presentations.validate(s.Defaults.SlideMS); err != nil {
+		return err
 	}
 	switch s.TrashRetentionDays {
 	case 0, 7, 30, 60, 90:

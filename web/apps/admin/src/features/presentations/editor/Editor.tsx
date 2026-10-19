@@ -4,7 +4,7 @@ import { useBlocker, useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Eye, History, Play, RotateCcw, Upload } from 'lucide-react';
 import type { Presentation } from '@opensignage/contracts';
 import { ApiError, api, errorText, get, post } from '../../../lib/api';
-import { useT } from '../../../lib/hooks';
+import { useQuery, useT } from '../../../lib/hooks';
 import { useConfirm, useToast } from '../../../components/feedback';
 import { Badge, Button, DataState, Dialog } from '../../../components/ui';
 import { EditorStore } from './store';
@@ -15,6 +15,7 @@ import { Panel } from './Panel';
 import { SlideRail } from './SlideRail';
 import { Preview } from './Preview';
 import { useEditorLive, useFonts, useRenderEnv } from './env';
+import { contentDefaults, type PresentationDefaults } from './factory';
 import { textSession } from './TextEditor';
 import { HistoryDialog } from './History';
 import { CopyForZoneButton } from '../../../components/CopyForZone';
@@ -70,6 +71,9 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
   const live = useEditorLive();
   const fonts = useFonts();
   const env = useRenderEnv(snap.doc, live);
+  // Start values of new slides and texts (Settings → Defaults).
+  const settings = useQuery<{ defaults: { slideMs: number }; presentations: PresentationDefaults }>('/api/v1/settings');
+  const defaults = useMemo(() => contentDefaults(settings.data ?? undefined), [settings.data]);
   const [save, setSave] = useState<SaveState>('saved');
   const [saveError, setSaveError] = useState<string>('');
   const [meta, setMeta] = useState({ revision: detail.draftRevision, published: detail.publishedVersion, hasChanges: detail.hasChanges });
@@ -291,9 +295,9 @@ function EditorInner({ detail, reload }: { detail: Detail; reload: () => void })
       </div>
       {save === 'error' && saveError && <div className="banner banner-warning">{saveError}</div>}
       {readOnly && <div className="banner banner-info">{t(detail.copyZones?.length ? 'admin.readOnly.sharedCopy' : 'admin.readOnly.shared')}</div>}
-      {!readOnly && <Toolbar store={store} />}
+      {!readOnly && <Toolbar store={store} defaults={defaults} />}
       <div className="editor-body">
-        <SlideRail store={store} env={{ ...env, mode: 'thumb' }} defaultSlideMs={10000} />
+        <SlideRail store={store} env={{ ...env, mode: 'thumb' }} defaults={defaults} />
         <Canvas store={store} env={env} />
         <fieldset className="editor-lock" disabled={readOnly}>
           <Panel store={store} fonts={fonts} />

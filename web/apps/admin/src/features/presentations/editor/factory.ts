@@ -1,6 +1,6 @@
 // Default elements for the Insert tab. Sizes are relative to the design resolution so a
 // new element looks right on 1280×720 as well as on 3840×2160.
-import type { Presentation, Slide, SlideElement, TextStyle } from '@opensignage/contracts';
+import type { Presentation, Slide, SlideElement, TextStyle, Transition, Typography } from '@opensignage/contracts';
 import { newId } from './store';
 
 export type InsertKind =
@@ -21,11 +21,54 @@ export type InsertKind =
 
 export const DEFAULT_FONT = 'Montserrat';
 
-export function baseStyle(size: number, overrides: Partial<TextStyle> = {}): TextStyle {
+/** Font and color of new texts, clocks and tickers. */
+export interface TextDefault {
+  font: string;
+  color: string;
+}
+
+/** The presentation defaults of the settings (Settings → Defaults; GET /api/v1/settings). */
+export interface PresentationDefaults {
+  width: number;
+  height: number;
+  background: string;
+  transition: Transition;
+  text: TextDefault;
+  typography: Typography;
+}
+
+/** Start values of new slides and elements in the editor. */
+export interface ContentDefaults {
+  slideMs: number;
+  background: string;
+  transition: Transition;
+  text: TextDefault;
+}
+
+/** Factory values, used until the settings are loaded. */
+export const FACTORY_DEFAULTS: ContentDefaults = {
+  slideMs: 10_000,
+  background: '#000000',
+  transition: { type: 'fade', ms: 600 },
+  text: { font: DEFAULT_FONT, color: '#ffffff' },
+};
+
+/** The editor's start values from the settings (slide duration and presentation defaults). */
+export function contentDefaults(s: { defaults?: { slideMs?: number }; presentations?: PresentationDefaults } | undefined): ContentDefaults {
+  const p = s?.presentations;
   return {
-    font: DEFAULT_FONT,
+    slideMs: s?.defaults?.slideMs ?? FACTORY_DEFAULTS.slideMs,
+    background: p?.background ?? FACTORY_DEFAULTS.background,
+    transition: p?.transition ?? FACTORY_DEFAULTS.transition,
+    text: p?.text ?? FACTORY_DEFAULTS.text,
+  };
+}
+
+export function baseStyle(size: number, overrides: Partial<TextStyle> = {}, text: TextDefault = FACTORY_DEFAULTS.text): TextStyle {
+  return {
+    font: text.font,
     size,
-    color: '#ffffff',
+    color: text.color,
     bold: false,
     italic: false,
     underline: false,
@@ -45,10 +88,16 @@ function box(doc: Presentation, wf: number, hf: number): { x: number; y: number;
 
 const common = { rotation: 0, opacity: 1, locked: false, hidden: false, pinned: false, name: '' };
 
-/** Creates a new element; asset-based kinds need an assetId (from the media picker). */
-export function createElement(kind: InsertKind, doc: Presentation, opts: { assetId?: string; productId?: string; text?: string } = {}): SlideElement {
+/** Creates a new element; asset-based kinds need an assetId (from the media picker). Texts,
+ *  clocks and tickers take font and color from the defaults. */
+export function createElement(
+  kind: InsertKind,
+  doc: Presentation,
+  opts: { assetId?: string; productId?: string; text?: string; defaults?: ContentDefaults } = {},
+): SlideElement {
   const id = newId();
   const u = doc.height / 1080; // unit relative to a 1080 px tall design
+  const text = (opts.defaults ?? FACTORY_DEFAULTS).text;
   switch (kind) {
     case 'text':
       return {
@@ -56,7 +105,7 @@ export function createElement(kind: InsertKind, doc: Presentation, opts: { asset
         id,
         type: 'text',
         ...box(doc, 0.5, 0.15),
-        style: baseStyle(Math.round(64 * u)),
+        style: baseStyle(Math.round(64 * u), {}, text),
         valign: 'middle',
         padding: [0, 0, 0, 0],
         doc: { paragraphs: [{ runs: [{ text: opts.text ?? 'Text' }] }] },
@@ -141,7 +190,7 @@ export function createElement(kind: InsertKind, doc: Presentation, opts: { asset
         h: Math.round(110 * u),
         format: 'HH:mm',
         date: 'none',
-        style: baseStyle(Math.round(72 * u), { align: 'right', bold: true }),
+        style: baseStyle(Math.round(72 * u), { align: 'right', bold: true }, text),
         valign: 'middle',
       };
     case 'ticker':
@@ -155,7 +204,7 @@ export function createElement(kind: InsertKind, doc: Presentation, opts: { asset
         h: Math.round(80 * u),
         tickerSource: 'zone',
         text: '',
-        style: baseStyle(Math.round(44 * u)),
+        style: baseStyle(Math.round(44 * u), {}, text),
         fill: '#201c18',
         speed: Math.round(140 * u),
         direction: 'left',
@@ -163,14 +212,14 @@ export function createElement(kind: InsertKind, doc: Presentation, opts: { asset
   }
 }
 
-export function createSlide(durationMs: number): Slide {
+export function createSlide(d: ContentDefaults = FACTORY_DEFAULTS): Slide {
   return {
     id: newId(),
     name: '',
     hidden: false,
-    duration: { mode: 'fixed', ms: durationMs },
-    background: { type: 'color', color: '#000000' },
-    transition: { type: 'fade', ms: 600 },
+    duration: { mode: 'fixed', ms: d.slideMs },
+    background: { type: 'color', color: d.background },
+    transition: { ...d.transition },
     elements: [],
   };
 }

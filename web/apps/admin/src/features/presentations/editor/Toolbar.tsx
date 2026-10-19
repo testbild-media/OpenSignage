@@ -45,7 +45,7 @@ import {
 import { useT } from '../../../lib/hooks';
 import type { EditorStore } from './store';
 import { useEditor } from './useEditor';
-import { createElement, type InsertKind } from './factory';
+import { createElement, type ContentDefaults, type InsertKind } from './factory';
 import { MediaPickerDialog } from './pickers';
 import { Num } from './controls';
 import { ContextMenu, type MenuEntry, type MenuState } from './ContextMenu';
@@ -101,7 +101,7 @@ function TBMenu({ label, items, children, text, disabled }: { label: string; ite
 
 const Sep = () => <span className="tb-sep" aria-hidden="true" />;
 
-export function Toolbar({ store }: { store: EditorStore }) {
+export function Toolbar({ store, defaults }: { store: EditorStore; defaults: ContentDefaults }) {
   const t = useT();
   const snap = useEditor(store);
   const [pick, setPick] = useState<null | { kind: 'image' | 'video' | 'audio'; insert: InsertKind }>(null);
@@ -112,7 +112,7 @@ export function Toolbar({ store }: { store: EditorStore }) {
   // reports a refusal through onLimit (toast in the editor page).
   const insert = (kind: InsertKind, assetId?: string): void => {
     if (!slide) return;
-    store.addElement(createElement(kind, snap.doc, { assetId }));
+    store.addElement(createElement(kind, snap.doc, { assetId, defaults }));
   };
   const doInsert = (kind: InsertKind): void => {
     const k = kind === 'image' || kind === 'logo' ? 'image' : kind === 'video' ? 'video' : kind === 'audio' ? 'audio' : null;

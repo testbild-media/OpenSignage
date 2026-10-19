@@ -18,6 +18,7 @@ import (
 	"opensignage/internal/server/config"
 	"opensignage/internal/server/core"
 	"opensignage/internal/server/httpx"
+	"opensignage/internal/server/modkit"
 	"opensignage/locales"
 )
 
@@ -37,10 +38,13 @@ type Module struct {
 	app       *core.App
 	cert      CertRefresher
 	restarter Restarter
+	fonts     *modkit.Fonts
 }
 
 // New creates the module.
-func New(app *core.App, host Host) *Module { return &Module{app: app, cert: host, restarter: host} }
+func New(app *core.App, host Host) *Module {
+	return &Module{app: app, cert: host, restarter: host, fonts: modkit.NewFonts(app.Cfg.ShareDir)}
+}
 
 // Routes registers the endpoints.
 func (m *Module) Routes(rt *core.Router) {
@@ -69,16 +73,17 @@ func (m *Module) get(w http.ResponseWriter, _ *http.Request, _ *core.Principal) 
 }
 
 type patchReq struct {
-	ServerName         *string               `json:"serverName"`
-	Language           *string               `json:"language"`
-	Timezone           *string               `json:"timezone"`
-	Currency           *string               `json:"currency"`
-	Defaults           *core.PlaylistDefault `json:"defaults"`
-	TrashRetentionDays *int                  `json:"trashRetentionDays"`
-	DeviceDefaults     *core.DeviceDefaults  `json:"deviceDefaults"`
-	AutoAlignVersions  *bool                 `json:"autoAlignVersions"`
-	UpdateCheck        *bool                 `json:"updateCheck"`
-	UpdateRepo         *string               `json:"updateRepo"`
+	ServerName         *string                    `json:"serverName"`
+	Language           *string                    `json:"language"`
+	Timezone           *string                    `json:"timezone"`
+	Currency           *string                    `json:"currency"`
+	Defaults           *core.PlaylistDefault      `json:"defaults"`
+	Presentations      *core.PresentationDefaults `json:"presentations"`
+	TrashRetentionDays *int                       `json:"trashRetentionDays"`
+	DeviceDefaults     *core.DeviceDefaults       `json:"deviceDefaults"`
+	AutoAlignVersions  *bool                      `json:"autoAlignVersions"`
+	UpdateCheck        *bool                      `json:"updateCheck"`
+	UpdateRepo         *string                    `json:"updateRepo"`
 }
 
 func (m *Module) patch(w http.ResponseWriter, r *http.Request, p *core.Principal) error {
@@ -110,6 +115,18 @@ func (m *Module) patch(w http.ResponseWriter, r *http.Request, p *core.Principal
 		}
 		if req.Defaults != nil {
 			next.Defaults = *req.Defaults
+		}
+		if req.Presentations != nil {
+			next.Presentations = *req.Presentations
+			for _, fam := range next.Presentations.Fonts() {
+				ok, err := m.fonts.Exists(r.Context(), tx, fam)
+				if err != nil {
+					return err
+				}
+				if !ok {
+					return httpx.Invalid("font", "unknown_font").With("family", fam)
+				}
+			}
 		}
 		if req.TrashRetentionDays != nil {
 			next.TrashRetentionDays = *req.TrashRetentionDays

@@ -459,20 +459,20 @@
   overflow-y: auto;
   padding: 10px 12px 24px;
 }
-.editor .props {
+:is(.editor, .ed-controls) .props {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
 }
-.editor .props h3 {
+:is(.editor, .ed-controls) .props h3 {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--os-text-muted);
   margin: 6px 0 2px;
 }
-.editor .prop-row {
+:is(.editor, .ed-controls) .prop-row {
   display: grid;
   grid-template-columns: 90px minmax(0, 1fr);
   align-items: center;
@@ -480,40 +480,40 @@
   font-size: 12px;
   color: var(--os-text-muted);
 }
-.editor .prop-ctrl {
+:is(.editor, .ed-controls) .prop-ctrl {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
   min-width: 0;
 }
-.editor .input-sm {
+:is(.editor, .ed-controls) .input-sm {
   min-height: 28px;
   padding: 4px 8px;
   font-size: 12px;
 }
-.editor .btn-sm {
+:is(.editor, .ed-controls) .btn-sm {
   height: 28px;
   padding: 0 10px;
   font-size: 12px;
 }
-.editor .ed-num {
+:is(.editor, .ed-controls) .ed-num {
   display: inline-flex;
   align-items: center;
   gap: 2px;
   width: 74px; /* two side by side (x/y, w/h) in the 300 px panel */
 }
-.editor .ed-num em {
+:is(.editor, .ed-controls) .ed-num em {
   font-style: normal;
   font-size: 10px;
   color: var(--os-text-faint);
 }
-.editor .color-input {
+:is(.editor, .ed-controls) .color-input {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-.editor .color-input input[type='color'] {
+:is(.editor, .ed-controls) .color-input input[type='color'] {
   width: 30px;
   height: 26px;
   border: 1px solid var(--os-border);
@@ -521,7 +521,7 @@
   background: none;
   padding: 1px;
 }
-.editor .color-input input[type='range'] {
+:is(.editor, .ed-controls) .color-input input[type='range'] {
   width: 60px;
   accent-color: var(--os-primary);
 }
@@ -532,11 +532,11 @@
 .editor .checkbox.indent {
   padding-left: 18px;
 }
-.editor .font-select {
+:is(.editor, .ed-controls) .font-select {
   position: relative;
   min-width: 150px;
 }
-.editor .font-current {
+:is(.editor, .ed-controls) .font-current {
   width: 100%;
   text-align: left;
   display: flex;
@@ -544,7 +544,7 @@
   justify-content: space-between;
   cursor: pointer;
 }
-.editor .font-list {
+:is(.editor, .ed-controls) .font-list {
   position: fixed; /* placed by FontSelect: the panel clips overflow */
   z-index: 50;
   width: 260px;
@@ -555,7 +555,7 @@
   border-radius: var(--os-radius-s);
   box-shadow: var(--os-shadow);
 }
-.editor .font-opt {
+:is(.editor, .ed-controls) .font-opt {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -567,11 +567,11 @@
   text-align: left;
   cursor: pointer;
 }
-.editor .font-opt:hover,
-.editor .font-opt.active {
+:is(.editor, .ed-controls) .font-opt:hover,
+:is(.editor, .ed-controls) .font-opt.active {
   background: var(--os-primary-soft);
 }
-.editor .warn-dot {
+:is(.editor, .ed-controls) .warn-dot {
   display: inline-block;
   width: 8px;
   height: 8px;
@@ -618,19 +618,19 @@
 .editor .pad {
   padding: 12px 4px;
 }
-.editor .typo summary {
+:is(.editor, .ed-controls) .typo summary {
   cursor: pointer;
   font-size: 12px;
   padding: 4px 0;
 }
-.editor .typo-body {
+:is(.editor, .ed-controls) .typo-body {
   margin: 2px 0 8px 10px;
 }
 .editor .ovr-hint {
   font-size: 11px;
   margin-top: -4px;
 }
-.editor .prop-row.overridden > span {
+:is(.editor, .ed-controls) .prop-row.overridden > span {
   color: var(--os-primary);
 }
 .editor .ovr-reset {
@@ -646,7 +646,7 @@
   background: var(--os-primary);
   vertical-align: middle;
 }
-.editor .tog {
+:is(.editor, .ed-controls) .tog {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -658,22 +658,22 @@
   color: var(--os-text);
   cursor: pointer;
 }
-.editor .tog.active {
+:is(.editor, .ed-controls) .tog.active {
   color: var(--os-primary);
   background: var(--os-primary-soft);
   border-color: var(--os-primary);
 }
-.editor .tog:disabled {
+:is(.editor, .ed-controls) .tog:disabled {
   opacity: 0.35;
   cursor: default;
 }
-.editor .tog-row {
+:is(.editor, .ed-controls) .tog-row {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-wrap: wrap;
 }
-.editor .tog-sep {
+:is(.editor, .ed-controls) .tog-sep {
   width: 1px;
   height: 20px;
   margin: 0 3px;

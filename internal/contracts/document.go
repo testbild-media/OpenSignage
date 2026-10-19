@@ -28,6 +28,27 @@ type Typography struct {
 	Price       TextStyle `json:"price"`
 }
 
+// DefaultTypography is the factory typography of new presentations: Montserrat, heading
+// 34 px #ff8a00 bold, subheading 26 px #ffa733 bold, item 24 px, description 16 px – the
+// same white as the item – and price 24 px bold right.
+func DefaultTypography() Typography {
+	style := func(size float64, color string, bold bool, align string, lineHeight float64) TextStyle {
+		return TextStyle{Font: "Montserrat", Size: size, Color: color, Bold: bold, LineHeight: lineHeight, Align: align}
+	}
+	return Typography{
+		Heading:     style(34, "#ff8a00", true, "left", 1.2),
+		Subheading:  style(26, "#ffa733", true, "left", 1.2),
+		Item:        style(24, "#ffffff", false, "left", 1.25),
+		Description: style(16, "#ffffff", false, "left", 1.25),
+		Price:       style(24, "#ffffff", true, "right", 1.25),
+	}
+}
+
+// Fonts lists the font families of the typography.
+func (t Typography) Fonts() []string {
+	return []string{t.Heading.Font, t.Subheading.Font, t.Item.Font, t.Description.Font, t.Price.Font}
+}
+
 // TextStyle is a complete text style. Shadows never blur (Pi 3 rule).
 type TextStyle struct {
 	Font          string   `json:"font"`

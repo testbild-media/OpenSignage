@@ -37,9 +37,10 @@ interface FontFace {
   url: string;
 }
 
-/** Content that uses a font: presentation or template (draft/published) or ticker template. */
+/** Content that uses a font: presentation or template (draft/published), ticker template or
+ *  the presentation defaults of the settings. */
 interface FontUser {
-  type: 'presentation' | 'template' | 'ticker';
+  type: 'presentation' | 'template' | 'ticker' | 'settings';
   id: string;
   name: string;
   states?: string[];
@@ -60,11 +61,19 @@ function UsedBy({ users }: { users: FontUser[] }) {
   const t = useT();
   if (users.length === 0) return null;
   const kind = (u: FontUser): string =>
-    u.type === 'ticker'
-      ? t('media.fonts.ownerTicker')
-      : u.type === 'template'
-        ? t('media.fonts.ownerTemplate')
-        : t('media.usage.presentation');
+    u.type === 'settings'
+      ? t('admin.settings.defaults')
+      : u.type === 'ticker'
+        ? t('media.fonts.ownerTicker')
+        : u.type === 'template'
+          ? t('media.fonts.ownerTemplate')
+          : t('media.usage.presentation');
+  const link = (u: FontUser): string =>
+    u.type === 'settings'
+      ? '/settings/defaults'
+      : u.type === 'ticker'
+        ? '/zones/tickers'
+        : `/presentations/${encodeURIComponent(u.id)}`;
   return (
     <div className="st-font-usedby">
       <div className="faint">{t('media.fonts.usedIn')}</div>
@@ -72,8 +81,8 @@ function UsedBy({ users }: { users: FontUser[] }) {
         {users.map((u) => (
           <li key={`${u.type}:${u.id}`}>
             <span className="faint">{kind(u)}</span>
-            <Link to={u.type === 'ticker' ? '/zones/tickers' : `/presentations/${encodeURIComponent(u.id)}`}>
-              {u.name || u.id}
+            <Link to={link(u)}>
+              {u.type === 'settings' ? t('admin.defaults.presentations') : u.name || u.id}
             </Link>
             {(u.states ?? []).map((s) => (
               <Badge key={s}>

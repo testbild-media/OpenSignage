@@ -243,8 +243,11 @@ The audit log records every change.
 ## Settings
 
 - **General:** language (each user can choose their own), time zone, currency.
-- **Defaults:** scaling and other defaults for new devices, central player password,
-  bring devices with another version up to date automatically.
+- **Defaults:** start values of new playlist entries; of new presentations (format, slide
+  duration, background and transition of new slides, font and color of new texts, clocks
+  and tickers, product typography – existing presentations and templates keep theirs);
+  scaling and other defaults for new devices, central player password, bring devices with
+  another version up to date automatically.
 - **Certificate:** download the local CA or upload your own certificate.
 - **Storage:** what uses the disk, unused media, old revisions.
 - **Backup:** database, media (ZIP) or everything; restore with a controlled restart.

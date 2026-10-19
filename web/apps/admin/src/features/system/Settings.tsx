@@ -6,6 +6,8 @@ import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useToast } from '../../components/feedback';
 import { storedLanguage, useSession } from '../../lib/session';
 import { Badge, Button, Checkbox, DataState, ErrorText, PageHeader, PasswordPair, Select, TextInput, passwordPairValid } from '../../components/ui';
+import type { PresentationDefaults } from '../presentations/editor/factory';
+import { PresentationDefaultsCard } from './PresentationDefaults';
 
 export interface Settings {
   serverName: string;
@@ -13,6 +15,7 @@ export interface Settings {
   timezone: string;
   currency: string;
   defaults: { mode: 'duration' | 'repeat'; durationMs: number; repeat: number; fit: 'contain' | 'cover' | 'fill'; slideMs: number };
+  presentations: PresentationDefaults;
   trashRetentionDays: number;
   deviceDefaults: { scaleMode: 'contain' | 'cover' | 'none' };
   autoAlignVersions: boolean;
@@ -217,7 +220,8 @@ export function CertificatePage() {
   );
 }
 
-/** Standardwerte for new playlist entries and slides, plus device defaults. */
+/** Standardwerte: new playlist entries, new presentations (with their slides and texts),
+ *  devices; the central password of the device web interfaces. */
 export function DefaultsPage() {
   const t = useT();
   const toast = useToast();
@@ -226,7 +230,7 @@ export function DefaultsPage() {
   const [pw2, setPw2] = useState('');
   const save = useAction(async () => {
     if (!form) return;
-    q.setData(await patch<Settings>('/api/v1/settings', { defaults: form.defaults, deviceDefaults: form.deviceDefaults, trashRetentionDays: form.trashRetentionDays, autoAlignVersions: form.autoAlignVersions }));
+    q.setData(await patch<Settings>('/api/v1/settings', { defaults: form.defaults, presentations: form.presentations, deviceDefaults: form.deviceDefaults, trashRetentionDays: form.trashRetentionDays, autoAlignVersions: form.autoAlignVersions }));
     toast(t('admin.saved'));
   });
   const setClientPw = useAction(async (clear: boolean) => {
@@ -261,8 +265,13 @@ export function DefaultsPage() {
                 onChange={(e) => setForm({ ...form, defaults: { ...form.defaults, fit: e.target.value as Settings['defaults']['fit'] } })}
                 options={['contain', 'cover', 'fill'].map((f) => ({ value: f, label: t(`admin.fit.${f}`) }))}
               />
-              <TextInput label={t('admin.defaults.slideSec')} type="number" min={1} value={sec(form.defaults.slideMs)} onChange={(e) => setForm({ ...form, defaults: { ...form.defaults, slideMs: Number(e.target.value) * 1000 } })} />
             </div>
+            <PresentationDefaultsCard
+              value={form.presentations}
+              slideMs={form.defaults.slideMs}
+              onChange={(presentations) => setForm({ ...form, presentations })}
+              onSlideMs={(slideMs) => setForm({ ...form, defaults: { ...form.defaults, slideMs } })}
+            />
             <div className="card form">
               <h2>{t('admin.defaults.devices')}</h2>
               <Select
@@ -278,6 +287,9 @@ export function DefaultsPage() {
                 onChange={(e) => setForm({ ...form, trashRetentionDays: Number(e.target.value) })}
                 options={[7, 30, 60, 90, 0].map((d) => ({ value: String(d), label: d === 0 ? t('admin.defaults.trashNever') : t('admin.defaults.trashDays', { days: d }) }))}
               />
+            </div>
+            {/* One button for the three cards above. */}
+            <div className="defaults-save">
               <ErrorText error={save.error} />
               <div className="form-actions">
                 <Button variant="primary" busy={save.busy} onClick={() => void save.run()}>
