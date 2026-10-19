@@ -27,6 +27,9 @@ type networkState struct {
 	lastErr string
 	// errLed: a login was already led to the network page because of lastErr.
 	errLed bool
+	// applying is closed when the change being applied is done (nil = none): a login right
+	// after "apply" – before the change took effect – waits for it and then confirms it.
+	applying chan struct{}
 }
 
 func (a *Agent) netMgr() *netmgr.Manager {
@@ -87,23 +90,13 @@ func (a *Agent) ApplyNetwork(c netcfg.Config) error {
 	if err := a.netMgr().HelperError(context.Background()); err != nil {
 		return err
 	}
+	done := make(chan struct{})
 	a.net.mu.Lock()
 	a.net.lastErr, a.net.errLed = "", false
+	a.net.applying = done
 	a.net.mu.Unlock()
 	safe.Go("network-apply", func() {
-		a.net.applyMu.Lock()
-		defer a.net.applyMu.Unlock()
-		time.Sleep(1500 * time.Millisecond)
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-		defer cancel()
-		slog.Info("applying network change", "interface", c.Interface, "kind", c.Kind, "method", c.Method, "disabled", c.Disabled)
-		err := a.netMgr().Apply(ctx, c)
-		if err != nil {
-			slog.Error("network change failed, the previous settings are active again", "interface", c.Interface, "err", err)
-			a.net.mu.Lock()
-			a.net.lastErr = err.Error()
-			a.net.mu.Unlock()
-		}
+		a.applyNetwork(c, done)
 		// New addresses: show them at once on the screen, and again when DHCP was slow.
 		for _, wait := range []time.Duration{0, 10 * time.Second, 30 * time.Second} {
 			time.Sleep(wait)
@@ -113,8 +106,37 @@ func (a *Agent) ApplyNetwork(c netcfg.Config) error {
 	return nil
 }
 
+// applyNetwork applies one change (one at a time) and closes done when it took effect.
+func (a *Agent) applyNetwork(c netcfg.Config, done chan struct{}) {
+	a.net.applyMu.Lock()
+	defer a.net.applyMu.Unlock()
+	defer func() {
+		a.net.mu.Lock()
+		if a.net.applying == done {
+			a.net.applying = nil
+		}
+		a.net.mu.Unlock()
+		close(done)
+	}()
+	time.Sleep(1500 * time.Millisecond) // the answer reaches the browser first
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	slog.Info("applying network change", "interface", c.Interface, "kind", c.Kind, "method", c.Method, "disabled", c.Disabled)
+	if err := a.netMgr().Apply(ctx, c); err != nil {
+		slog.Error("network change failed, the previous settings are active again", "interface", c.Interface, "err", err)
+		a.net.mu.Lock()
+		a.net.lastErr = err.Error()
+		a.net.mu.Unlock()
+	}
+}
+
 // NetworkPending implements webgui.NetworkBackend.
-func (a *Agent) NetworkPending() bool { return a.netMgr().Pending() != nil }
+func (a *Agent) NetworkPending() bool {
+	a.net.mu.Lock()
+	applying := a.net.applying != nil
+	a.net.mu.Unlock()
+	return applying || a.netMgr().Pending() != nil
+}
 
 // NetworkFailed implements webgui.NetworkBackend: true once after a change failed.
 func (a *Agent) NetworkFailed() bool {
@@ -129,6 +151,19 @@ func (a *Agent) NetworkFailed() bool {
 
 // ConfirmNetwork implements webgui.NetworkBackend.
 func (a *Agent) ConfirmNetwork(ctx context.Context) error {
+	a.net.mu.Lock()
+	done := a.net.applying
+	a.net.mu.Unlock()
+	if done != nil {
+		select {
+		case <-done:
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+	if a.netMgr().Pending() == nil {
+		return webgui.ErrNothingToConfirm
+	}
 	err := a.netMgr().Confirm(ctx)
 	a.refreshPlayer()
 	return err

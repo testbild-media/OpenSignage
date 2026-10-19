@@ -42,10 +42,13 @@ type NetworkBackend interface {
 	// ApplyNetwork starts a change (after the answer is sent): active at once, permanent
 	// once confirmed by the next login.
 	ApplyNetwork(c netcfg.Config) error
+	// NetworkPending: a change waits for its confirmation or is still being applied.
 	NetworkPending() bool
 	// NetworkFailed: the last change did not come up (the previous settings are active);
 	// reported once, so that only the next login leads to the network page.
 	NetworkFailed() bool
+	// ConfirmNetwork makes the pending change permanent; a change still being applied is
+	// waited for first. ErrNothingToConfirm: nothing waits (the change did not come up).
 	ConfirmNetwork(ctx context.Context) error
 	InstallFirmware(ctx context.Context, pkg string) error
 }
@@ -304,6 +307,9 @@ func (s *Server) networkPost(w http.ResponseWriter, r *http.Request, _ string, s
 	}
 }
 
+// ErrNothingToConfirm: no network change waits for its confirmation.
+var ErrNothingToConfirm = errors.New("no network change to confirm")
+
 // networkError translates a failed change.
 func (s *Server) networkError(lang string, err error) string {
 	var fe *netcfg.InputError
@@ -330,6 +336,9 @@ func (s *Server) confirmNetwork(r *http.Request) (confirmed bool, failure string
 	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Minute)
 	defer cancel()
 	if err := nb.ConfirmNetwork(ctx); err != nil {
+		if errors.Is(err, ErrNothingToConfirm) {
+			return false, "" // it did not come up: the login leads to the error (NetworkFailed)
+		}
 		slog.Error("confirming the network change failed", "err", err)
 		return false, err.Error()
 	}

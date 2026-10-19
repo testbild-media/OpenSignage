@@ -203,6 +203,19 @@ func TestNetworkWifiOffAndConfirmFailure(t *testing.T) {
 	}
 }
 
+// The login waited for a change that then did not come up: no "confirmation failed", the
+// error of the change is shown instead.
+func TestNetworkNothingToConfirm(t *testing.T) {
+	e := netEnv(t)
+	e.be.net.Pending = &netcfg.Pending{Interfaces: []string{"wlan0"}}
+	e.be.confirmErr = ErrNothingToConfirm
+	e.be.net.LastError = "nmcli: activation failed"
+	e.client.Jar, _ = cookiejar.New(nil)
+	if resp := e.login(t, "central-secret"); resp.Header.Get("Location") != "/network" {
+		t.Fatalf("login: %s", resp.Header.Get("Location"))
+	}
+}
+
 func TestNetworkFailedChange(t *testing.T) {
 	e := netEnv(t)
 	// The change did not come up: the helper went back to the previous settings.
