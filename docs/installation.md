@@ -186,7 +186,7 @@ systems listed in section 1, including a Raspberry Pi (arm64).
 | --- | --- |
 | x86 wired, Realtek RTL8111/8168 (`r8169`) | tested – DHCP and fixed address |
 | Raspberry Pi 4 wired (`bcmgenet`) | tested – DHCP and fixed address |
-| Raspberry Pi 4 Wi-Fi (Broadcom, `brcmfmac`) | supported – scan (2.4 and 5 GHz) and switching the radio on tested |
+| Raspberry Pi 4 Wi-Fi (Broadcom, `brcmfmac`) | tested – connection on 5 GHz, scan 2.4 and 5 GHz |
 | USB Wi-Fi stick UGREEN CM493 (Realtek RTL8822BU, AC1200) on x86 | tested on Debian 13 – 2.4 and 5 GHz, driver `rtw88_8822bu` in the kernel, firmware from `firmware-realtek` (the installer or the web interface installs it) |
 
 - A USB Wi-Fi stick needs a driver in the kernel. Debian 13 (kernel 6.12) has one for most
