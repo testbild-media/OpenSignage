@@ -45,9 +45,14 @@ func (f *fakeBackend) ApplyNetwork(c netcfg.Config) error {
 	f.net.Pending = &netcfg.Pending{Interfaces: []string{c.Interface}}
 	return nil
 }
-func (f *fakeBackend) NetworkPending() bool { return f.net.Pending != nil }
-func (f *fakeBackend) NetworkFailed() bool  { return f.net.LastError != "" }
-func (f *fakeBackend) ConfirmNetwork(context.Context) error {
+func (f *fakeBackend) NetworkPending() bool  { return f.net.Pending != nil || f.net.Applying }
+func (f *fakeBackend) NetworkApplying() bool { return f.net.Applying }
+func (f *fakeBackend) NetworkFailed() bool   { return f.net.LastError != nil }
+func (f *fakeBackend) ConfirmNetwork(ctx context.Context) error {
+	if f.net.Applying {
+		<-ctx.Done() // the change takes longer than the login waits
+		return ctx.Err()
+	}
 	if f.confirmErr != nil {
 		return f.confirmErr
 	}

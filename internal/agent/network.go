@@ -24,7 +24,7 @@ type networkState struct {
 	mgr     *netmgr.Manager
 	applyMu sync.Mutex // one change at a time
 	mu      sync.Mutex
-	lastErr string
+	lastErr error
 	// errLed: a login was already led to the network page because of lastErr.
 	errLed bool
 	// applying is closed when the change being applied is done (nil = none): a login right
@@ -61,6 +61,7 @@ func (a *Agent) NetworkView(ctx context.Context) webgui.NetworkView {
 	}
 	a.net.mu.Lock()
 	v.LastError = a.net.lastErr
+	v.Applying = a.net.applying != nil
 	a.net.mu.Unlock()
 	return v
 }
@@ -92,7 +93,7 @@ func (a *Agent) ApplyNetwork(c netcfg.Config) error {
 	}
 	done := make(chan struct{})
 	a.net.mu.Lock()
-	a.net.lastErr, a.net.errLed = "", false
+	a.net.lastErr, a.net.errLed = nil, false
 	a.net.applying = done
 	a.net.mu.Unlock()
 	safe.Go("network-apply", func() {
@@ -125,24 +126,28 @@ func (a *Agent) applyNetwork(c netcfg.Config, done chan struct{}) {
 	if err := a.netMgr().Apply(ctx, c); err != nil {
 		slog.Error("network change failed, the previous settings are active again", "interface", c.Interface, "err", err)
 		a.net.mu.Lock()
-		a.net.lastErr = err.Error()
+		a.net.lastErr = err
 		a.net.mu.Unlock()
 	}
 }
 
 // NetworkPending implements webgui.NetworkBackend.
 func (a *Agent) NetworkPending() bool {
+	return a.NetworkApplying() || a.netMgr().Pending() != nil
+}
+
+// NetworkApplying implements webgui.NetworkBackend.
+func (a *Agent) NetworkApplying() bool {
 	a.net.mu.Lock()
-	applying := a.net.applying != nil
-	a.net.mu.Unlock()
-	return applying || a.netMgr().Pending() != nil
+	defer a.net.mu.Unlock()
+	return a.net.applying != nil
 }
 
 // NetworkFailed implements webgui.NetworkBackend: true once after a change failed.
 func (a *Agent) NetworkFailed() bool {
 	a.net.mu.Lock()
 	defer a.net.mu.Unlock()
-	if a.net.lastErr == "" || a.net.errLed {
+	if a.net.lastErr == nil || a.net.errLed {
 		return false
 	}
 	a.net.errLed = true

@@ -32,7 +32,9 @@ type NetworkView struct {
 	Country string
 	// LastError of the last change (it is applied after the page was answered); the
 	// interface is back on its previous settings then.
-	LastError string
+	LastError error
+	// Applying: a change is being applied right now.
+	Applying bool
 }
 
 // NetworkBackend is implemented by the agent.
@@ -44,6 +46,9 @@ type NetworkBackend interface {
 	ApplyNetwork(c netcfg.Config) error
 	// NetworkPending: a change waits for its confirmation or is still being applied.
 	NetworkPending() bool
+	// NetworkApplying: a change is still being applied (up to about two minutes when a
+	// network does not connect at once).
+	NetworkApplying() bool
 	// NetworkFailed: the last change did not come up (the previous settings are active);
 	// reported once, so that only the next login leads to the network page.
 	NetworkFailed() bool
@@ -90,6 +95,8 @@ type networkData struct {
 	Wifi       []netIface
 	HelperNote bool
 	Since      string
+	// LastError: why the last change failed, in the language of the page.
+	LastError string
 }
 
 func (s *Server) networkBackend() NetworkBackend { return s.Backend }
@@ -100,6 +107,9 @@ func (s *Server) networkData(r *http.Request, scanIface string, scan []netcfg.AP
 	defer cancel()
 	v := nb.NetworkView(ctx)
 	d := networkData{View: v, HelperNote: !v.Available}
+	if v.LastError != nil {
+		d.LastError = s.networkError(s.lang(r), v.LastError)
+	}
 	if v.Pending != nil {
 		d.Since = v.Pending.Since.Local().Format("15:04")
 	}
@@ -217,9 +227,13 @@ func prefill(it netcfg.Interface, c *netcfg.Config, country string, dns []string
 
 func (s *Server) networkPage(w http.ResponseWriter, r *http.Request, _ string, sess *session) {
 	p := s.authedPage(r, sess, "network")
-	p.Data = s.networkData(r, "", nil, nil, nil, "")
+	d := s.networkData(r, "", nil, nil, nil, "")
+	p.Data = d
 	if r.URL.Query().Get("err") == "confirm" {
 		p.Error = s.t(s.lang(r), "network.confirmFailed")
+	}
+	if d.View.Applying {
+		w.Header().Set("Refresh", "5") // no scripts in the WebGUI: the browser reloads the page
 	}
 	s.render(w, r, http.StatusOK, "network", p)
 }
@@ -293,6 +307,22 @@ func (s *Server) networkPost(w http.ResponseWriter, r *http.Request, _ string, s
 		s.dropSessions("")
 		http.SetCookie(w, &http.Cookie{Name: sessionCookie, Value: "", Path: "/", MaxAge: -1, Secure: true, HttpOnly: true, SameSite: http.SameSiteStrictMode})
 		s.render(w, r, http.StatusOK, "network_applied", &page{CSRF: loginCSRF(w, r), Title: s.t(lang, "network.applied.title")})
+	case "confirm":
+		// "Save now" on the page of a change that waits for its confirmation (the login
+		// confirms it as well).
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Minute)
+		err := nb.ConfirmNetwork(ctx)
+		cancel()
+		switch {
+		case err == nil:
+			slog.Info("network change confirmed on the network page")
+			flash(w, r, "/network", "networkConfirmed")
+		case errors.Is(err, ErrNothingToConfirm):
+			http.Redirect(w, r, "/network", http.StatusSeeOther)
+		default:
+			slog.Error("confirming the network change failed", "err", err)
+			again(http.StatusBadGateway, s.t(lang, "network.confirmFailed"), nil, "")
+		}
 	case "firmware":
 		ctx, cancel := context.WithTimeout(r.Context(), 16*time.Minute)
 		err := nb.InstallFirmware(ctx, r.PostFormValue("package"))
@@ -316,7 +346,7 @@ func (s *Server) networkError(lang string, err error) string {
 	if errors.As(err, &fe) {
 		key := "network.error." + fe.Field
 		switch fe.Reason {
-		case "network_address", "outside_network", "too_many", "required", "unsupported", "unknown":
+		case "network_address", "outside_network", "too_many", "required", "unsupported", "unknown", "rejected":
 			key += "_" + fe.Reason
 		}
 		if msg := s.t(lang, key); msg != "client."+key {
@@ -327,21 +357,38 @@ func (s *Server) networkError(lang string, err error) string {
 	return s.t(lang, "network.error.generic", "error", err.Error())
 }
 
+// loginNetworkWait is how long a login waits for a change still being applied: long enough
+// for a change that comes up at once, short enough that the login does not seem to hang
+// (a Wi-Fi network that refuses the password takes up to about two minutes).
+var loginNetworkWait = 10 * time.Second
+
+type loginConfirm int
+
+const (
+	confirmNone     loginConfirm = iota // nothing waits (or the change did not come up)
+	confirmDone                         // the change is permanent now
+	confirmApplying                     // still being applied: the network page shows it
+	confirmFailed                       // confirming failed
+)
+
 // confirmNetwork runs after a successful login: it makes a pending change permanent.
-func (s *Server) confirmNetwork(r *http.Request) (confirmed bool, failure string) {
+func (s *Server) confirmNetwork(r *http.Request) loginConfirm {
 	nb := s.networkBackend()
 	if !nb.NetworkPending() {
-		return false, ""
+		return confirmNone
 	}
-	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(r.Context(), loginNetworkWait)
 	defer cancel()
 	if err := nb.ConfirmNetwork(ctx); err != nil {
-		if errors.Is(err, ErrNothingToConfirm) {
-			return false, "" // it did not come up: the login leads to the error (NetworkFailed)
+		switch {
+		case errors.Is(err, ErrNothingToConfirm):
+			return confirmNone // it did not come up: the login leads to the error (NetworkFailed)
+		case errors.Is(err, context.DeadlineExceeded) && nb.NetworkApplying():
+			return confirmApplying
 		}
 		slog.Error("confirming the network change failed", "err", err)
-		return false, err.Error()
+		return confirmFailed
 	}
 	slog.Info("network change confirmed by login")
-	return true, ""
+	return confirmDone
 }

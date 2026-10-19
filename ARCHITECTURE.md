@@ -423,7 +423,10 @@ Config: `/etc/opensignage/agent.env`.
   the stanza also carries `dns-nameservers` for resolvconf, and a symlinked resolv.conf is
   left alone); `/var/lib/opensignage-net/unconfirmed/` notes which files the change
   touched. The WebGUI ends all sessions and the player shows
-  `networkNotice` with the WebGUI addresses. The next successful login runs `confirm`: the
+  `networkNotice` with the WebGUI addresses. The next successful login runs `confirm` (it
+  waits up to 10 s for a change still being applied; after that it leads to the network
+  page, which reloads itself until the change is done and then offers *Save now* – the same
+  `confirm`): the
   stanza goes to `/etc/network/interfaces.d/opensignage-<iface>` (the system's stanzas for
   the interface are commented out with `#opensignage# `, the originals kept in
   `/var/lib/opensignage-net/original/`), the Wi-Fi settings to
@@ -437,7 +440,9 @@ Config: `/etc/opensignage/agent.env`.
   the pending files of the interface go, the DNS block is set back (or rewritten for the
   changes still pending) and the interface comes up with its settings on disk
   (`ifup IFACE`, `nmcli device connect IFACE`). The agent keeps the error; the next login
-  leads to the network page, which shows it.
+  leads to the network page, which shows it. A Wi-Fi network that refuses the password
+  (NetworkManager: "Secrets were required") becomes `passphrase`/`rejected` in the agent
+  (`netmgr`), so the page says so in plain words.
 - **Restart without confirmation:** `/run` is empty, the system starts with its previous
   configuration and the agent runs `cleanup`: the DNS block of the touched files gets the
   servers of the confirmed settings again (or goes); what dhcpcd wrote stays.

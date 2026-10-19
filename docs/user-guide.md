@@ -196,9 +196,11 @@ for all players can be set under Settings → Defaults.
 - **Apply:** the change is active at once and you are logged out. The screen of the player
   shows its new address until you log in there again – that login saves the change. If you
   cannot reach the player any more, restart it: without that login it starts with the
-  previous settings. A change that does not come up at all (for example no answer from
-  DHCP, or the Wi-Fi network refuses the password) is undone at once; after the next login
-  the page says why.
+  previous settings. Applying takes a few seconds, up to about two minutes when a Wi-Fi
+  network does not connect at once; a login in that time leads to the network page, which
+  follows the change and then offers *Save now*. A change that does not come up at all (for
+  example no answer from DHCP, or the Wi-Fi network refuses the password) is undone at once;
+  after the next login the page says why.
 - **Wi-Fi in advance:** a Wi-Fi network that is not in range yet can be set up beforehand –
   e.g. over the LAN in the office, then the player goes to its place without cable. Confirm
   the change with a login over the LAN; the player joins the network as soon as it is in

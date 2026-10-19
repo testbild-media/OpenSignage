@@ -164,6 +164,16 @@ func (m *Manager) Apply(ctx context.Context, c netcfg.Config) error {
 	}
 	_, err = m.call(ctx, 4*time.Minute, b, "apply")
 	m.Refresh()
+	return applyError(c, err)
+}
+
+// applyError says a refused Wi-Fi password in plain words: NetworkManager asks for the
+// password again when the network refused the login (mostly a wrong password, sometimes a
+// signal too weak to finish it) and nmcli reports that it could not ask.
+func applyError(c netcfg.Config, err error) error {
+	if err != nil && c.Kind == netcfg.KindWifi && strings.Contains(err.Error(), "Secrets were required") {
+		return &netcfg.InputError{Field: "passphrase", Reason: "rejected"}
+	}
 	return err
 }
 

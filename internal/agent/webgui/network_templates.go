@@ -6,8 +6,10 @@ package webgui
 const networkTemplates = `
 {{define "network"}}{{$d := .Data}}
 {{if $d.HelperNote}}<div class="card"><p>{{t .L "network.helperMissing"}}</p><p class="note">{{t .L "network.helperMissingHint"}}</p></div>{{end}}
-{{if $d.View.Pending}}<div class="card"><h2>{{t .L "network.pending.title"}}</h2><p>{{t .L "network.pending.text" "since" $d.Since}}</p></div>{{end}}
-{{if $d.View.LastError}}<div class="error">{{t .L "network.error.generic" "error" $d.View.LastError}} {{t .L "network.reverted"}}</div>{{end}}
+{{if $d.View.Applying}}<div class="card"><h2>{{t .L "network.applied.title"}}</h2><p>{{t .L "network.applying.text"}}</p></div>
+{{else if $d.View.Pending}}<div class="card"><h2>{{t .L "network.pending.title"}}</h2><p>{{t .L "network.pending.text" "since" $d.Since}}</p>
+<form method="post" action="/network"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="do" value="confirm"><p><button type="submit">{{t .L "network.pending.keep"}}</button></p></form></div>{{end}}
+{{if $d.LastError}}<div class="error">{{$d.LastError}} {{t .L "network.reverted"}}</div>{{end}}
 {{range $d.View.Firmware}}<div class="card"><h2>{{t $.L "network.firmware.title"}}</h2><p>{{t $.L "network.firmware.text" "file" .File "package" .Package}}</p>
 {{if $d.View.Available}}<form method="post" action="/network"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="do" value="firmware"><input type="hidden" name="package" value="{{.Package}}">
 <p><button type="submit">{{t $.L "network.firmware.install"}}</button></p></form><p class="note">{{t $.L "network.firmware.hint"}}</p>{{end}}</div>{{end}}

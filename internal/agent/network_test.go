@@ -18,7 +18,7 @@ func TestNetworkFailedOnce(t *testing.T) {
 	if a.NetworkFailed() {
 		t.Fatal("nothing failed")
 	}
-	a.net.lastErr = "ifup enp2s0: exit status 1"
+	a.net.lastErr = errors.New("ifup enp2s0: exit status 1")
 	if !a.NetworkFailed() {
 		t.Fatal("the next login leads to the network page")
 	}
@@ -34,7 +34,7 @@ func TestConfirmWaitsForTheChange(t *testing.T) {
 	a.net.mgr = &netmgr.Manager{Root: root}
 	done := make(chan struct{})
 	a.net.applying = done
-	if !a.NetworkPending() {
+	if !a.NetworkPending() || !a.NetworkApplying() {
 		t.Fatal("a change being applied counts as pending (the login page says so)")
 	}
 	res := make(chan error, 1)

@@ -88,13 +88,18 @@ func (s *Server) loginPost(w http.ResponseWriter, r *http.Request) {
 	slog.Info("webgui login", "remote", ip)
 	s.newSession(w)
 	// A new login confirms a changed network setting (it is permanent from now on).
-	if confirmed, failure := s.confirmNetwork(r); confirmed {
+	switch s.confirmNetwork(r) {
+	case confirmDone:
 		flash(w, r, "/network", "networkConfirmed")
 		return
-	} else if failure != "" {
+	case confirmApplying:
+		http.Redirect(w, r, "/network", http.StatusSeeOther) // it follows the change
+		return
+	case confirmFailed:
 		http.Redirect(w, r, "/network?err=confirm", http.StatusSeeOther)
 		return
-	} else if s.networkBackend().NetworkFailed() {
+	}
+	if s.networkBackend().NetworkFailed() {
 		http.Redirect(w, r, "/network", http.StatusSeeOther) // it says why the change failed
 		return
 	}

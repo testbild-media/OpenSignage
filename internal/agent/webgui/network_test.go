@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"opensignage/internal/agent/netcfg"
 	"opensignage/internal/common/passwords"
@@ -209,17 +210,65 @@ func TestNetworkNothingToConfirm(t *testing.T) {
 	e := netEnv(t)
 	e.be.net.Pending = &netcfg.Pending{Interfaces: []string{"wlan0"}}
 	e.be.confirmErr = ErrNothingToConfirm
-	e.be.net.LastError = "nmcli: activation failed"
+	e.be.net.LastError = errors.New("nmcli: activation failed")
 	e.client.Jar, _ = cookiejar.New(nil)
 	if resp := e.login(t, "central-secret"); resp.Header.Get("Location") != "/network" {
 		t.Fatalf("login: %s", resp.Header.Get("Location"))
 	}
 }
 
+// A login while the change is still being applied (a Wi-Fi network that refuses the
+// password takes up to about two minutes) does not hang: it leads to the network page, which
+// follows the change and then offers to save it.
+func TestLoginWhileApplying(t *testing.T) {
+	e := netEnv(t)
+	defer func(d time.Duration) { loginNetworkWait = d }(loginNetworkWait)
+	loginNetworkWait = 50 * time.Millisecond
+	e.be.net.Applying = true
+	e.client.Jar, _ = cookiejar.New(nil)
+	start := time.Now()
+	resp := e.login(t, "central-secret")
+	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/network" || e.be.confirmed != 0 {
+		t.Fatalf("login while applying: %d %s", resp.StatusCode, resp.Header.Get("Location"))
+	}
+	if time.Since(start) > 5*time.Second {
+		t.Fatal("the login waited too long")
+	}
+	resp, body := e.get(t, "/network")
+	if resp.Header.Get("Refresh") == "" || !strings.Contains(body, e.en(t, "network.applying.text")) ||
+		strings.Contains(body, e.en(t, "network.pending.keep")) {
+		t.Fatalf("the page must follow the change: refresh %q", resp.Header.Get("Refresh"))
+	}
+	// The change came up and waits for its confirmation: "Save now".
+	e.be.net.Applying = false
+	e.be.net.Pending = &netcfg.Pending{Interfaces: []string{"wlan0"}}
+	resp, body = e.get(t, "/network")
+	if resp.Header.Get("Refresh") != "" || !strings.Contains(body, e.en(t, "network.pending.keep")) {
+		t.Fatal("no button to save the change")
+	}
+	resp, _ = e.post(t, "/network", url.Values{"csrf": {csrf(t, body)}, "do": {"confirm"}})
+	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/network?ok=networkConfirmed" || e.be.confirmed != 1 {
+		t.Fatalf("save now: %d %s confirmed=%d", resp.StatusCode, resp.Header.Get("Location"), e.be.confirmed)
+	}
+	// Nothing left to save (it did not come up): back to the page, which shows why.
+	e.be.net.Pending = &netcfg.Pending{Interfaces: []string{"wlan0"}}
+	e.be.confirmErr = ErrNothingToConfirm
+	e.be.net.LastError = &netcfg.InputError{Field: "passphrase", Reason: "rejected"}
+	_, body = e.get(t, "/network")
+	resp, _ = e.post(t, "/network", url.Values{"csrf": {csrf(t, body)}, "do": {"confirm"}})
+	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/network" {
+		t.Fatalf("nothing to save: %d %s", resp.StatusCode, resp.Header.Get("Location"))
+	}
+	e.be.net.Pending = nil
+	if _, body = e.get(t, "/network"); !strings.Contains(body, e.en(t, "network.error.passphrase_rejected")) {
+		t.Fatal("a refused password must be said in plain words")
+	}
+}
+
 func TestNetworkFailedChange(t *testing.T) {
 	e := netEnv(t)
 	// The change did not come up: the helper went back to the previous settings.
-	e.be.net.LastError = "ifup enp2s0: exit status 1"
+	e.be.net.LastError = errors.New("ifup enp2s0: exit status 1")
 	e.client.Jar, _ = cookiejar.New(nil)
 	if resp := e.login(t, "central-secret"); resp.Header.Get("Location") != "/network" || e.be.confirmed != 0 {
 		t.Fatalf("login after a failed change: %s", resp.Header.Get("Location"))
@@ -243,6 +292,7 @@ func TestNetworkErrorTexts(t *testing.T) {
 		{&netcfg.InputError{Field: "gateway", Reason: "outside_network"}, "network.error.gateway_outside_network"},
 		{&netcfg.InputError{Field: "dns", Reason: "invalid"}, "network.error.dns"},
 		{&netcfg.InputError{Field: "backend", Reason: "unsupported"}, "network.error.backend_unsupported"},
+		{&netcfg.InputError{Field: "passphrase", Reason: "rejected"}, "network.error.passphrase_rejected"},
 	} {
 		if got := e.srv.networkError("en", c.err); got != e.srv.t("en", c.want) {
 			t.Errorf("%v: %q", c.err, got)
