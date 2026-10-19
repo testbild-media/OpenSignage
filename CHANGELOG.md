@@ -15,7 +15,9 @@ All notable changes to OpenSignage are documented in this file. The format is ba
   change that does not come up at all is undone at once.
   dhcpcd and wpa_supplicant run in a systemd scope of their own, so updates and restarts of
   the agent never take the connection down; a Wi-Fi scan sets the radio rules of the country
-  first, so 5 GHz networks are found before the first Wi-Fi setup.
+  first, so 5 GHz networks are found before the first Wi-Fi setup. Wi-Fi power saving is off
+  (players run on mains power; on USB sticks it causes dropouts). Tested with a USB stick with
+  Realtek RTL8822BU on Debian 13 (driver in the kernel, firmware from `firmware-realtek`).
   Players without a Wi-Fi adapter say so; missing network firmware is named and installed
   on request. Follows the system's network setup (ifupdown on Debian, NetworkManager on
   Raspberry Pi OS). Existing players need the installer once more for it.

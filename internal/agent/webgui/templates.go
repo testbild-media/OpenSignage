@@ -59,6 +59,7 @@ func parseTemplates(bundle *locales.Bundle) (*template.Template, error) {
 			return fmt.Sprintf("%.1f °C", *t)
 		},
 		"float": func(f float64) string { return fmt.Sprintf("%.1f", f) },
+		"rate":  func(f float64) string { return strings.TrimSuffix(fmt.Sprintf("%.1f", f), ".0") }, // 780, 866.7
 		"hz":    func(f float64) string { return fmt.Sprintf("%.2f", f) },
 		"join":  func(l []string) string { return strings.Join(l, ", ") },
 		"quality": func(q string) string {
@@ -131,8 +132,19 @@ code{background:var(--raised);padding:1px 6px;border-radius:4px}
 table.aps{width:100%;border-collapse:collapse;margin-top:8px}table.aps th,table.aps td{text-align:left;padding:6px 8px;border-top:1px solid var(--border)}table.aps th{color:var(--muted);font-weight:500}
 .unsupported{color:var(--faint)}
 fieldset{border:1px solid var(--border);border-radius:8px;padding:6px 14px 12px;margin:12px 0}legend{color:var(--muted);padding:0 6px}
+.net-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.net-head h2{margin:0}.net-head code{font-size:13px;font-weight:400}
+dl.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px 18px;margin:0}dl.facts dt{color:var(--muted);font-size:12px}dl.facts dd{margin:0;word-break:break-word}
+.net-hw{color:var(--faint);font-size:12px;margin:10px 0 0;word-break:break-word}
+details.net-edit{margin-top:12px;border-top:1px solid var(--border);padding-top:10px}details.net-edit>summary{cursor:pointer;color:var(--primary);font-weight:600}
+.net-scan{margin:10px 0 4px}.net-form .fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:0 12px}.net-form .fields input{max-width:none}
+.net-form label{margin:8px 0 3px;font-size:13px}.choice{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;margin-top:10px}.choice span{color:var(--muted)}.choice label{display:inline-flex;align-items:center;gap:6px;margin:0;color:var(--text);font-size:15px}
+.net-form .static-fields{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.static-fields{display:none!important}.net-form:has(input[name=method][value=static]:checked) .static-fields{display:grid!important}.net-form:has(input[name=open]:checked) .pass-field{display:none}
+@supports not selector(:has(*)){.static-fields{display:grid!important}}
+.net-actions{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:14px}.net-actions .note{flex:1;min-width:220px;font-size:13px}
+table.aps td,table.aps th{padding:4px 8px}.net-foot{margin-top:-4px}
 input[type=radio],input[type=checkbox]{accent-color:var(--primary)}
-@media (max-width:640px){dl.grid{grid-template-columns:1fr}main{padding:16px}header{padding:12px 16px}}
+@media (max-width:640px){dl.grid{grid-template-columns:1fr}dl.facts{grid-template-columns:1fr 1fr}main{padding:16px}header{padding:12px 16px}}
 `
 
 const templates = `

@@ -99,7 +99,7 @@ func TestFiles(t *testing.T) {
 		t.Errorf("static stanza:\n%s", got)
 	}
 	w := Config{Interface: "wlx1", Kind: KindWifi, Method: MethodDHCP, Wifi: &Wifi{SSID: `Bar "Nord"`, Passphrase: `p"a\ss word`, Country: "DE", Hidden: true}}
-	if got := IfupdownStanza(w, "/run/x.conf", ""); !strings.Contains(got, "iface wlx1 inet dhcp\n\twpa-conf /run/x.conf\n") {
+	if got := IfupdownStanza(w, "/run/x.conf", ""); !strings.Contains(got, "iface wlx1 inet dhcp\n\twpa-conf /run/x.conf\n\tpost-up iw dev wlx1 set power_save off || true\n") {
 		t.Errorf("wifi stanza:\n%s", got)
 	}
 	conf := WpaConf(*w.Wifi)
@@ -122,7 +122,7 @@ func TestFiles(t *testing.T) {
 
 	kf := NMKeyfile(w, "opensignage-wlx1", "u-1")
 	ssid := keyfileSSID(`Bar "Nord"`)
-	for _, want := range []string{"id=opensignage-wlx1\nuuid=u-1\ntype=wifi\ninterface-name=wlx1\n", "ssid=" + ssid + "\n", "hidden=true", "key-mgmt=wpa-psk", `psk=p"a\\ss word`, "[ipv4]\nmethod=auto"} {
+	for _, want := range []string{"id=opensignage-wlx1\nuuid=u-1\ntype=wifi\ninterface-name=wlx1\n", "ssid=" + ssid + "\n", "[wifi]\nmode=infrastructure\npowersave=2\n", "hidden=true", "key-mgmt=wpa-psk", `psk=p"a\\ss word`, "[ipv4]\nmethod=auto"} {
 		if !strings.Contains(kf, want) {
 			t.Errorf("keyfile misses %q:\n%s", want, kf)
 		}

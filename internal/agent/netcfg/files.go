@@ -35,6 +35,9 @@ func IfupdownStanza(c Config, wpaConf, inet6 string) string {
 	}
 	if c.Kind == KindWifi {
 		fmt.Fprintf(&b, "\twpa-conf %s\n", wpaConf)
+		// A player runs on mains power: power saving only costs latency, and on USB sticks
+		// (rtw88) it is a known cause of dropouts. Not every driver allows switching it off.
+		fmt.Fprintf(&b, "\tpost-up iw dev %s set power_save off || true\n", c.Interface)
 	}
 	b.WriteString(inet6)
 	return b.String()
@@ -134,7 +137,7 @@ func NMKeyfile(c Config, id, uuid string) string {
 	b.WriteString("autoconnect=true\nautoconnect-priority=100\n\n")
 	if c.Kind == KindWifi {
 		w := c.Wifi
-		b.WriteString("[wifi]\nmode=infrastructure\n")
+		b.WriteString("[wifi]\nmode=infrastructure\npowersave=2\n") // off: see IfupdownStanza
 		fmt.Fprintf(&b, "ssid=%s\n", keyfileSSID(w.SSID))
 		if w.Hidden {
 			b.WriteString("hidden=true\n")

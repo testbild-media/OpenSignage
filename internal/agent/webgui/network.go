@@ -64,6 +64,8 @@ type netIface struct {
 	Scan       []netAP
 	Scanned    bool
 	ScanError  string
+	// Open: the settings are shown (after an error, a scan or a chosen network).
+	Open bool
 }
 
 type netForm struct {
@@ -127,14 +129,16 @@ func (s *Server) networkData(r *http.Request, scanIface string, scan []netcfg.AP
 		ni.Form = prefill(it, ni.Configured, v.Country, v.Status.DNS)
 		if form != nil && formIface == it.Name {
 			ni.Form = *form
+			ni.Open = true
 		}
 		if it.Kind == netcfg.KindWifi && q.Get("iface") == it.Name && q.Get("ssid") != "" {
 			ni.Form.SSID, ni.Form.SAE, ni.Form.Hidden = q.Get("ssid"), q.Get("sec") == netcfg.SecWPA3, false
 			ni.Form.Open = q.Get("sec") == netcfg.SecOpen
 			ni.Form.HavePass = ni.Configured != nil && ni.Configured.Wifi != nil && ni.Configured.Wifi.SSID == ni.Form.SSID
+			ni.Open = true
 		}
 		if scanIface == it.Name {
-			ni.Scanned = true
+			ni.Scanned, ni.Open = true, true
 			if scanErr != nil {
 				ni.ScanError = scanErr.Error()
 			}
