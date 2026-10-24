@@ -70,6 +70,20 @@ func TestMediaModuleIsWired(t *testing.T) {
 	if res.StatusCode != 200 || !bytes.Equal(got, data) {
 		t.Fatalf("download: %d", res.StatusCode)
 	}
+	// Renamed without an extension: the download still gets the one of its content.
+	if code, out := c.do("PATCH", "/api/v1/media/"+asset["id"].(string), map[string]any{"name": "Red Bull"}); code != 200 {
+		t.Fatalf("rename: %d %v", code, out)
+	}
+	req, _ = http.NewRequest("GET", c.base+"/api/v1/media/"+asset["id"].(string)+"/file?download=1", nil)
+	res, err = c.http.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, _ = io.ReadAll(res.Body)
+	res.Body.Close()
+	if cd := res.Header.Get("Content-Disposition"); cd != "attachment; filename*=UTF-8''Red%20Bull.png" || !bytes.Equal(got, data) {
+		t.Fatalf("download name: %q (%d bytes)", cd, len(got))
+	}
 	if code, out := c.do("GET", "/api/v1/storage", nil); code != 200 || out["disk"] == nil || out["breakdown"] == nil {
 		t.Fatalf("storage: %d %v", code, out)
 	}

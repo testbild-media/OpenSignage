@@ -5,11 +5,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"io"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"opensignage/internal/server/core"
@@ -551,6 +554,14 @@ func (m *Module) serveFile(w http.ResponseWriter, r *http.Request, id string) er
 	defer f.Close()
 	var name string
 	_ = m.app.DB.R.QueryRowContext(ctx, `SELECT name FROM media_assets WHERE id = ?`, id).Scan(&name)
+	// The file name gets the extension of the content (a renamed asset has none, and a
+	// download without it does not open).
+	head := make([]byte, 512)
+	n, _ := io.ReadFull(f, head)
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
+	name = downloadName(name, DetectType(head[:n]).Ext)
 
 	h := w.Header()
 	h.Set("Content-Type", firstNonEmpty(ref.Mime, "application/octet-stream"))
@@ -571,4 +582,17 @@ func (m *Module) serveFile(w http.ResponseWriter, r *http.Request, id string) er
 	// zero mod time: the content hash in the ETag is the only validator needed
 	http.ServeContent(w, r, "", time.Time{}, f)
 	return nil
+}
+
+// downloadName is the file name of a download: the asset name with the extension of its
+// content, unless the name ends with it already (.jpeg counts as .jpg).
+func downloadName(name, ext string) string {
+	if name == "" {
+		name = "media"
+	}
+	have := strings.ToLower(filepath.Ext(name))
+	if ext == "" || have == ext || (have == ".jpeg" && ext == ".jpg") {
+		return name
+	}
+	return name + ext
 }

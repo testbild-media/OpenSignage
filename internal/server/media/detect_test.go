@@ -164,3 +164,21 @@ func TestSanitizeFilename(t *testing.T) {
 		t.Errorf("length: %d", len([]rune(got)))
 	}
 }
+
+func TestDownloadName(t *testing.T) {
+	for _, c := range [][3]string{
+		{"Red Bull", ".png", "Red Bull.png"},
+		{"pixel.png", ".png", "pixel.png"},
+		{"Logo.PNG", ".png", "Logo.PNG"},
+		{"photo.jpeg", ".jpg", "photo.jpeg"},
+		{"Red Bull 0.25l", ".png", "Red Bull 0.25l.png"},
+		{"clip", ".mp4", "clip.mp4"},
+		{"unknown", "", "unknown"},
+		{"", ".jpg", "media.jpg"},
+	} {
+		if got := downloadName(c[0], c[1]); got != c[2] {
+			t.Errorf("%q %q: %q, want %q", c[0], c[1], got, c[2])
+		}
+	}
+}
+
