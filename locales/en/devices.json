@@ -38,6 +38,7 @@
   "alerts.device": "Device",
   "alerts.diskFree": "{percent} free",
   "alerts.empty": "No problems. All paired devices are working.",
+  "alerts.log": "Log of the failed version",
   "alerts.noneOpen": "No open problems.",
   "alerts.open": "Show the problems",
   "alerts.problem": "Problem",

@@ -38,6 +38,7 @@
   "alerts.device": "Gerät",
   "alerts.diskFree": "{percent} frei",
   "alerts.empty": "Keine Probleme. Alle gekoppelten Geräte arbeiten.",
+  "alerts.log": "Protokoll der fehlgeschlagenen Version",
   "alerts.noneOpen": "Keine offenen Probleme.",
   "alerts.open": "Probleme anzeigen",
   "alerts.problem": "Problem",

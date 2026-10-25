@@ -158,9 +158,16 @@ func TestRolloutOnePerZoneAndStopOnFailure(t *testing.T) {
 		t.Fatalf("second wave %q", got)
 	}
 	// d4 (zone-less) fails → the rollout stops, d5 is never offered
-	e.m.UpdateProgress("d4", contracts.UpdateProgress{Version: version.Version, State: "rolled_back", Error: "health check failed"})
+	e.m.UpdateProgress("d4", contracts.UpdateProgress{Version: version.Version, State: "rolled_back", Error: "health check failed",
+		Log: "2026-10-24 13:13:30 ERROR agent start failed"})
 	if r, _ := e.m.getRun(ctx, run); r.State != runFailed || !strings.Contains(r.Error, "Screen d4") {
 		t.Fatalf("run %+v", r)
+	}
+	// The log of the failed version is kept with the device's update.
+	var stored string
+	if err := e.m.app.DB.R.QueryRow(`SELECT error FROM device_updates WHERE run_id = ? AND device_id = 'd4'`, run).Scan(&stored); err != nil ||
+		!strings.Contains(stored, `"log":"2026-10-24 13:13:30 ERROR agent start failed"`) {
+		t.Fatalf("stored error %s (%v)", stored, err)
 	}
 	if s := e.state(t, run, "d5"); s != duCancelled {
 		t.Fatalf("d5 %s", s)

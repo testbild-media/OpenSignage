@@ -38,6 +38,7 @@
   "alerts.device": "Įrenginys",
   "alerts.diskFree": "Laisva {percent}",
   "alerts.empty": "Problemų nėra. Visi susieti įrenginiai veikia.",
+  "alerts.log": "Nepavykusios versijos žurnalas",
   "alerts.noneOpen": "Atvirų problemų nėra.",
   "alerts.open": "Rodyti problemas",
   "alerts.problem": "Problema",

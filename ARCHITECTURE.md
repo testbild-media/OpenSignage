@@ -311,7 +311,7 @@ activeSource: { kind: "playlist"|"closed"|"cleared", playlistId?, ruleId? }, ips
 `status { metrics… }` (every 30 s, at once after a blackout/display change was applied),
 `deploy.progress { id, state:
 "preparing"|"ready"|"active"|"failed", done, total, error? }`, `action.result { id, ok,
-error?, data? }`, `update.progress { version, state, error? }`, `time.ping { seq, t0 }`
+error?, data? }`, `update.progress { version, state, error?, log? }`, `time.ping { seq, t0 }`
 (clock measurement: a burst of five every minute, the shortest round trip wins).
 
 Well-known status keys (all optional, older agents send fewer): `version, os, arch, ips,
@@ -537,7 +537,14 @@ server data and re-enters pairing.
   does not return with the new version within 10 minutes stops the rollout. The agent first
   fetches the signed metadata (`GET /device/v1/update/release`), verifies it with its own
   keys (§5.9) and installs only the package whose checksum and size the signed data names –
-  side by side, with a health check and its own rollback.
+  side by side, with a health check and its own rollback. After a rollback the previous
+  version reports `update.progress rolled_back` with `log`: the last lines of the agent log
+  from the start of the update on (kept in memory at start, from before this run wrote
+  anything) and the crash output of the failed version (`<data>/logs/crash.log`, written by
+  the Go runtime via `debug.SetCrashOutput`), at most 12 KiB. The server keeps it with the
+  device's update (`params.log` of the stored error); the problems list shows "update
+  failed" with the reason and that log, so a failed update can be diagnosed without access
+  to the device.
 - The server follows asset URLs and redirects only via https to `github.com`,
   `api.github.com` and `*.githubusercontent.com`.
 - The rollback paths can be exercised with test builds (`-tags=opensignage_selftest_fail`:

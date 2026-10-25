@@ -38,6 +38,7 @@
   "alerts.device": "Urządzenie",
   "alerts.diskFree": "Wolne: {percent}",
   "alerts.empty": "Brak problemów. Wszystkie sparowane urządzenia działają.",
+  "alerts.log": "Dziennik nieudanej wersji",
   "alerts.noneOpen": "Brak otwartych problemów.",
   "alerts.open": "Pokaż problemy",
   "alerts.problem": "Problem",

@@ -38,6 +38,7 @@
   "alerts.device": "Naprava",
   "alerts.diskFree": "Prosto: {percent}",
   "alerts.empty": "Ni težav. Vse seznanjene naprave delujejo.",
+  "alerts.log": "Dnevnik neuspele različice",
   "alerts.noneOpen": "Ni odprtih težav.",
   "alerts.open": "Pokaži težave",
   "alerts.problem": "Težava",

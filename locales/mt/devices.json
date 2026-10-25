@@ -38,6 +38,7 @@
   "alerts.device": "Apparat",
   "alerts.diskFree": "{percent} ħieles",
   "alerts.empty": "L-ebda problema. L-apparati mgħaqqda kollha qed jaħdmu.",
+  "alerts.log": "Ir-reġistru tal-verżjoni li falliet",
   "alerts.noneOpen": "L-ebda problema miftuħa.",
   "alerts.open": "Uri l-problemi",
   "alerts.problem": "Problema",

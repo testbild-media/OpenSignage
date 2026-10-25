@@ -271,4 +271,6 @@ The audit log records every change.
 - **Updates:** new releases are shown (daily check), installed on click or from an uploaded
   offline bundle; the server updates itself first, then the players zone by zone. A player
   whose new version does not run returns to its previous version by itself; the problems
-  list says why ("Update failed").
+  list says why ("Update failed") and shows the log the player sent of that version. The
+  page lists the releases on the server and newer ones (older ones only on GitHub are
+  hidden), and the history shows the newest entries.

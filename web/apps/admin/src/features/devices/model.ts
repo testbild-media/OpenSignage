@@ -36,8 +36,10 @@ export interface Alert {
   zoneName?: string;
   since?: string;
   detail?: string;
-  /** update_failed: the version the update was to install (detail: the reason code). */
+  /** update_failed: the version the update was to install (detail: the reason code) and
+   *  what the screen sent from the log of that version. */
   version?: string;
+  log?: string;
   /** Acknowledged by a user: not open until the problem is gone and comes back. */
   ack?: { at: string; by: string };
 }

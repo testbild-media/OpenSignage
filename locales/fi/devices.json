@@ -38,6 +38,7 @@
   "alerts.device": "Laite",
   "alerts.diskFree": "Vapaana: {percent}",
   "alerts.empty": "Ei ongelmia. Kaikki parin muodostaneet laitteet toimivat.",
+  "alerts.log": "Epäonnistuneen version loki",
   "alerts.noneOpen": "Ei avoimia ongelmia.",
   "alerts.open": "Näytä ongelmat",
   "alerts.problem": "Ongelma",

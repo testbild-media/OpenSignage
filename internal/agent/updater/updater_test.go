@@ -537,10 +537,13 @@ func TestRollbackCommandAfterCrashLoop(t *testing.T) {
 	}
 	h := &harness{}
 	old := newUpdater(h, dataDir, inst, "1.0.0", nil)
+	var since time.Time
+	old.o.FailedLog = func(s time.Time) string { since = s; return "2026-10-24 13:13:30 ERROR agent start failed" }
 	old.Startup()
 	old.MarkConnected()
-	if p := h.last(); p.State != PhaseRolledBack || p.Error != ErrCrashLoop {
-		t.Fatalf("report %+v", p)
+	// The report carries the log of the failed version (lines since the update started).
+	if p := h.last(); p.State != PhaseRolledBack || p.Error != ErrCrashLoop || p.Log != "2026-10-24 13:13:30 ERROR agent start failed" || since.IsZero() {
+		t.Fatalf("report %+v (since %v)", p, since)
 	}
 	if msg, _ := Rollback(t.TempDir(), inst); msg != "nothing to roll back" {
 		t.Fatal("no state: nothing to do")

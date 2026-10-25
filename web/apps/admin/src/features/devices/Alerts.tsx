@@ -103,6 +103,12 @@ export function AlertList({ alerts, onChanged }: { alerts: Alert[]; onChanged?: 
                     <SeverityIcon severity={a.severity} />
                     <span>{text(a)}</span>
                   </span>
+                  {a.log && (
+                    <details className="failed-log">
+                      <summary>{t('devices.alerts.log')}</summary>
+                      <pre>{a.log}</pre>
+                    </details>
+                  )}
                 </td>
                 <td className="nowrap faint">{a.since ? formatDate(a.since) : '—'}</td>
                 <td className="alert-ack">

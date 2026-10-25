@@ -38,6 +38,7 @@
   "alerts.device": "Enhed",
   "alerts.diskFree": "{percent} ledig",
   "alerts.empty": "Ingen problemer. Alle parrede enheder fungerer.",
+  "alerts.log": "Log for den mislykkede version",
   "alerts.noneOpen": "Ingen åbne problemer.",
   "alerts.open": "Vis problemerne",
   "alerts.problem": "Problem",

@@ -38,6 +38,7 @@
   "alerts.device": "Dispositivo",
   "alerts.diskFree": "{percent} livre",
   "alerts.empty": "Sem problemas. Todos os dispositivos emparelhados estão a funcionar.",
+  "alerts.log": "Registo da versão que falhou",
   "alerts.noneOpen": "Não há problemas abertos.",
   "alerts.open": "Mostrar os problemas",
   "alerts.problem": "Problema",

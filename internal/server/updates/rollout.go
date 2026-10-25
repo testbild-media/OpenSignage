@@ -145,9 +145,9 @@ func (m *Module) UpdateProgress(deviceID string, p contracts.UpdateProgress) {
 	case "done":
 		state = duInstalled
 	case "failed":
-		state, errText = duFailed, codeErr(firstNonEmpty(p.Error, "update_failed"), p.Error)
+		state, errText = duFailed, codeErrP(firstNonEmpty(p.Error, "update_failed"), p.Error, logParam(p.Log))
 	case "rolled_back":
-		state, errText = duRolledBack, codeErr(firstNonEmpty(p.Error, "update_rolled_back"), p.Error)
+		state, errText = duRolledBack, codeErrP(firstNonEmpty(p.Error, "update_rolled_back"), p.Error, logParam(p.Log))
 	default:
 		m.log.Info("updates: unknown update.progress state ignored", "device", deviceID, "state", p.State)
 		return

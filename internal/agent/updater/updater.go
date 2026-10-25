@@ -97,6 +97,9 @@ type Options struct {
 	MaxAttempts   int           // starts of a new version before it rolls back (2)
 	RetryAfter    time.Duration // a failed version is not retried automatically before (30 min)
 	Now           func() time.Time
+	// FailedLog returns the log of the failed version (lines since the update started) for
+	// the report of a rollback; nil = none.
+	FailedLog func(since time.Time) string
 }
 
 // State is <data>/updates/update-state.json.
@@ -249,6 +252,10 @@ func (u *Updater) Startup() bool {
 		}
 		slog.Warn("running the previous version after a failed update", "failed", st.To, "reason", reason)
 		p := wire.UpdateProgress{Version: st.To, State: PhaseRolledBack, Error: reason}
+		if u.o.FailedLog != nil {
+			since, _ := time.Parse(time.RFC3339, st.StartedAt)
+			p.Log = u.o.FailedLog(since)
+		}
 		u.mu.Lock()
 		u.pending = &p
 		u.failedVersion, u.failedAt = st.To, u.o.Now()

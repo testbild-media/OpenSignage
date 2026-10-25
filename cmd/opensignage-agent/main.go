@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"syscall"
 	"time"
@@ -85,13 +86,22 @@ func run(args []string) error {
 		return fmt.Errorf("logging: %w", err)
 	}
 	defer logs.Close()
+	crashLog := filepath.Join(cfg.DataDir, "logs", "crash.log")
+	if f, err := logging.OpenCrashFile(crashLog); err != nil {
+		slog.Warn("crash output file not available", "err", err)
+	} else {
+		if err := debug.SetCrashOutput(f, debug.CrashOptions{}); err != nil {
+			slog.Warn("crash output file not set", "err", err)
+		}
+		_ = f.Close() // SetCrashOutput keeps its own descriptor
+	}
 	for _, w := range cfg.Warnings {
 		slog.Warn("configuration: " + w)
 	}
 	if cfg.Chromium == "" {
 		slog.Warn("no chromium binary found (install chromium or set OS_CHROMIUM)")
 	}
-	a, err := agent.New(cfg, agent.Options{Logs: logs})
+	a, err := agent.New(cfg, agent.Options{Logs: logs, PreviousLog: logs.PreviousTail(), CrashLog: crashLog})
 	if err != nil {
 		slog.Error("agent start failed", "err", err)
 		return err

@@ -38,6 +38,7 @@
   "alerts.device": "Seade",
   "alerts.diskFree": "Vaba: {percent}",
   "alerts.empty": "Probleeme pole. Kõik seotud seadmed töötavad.",
+  "alerts.log": "Ebaõnnestunud versiooni logi",
   "alerts.noneOpen": "Avatud probleeme pole.",
   "alerts.open": "Näita probleeme",
   "alerts.problem": "Probleem",

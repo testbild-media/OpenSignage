@@ -38,6 +38,7 @@
   "alerts.device": "Eszköz",
   "alerts.diskFree": "Szabad: {percent}",
   "alerts.empty": "Nincs probléma. Minden párosított eszköz működik.",
+  "alerts.log": "A sikertelen verzió naplója",
   "alerts.noneOpen": "Nincs nyitott probléma.",
   "alerts.open": "Problémák megjelenítése",
   "alerts.problem": "Probléma",

@@ -144,3 +144,23 @@ a.kpi:hover {
 .net-line + .net-line {
   margin-top: 2px;
 }
+
+/* The log of a failed update (problems and updates page), folded. */
+.failed-log {
+  margin-top: 6px;
+  font-size: 12px;
+}
+.failed-log summary {
+  cursor: pointer;
+  color: var(--os-text-muted);
+}
+.failed-log pre {
+  max-height: 280px;
+  overflow: auto;
+  margin: 6px 0 0;
+  padding: 8px;
+  border-radius: var(--os-radius-s);
+  background: rgba(0, 0, 0, 0.25);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -38,6 +38,7 @@
   "alerts.device": "Appareil",
   "alerts.diskFree": "{percent} libre",
   "alerts.empty": "Aucun problème. Tous les appareils associés fonctionnent.",
+  "alerts.log": "Journal de la version en échec",
   "alerts.noneOpen": "Aucun problème ouvert.",
   "alerts.open": "Afficher les problèmes",
   "alerts.problem": "Problème",

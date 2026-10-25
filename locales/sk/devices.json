@@ -38,6 +38,7 @@
   "alerts.device": "Zariadenie",
   "alerts.diskFree": "Voľné: {percent}",
   "alerts.empty": "Žiadne problémy. Všetky spárované zariadenia fungujú.",
+  "alerts.log": "Protokol neúspešnej verzie",
   "alerts.noneOpen": "Žiadne otvorené problémy.",
   "alerts.open": "Zobraziť problémy",
   "alerts.problem": "Problém",

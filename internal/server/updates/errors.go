@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"opensignage/internal/common/version"
 	"opensignage/internal/server/httpx"
@@ -84,6 +85,24 @@ func encodeErr(err error) string {
 
 // codeErr stores a plain failure code with an optional detail.
 func codeErr(code, detail string) string { return codeErrP(code, detail, nil) }
+
+// logMax bounds the log a device sends with a failed update (stored with the error).
+const logMax = 16 << 10
+
+// logParam keeps the log of a failed update as the parameter "log" (its newest part).
+func logParam(log string) map[string]any {
+	log = strings.TrimSpace(log)
+	if log == "" {
+		return nil
+	}
+	if len(log) > logMax {
+		log = log[len(log)-logMax:]
+		if i := strings.IndexByte(log, '\n'); i >= 0 {
+			log = log[i+1:]
+		}
+	}
+	return map[string]any{"log": log}
+}
 
 // codeErrP stores a failure code with a detail and message parameters. The detail is
 // also available to the translation as {detail}.

@@ -754,9 +754,10 @@ func TestUpdateFailedAlert(t *testing.T) {
 	if alert() != nil {
 		t.Fatal("a failure of another version is not this problem")
 	}
-	run("r2", version.Version, "rolled_back", `{"code":"crash_loop","message":"crash_loop"}`, "2026-10-24T15:46:18.000000000Z")
+	run("r2", version.Version, "rolled_back", `{"code":"crash_loop","message":"crash_loop","params":{"log":"ERROR agent start failed"}}`, "2026-10-24T15:46:18.000000000Z")
 	a := alert()
-	if a == nil || a["detail"] != "crash_loop" || a["version"] != version.Version || a["severity"] != "warning" || a["deviceId"] != id {
+	if a == nil || a["detail"] != "crash_loop" || a["version"] != version.Version || a["severity"] != "warning" || a["deviceId"] != id ||
+		a["log"] != "ERROR agent start failed" {
 		t.Fatalf("update failed: %v", a)
 	}
 	if _, view := e.admin.do("GET", "/api/v1/devices/"+id, nil); !strings.Contains(toJSON(view), `"kind":"update_failed"`) {

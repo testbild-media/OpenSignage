@@ -58,8 +58,10 @@ type Alert struct {
 	// Detail: the player state, the sync error, the device version, the error code of a
 	// failed update or the free share in percent ("8.53") depending on the kind.
 	Detail string `json:"detail,omitempty"`
-	// Version: the version a failed update was to install (update_failed).
+	// Version: the version a failed update was to install (update_failed); Log: what the
+	// device sent from the log of that version.
 	Version string `json:"version,omitempty"`
+	Log     string `json:"log,omitempty"`
 	// Ack: a user acknowledged the problem; it does not count as open until it is gone
 	// and comes back (acks.go).
 	Ack *AlertAck `json:"ack,omitempty"`
@@ -74,7 +76,7 @@ var alertSeverity = map[string]string{AlertOffline: SeverityWarning, AlertPlayer
 
 // updateFailure is the last update of a device when it failed or was rolled back.
 type updateFailure struct {
-	version, code, at string
+	version, code, at, log string
 }
 
 // updateFailures reads the newest update of every device (or of one) and keeps those that
@@ -102,12 +104,15 @@ func (m *Module) updateFailures(ctx context.Context, deviceID string) (map[strin
 			continue
 		}
 		var e struct {
-			Code string `json:"code"`
+			Code   string `json:"code"`
+			Params struct {
+				Log string `json:"log"`
+			} `json:"params"`
 		}
 		if json.Unmarshal([]byte(errText), &e) != nil || e.Code == "" {
 			e.Code = "update_" + state // update_failed | update_rolled_back
 		}
-		out[dev] = updateFailure{version: ver, code: e.Code, at: at}
+		out[dev] = updateFailure{version: ver, code: e.Code, at: at, log: e.Params.Log}
 	}
 	return out, rows.Err()
 }
@@ -284,7 +289,7 @@ func (m *Module) deviceAlerts(d *deviceRow, online bool, lp *progressRow, uf *up
 		// why the version differs, so it comes first.
 		if uf != nil && uf.version == version.Version {
 			add(AlertUpdateFailed, uf.at, uf.code)
-			out[len(out)-1].Version = uf.version
+			out[len(out)-1].Version, out[len(out)-1].Log = uf.version, uf.log
 		}
 		add(AlertVersionMismatch, m.since.since(d.ID, AlertVersionMismatch), d.Version)
 	}

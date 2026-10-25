@@ -471,6 +471,8 @@ type UpdateProgress struct {
 	Error   string `json:"error,omitempty"`
 	Done    int64  `json:"done,omitempty"`
 	Total   int64  `json:"total,omitempty"`
+	// Log: the last log lines (and crash output) of a version that was rolled back.
+	Log string `json:"log,omitempty"`
 }
 
 // ---------------------------------------------------------------- pairing (REST, §7.1)

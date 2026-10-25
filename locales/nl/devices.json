@@ -38,6 +38,7 @@
   "alerts.device": "Apparaat",
   "alerts.diskFree": "{percent} vrij",
   "alerts.empty": "Geen problemen. Alle gekoppelde apparaten werken.",
+  "alerts.log": "Logboek van de mislukte versie",
   "alerts.noneOpen": "Geen open problemen.",
   "alerts.open": "Problemen tonen",
   "alerts.problem": "Probleem",

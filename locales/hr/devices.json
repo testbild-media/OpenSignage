@@ -38,6 +38,7 @@
   "alerts.device": "Uređaj",
   "alerts.diskFree": "Slobodno: {percent}",
   "alerts.empty": "Nema problema. Svi upareni uređaji rade.",
+  "alerts.log": "Zapisnik neuspjele verzije",
   "alerts.noneOpen": "Nema otvorenih problema.",
   "alerts.open": "Prikaži probleme",
   "alerts.problem": "Problem",

@@ -38,6 +38,7 @@
   "alerts.device": "Enhet",
   "alerts.diskFree": "{percent} ledigt",
   "alerts.empty": "Inga problem. Alla parade enheter fungerar.",
+  "alerts.log": "Logg för den misslyckade versionen",
   "alerts.noneOpen": "Inga öppna problem.",
   "alerts.open": "Visa problemen",
   "alerts.problem": "Problem",

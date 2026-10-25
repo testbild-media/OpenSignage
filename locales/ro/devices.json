@@ -38,6 +38,7 @@
   "alerts.device": "Dispozitiv",
   "alerts.diskFree": "Liber: {percent}",
   "alerts.empty": "Nicio problemă. Toate dispozitivele asociate funcționează.",
+  "alerts.log": "Jurnalul versiunii eșuate",
   "alerts.noneOpen": "Nicio problemă deschisă.",
   "alerts.open": "Afișează problemele",
   "alerts.problem": "Problemă",

@@ -44,12 +44,16 @@ import (
 
 // Options allow tests to replace platform parts.
 type Options struct {
-	Display  display.Provider // nil = X11 on Linux, none elsewhere
-	NoKiosk  bool             // do not supervise Chromium (tests, headless)
-	Logs     *logging.RotatingFile
-	Now      func() time.Time
-	Reboot   func() error // nil = sudo -n systemctl reboot
-	Hostname string
+	Display display.Provider // nil = X11 on Linux, none elsewhere
+	NoKiosk bool             // do not supervise Chromium (tests, headless)
+	Logs    *logging.RotatingFile
+	// PreviousLog: the end of the log of the previous run; CrashLog: the file with the crash
+	// output of the agent. Both go with the report of a rolled back update.
+	PreviousLog []byte
+	CrashLog    string
+	Now         func() time.Time
+	Reboot      func() error // nil = sudo -n systemctl reboot
+	Hostname    string
 }
 
 // Agent is the running client service.
@@ -224,7 +228,10 @@ func New(cfg *config.Config, opts Options) (*Agent, error) {
 			_, free, err := sysinfo.Disk(dir)
 			return free, err
 		},
-		Report:      func(p wire.UpdateProgress) bool { return a.link.Send(wire.TUpdateProgress, "", p) },
+		Report: func(p wire.UpdateProgress) bool { return a.link.Send(wire.TUpdateProgress, "", p) },
+		FailedLog: func(since time.Time) string {
+			return updater.FailedRunLog(opts.PreviousLog, opts.CrashLog, since)
+		},
 		SetUpdating: a.setUpdating,
 		Exit:        a.requestExit,
 	})

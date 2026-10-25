@@ -38,6 +38,7 @@
   "alerts.device": "Gléas",
   "alerts.diskFree": "{percent} saor",
   "alerts.empty": "Níl aon fhadhbanna ann. Tá gach gléas péireáilte ag obair.",
+  "alerts.log": "Loga an leagain ar theip air",
   "alerts.noneOpen": "Níl aon fhadhbanna oscailte.",
   "alerts.open": "Taispeáin na fadhbanna",
   "alerts.problem": "Fadhb",

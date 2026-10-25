@@ -38,6 +38,7 @@
   "alerts.device": "Устройство",
   "alerts.diskFree": "Свободни: {percent}",
   "alerts.empty": "Няма проблеми. Всички сдвоени устройства работят.",
+  "alerts.log": "Журнал на неуспешната версия",
   "alerts.noneOpen": "Няма открити проблеми.",
   "alerts.open": "Покажи проблемите",
   "alerts.problem": "Проблем",

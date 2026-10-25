@@ -9,6 +9,8 @@ import { type Query, useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { useConfirm, useToast } from '../../components/feedback';
 import { Badge, Button, Checkbox, DataState, ErrorText, PageHeader, TextInput } from '../../components/ui';
+import { visibleReleases } from './releases';
+import '../devices/devices.css'; // .failed-log
 import './updates.css';
 
 interface StoredError {
@@ -478,11 +480,14 @@ function ReleasesCard({
     onInstall(r.version);
   });
   const anyOp = !!op;
+  const shown = visibleReleases(data.releases, op?.kind === 'download' ? op.version : undefined);
+  const hidden = data.releases.length - shown.length;
   return (
     <div className="card">
       <h2>{t('updates.releases')}</h2>
       {data.releases.length === 0 && <p className="muted">{t('updates.noReleases')}</p>}
-      {data.releases.map((r) => {
+      {data.releases.length > 0 && shown.length === 0 && <p className="muted">{t('updates.upToDate')}</p>}
+      {shown.map((r) => {
         const downloading = op?.kind === 'download' && op.version === r.version;
         const installing = op?.kind === 'install' && op.version === r.version;
         const canInstall = r.state === 'ready' && r.newer && r.serverPackage && data.serverUpdate.possible;
@@ -566,6 +571,7 @@ function ReleasesCard({
           </div>
         );
       })}
+      {hidden > 0 && <p className="faint">{t('updates.olderHidden', { count: hidden })}</p>}
       <ErrorText error={download.error ?? remove.error ?? install.error} />
     </div>
   );
@@ -778,6 +784,7 @@ function ClientsCard({ q, onChanged }: { q: Query<Clients>; onChanged: () => voi
                                   })}
                                 </div>
                                 {u.error && <div className="form-error upd-small">{errText(u.error)}</div>}
+                                <FailedLog log={storedLog(u.error)} />
                               </>
                             ) : (
                               <span className="faint">—</span>
@@ -815,10 +822,37 @@ function ClientsCard({ q, onChanged }: { q: Query<Clients>; onChanged: () => voi
   );
 }
 
+/** The log a screen sent with a failed update (params.log of the stored error). */
+function storedLog(raw: string): string {
+  try {
+    const e = JSON.parse(raw) as StoredError;
+    return typeof e.params?.log === 'string' ? e.params.log : '';
+  } catch {
+    return '';
+  }
+}
+
+/** The log of a failed version, folded (it can be long). */
+function FailedLog({ log }: { log: string | undefined }) {
+  const t = useT();
+  if (!log) return null;
+  return (
+    <details className="failed-log">
+      <summary>{t('devices.alerts.log')}</summary>
+      <pre>{log}</pre>
+    </details>
+  );
+}
+
+// The history shows the newest runs; older ones on request.
+const HISTORY_SHOWN = 10;
+
 function HistoryCard({ q }: { q: Query<{ runs: Run[] }> }) {
   const t = useT();
   const errText = useErrorText();
-  const list = q.data?.runs ?? [];
+  const [all, setAll] = useState(false);
+  const runs = q.data?.runs ?? [];
+  const list = all ? runs : runs.slice(0, HISTORY_SHOWN);
   return (
     <div className="card">
       <h2>{t('updates.history')}</h2>
@@ -875,6 +909,13 @@ function HistoryCard({ q }: { q: Query<{ runs: Run[] }> }) {
             </tbody>
           </table>
         </div>
+        {!all && runs.length > HISTORY_SHOWN && (
+          <div className="form-actions">
+            <Button variant="ghost" onClick={() => setAll(true)}>
+              {t('updates.historyOlder', { count: runs.length - HISTORY_SHOWN })}
+            </Button>
+          </div>
+        )}
       </DataState>
     </div>
   );

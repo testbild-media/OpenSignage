@@ -38,6 +38,7 @@
   "alerts.device": "Ierīce",
   "alerts.diskFree": "Brīvi {percent}",
   "alerts.empty": "Problēmu nav. Visas pārī savienotās ierīces darbojas.",
+  "alerts.log": "Neveiksmīgās versijas žurnāls",
   "alerts.noneOpen": "Nav atvērtu problēmu.",
   "alerts.open": "Rādīt problēmas",
   "alerts.problem": "Problēma",
