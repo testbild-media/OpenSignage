@@ -7,7 +7,7 @@ import { useEvents } from '../../lib/events';
 import { useToast } from '../../components/feedback';
 import { Button, DataState, ErrorText, PageHeader, PasswordPair, Select, TextInput, passwordPairValid } from '../../components/ui';
 import { AlertList, useAlertsQuery } from '../devices/Alerts';
-import { openAlerts } from '../devices/model';
+import { countBySeverity, openAlerts } from '../devices/model';
 import '../devices/devices.css';
 
 /** Own password and personal language (applied on save, not on selection). */
@@ -142,6 +142,8 @@ export function DashboardPage() {
   const list = devices.data?.devices ?? [];
   const online = list.filter((d) => d.online).length;
   const problems = openAlerts(alerts.data?.alerts); // acknowledged ones are on the alerts page
+  const bySeverity = countBySeverity(problems);
+  const kpiTone = bySeverity.critical ? 'kpi-danger' : bySeverity.warning ? 'kpi-warning' : '';
   return (
     <div className="page">
       <PageHeader title={t('admin.dashboard.title')} subtitle={t('admin.dashboard.welcome', { name: user?.displayName ?? '' })} />
@@ -150,7 +152,7 @@ export function DashboardPage() {
           <div className="kpi-value">{devices.data ? `${online} / ${list.length}` : '—'}</div>
           <div className="kpi-label">{t('admin.dashboard.devicesOnline')}</div>
         </div>
-        <Link to="/alerts" className={`kpi ${alerts.data?.count ? 'kpi-danger' : ''}`} title={t('devices.alerts.open')}>
+        <Link to="/alerts" className={`kpi ${kpiTone}`} title={t('devices.alerts.open')}>
           <div className="kpi-value">{alerts.data?.count ?? '—'}</div>
           <div className="kpi-label">{t('admin.dashboard.alerts')}</div>
         </Link>

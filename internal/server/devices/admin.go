@@ -130,6 +130,14 @@ func (m *Module) views(ctx context.Context, rows []*deviceRow) ([]DeviceView, er
 	if err != nil {
 		return nil, err
 	}
+	one := ""
+	if len(rows) == 1 {
+		one = rows[0].ID
+	}
+	failures, err := m.updateFailures(ctx, one)
+	if err != nil {
+		return nil, err
+	}
 	now := time.Now()
 	out := make([]DeviceView, 0, len(rows))
 	for _, d := range rows {
@@ -156,7 +164,11 @@ func (m *Module) views(ctx context.Context, rows []*deviceRow) ([]DeviceView, er
 		if p, ok := lastProgress[d.ID]; ok {
 			lp = &p
 		}
-		v.Alerts = m.deviceAlerts(d, v.Online, lp, now)
+		var uf *updateFailure
+		if f, ok := failures[d.ID]; ok {
+			uf = &f
+		}
+		v.Alerts = m.deviceAlerts(d, v.Online, lp, uf, now)
 		if v.Alerts == nil {
 			v.Alerts = []Alert{}
 		}
@@ -668,6 +680,10 @@ func (m *Module) alerts(w http.ResponseWriter, r *http.Request, p *core.Principa
 	if err := pr.Err(); err != nil {
 		return err
 	}
+	failures, err := m.updateFailures(r.Context(), "")
+	if err != nil {
+		return err
+	}
 	now := time.Now()
 	out := []Alert{}
 	for _, d := range devs {
@@ -678,7 +694,11 @@ func (m *Module) alerts(w http.ResponseWriter, r *http.Request, p *core.Principa
 		if x, ok := lastProgress[d.ID]; ok {
 			lp = &x
 		}
-		out = append(out, m.deviceAlerts(d, m.hub.get(d.ID) != nil, lp, now)...)
+		var uf *updateFailure
+		if f, ok := failures[d.ID]; ok {
+			uf = &f
+		}
+		out = append(out, m.deviceAlerts(d, m.hub.get(d.ID) != nil, lp, uf, now)...)
 	}
 	rank := func(a Alert) int {
 		if a.Severity == SeverityCritical {

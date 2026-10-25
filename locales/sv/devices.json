@@ -25,6 +25,7 @@
   "alert.player_crashed": "Spelaren kraschade",
   "alert.power_low": "Strömförsörjningen är för svag (underspänning)",
   "alert.sync_failed": "Synkroniseringen misslyckades",
+  "alert.update_failed": "Uppdateringen misslyckades",
   "alert.version_mismatch": "Annan version",
   "alert.video_fallback": "Maskinvaruavkodning av video avstängd efter fel",
   "alerts.ack": "Bekräfta",

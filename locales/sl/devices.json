@@ -25,6 +25,7 @@
   "alert.player_crashed": "Predvajalnik se je sesul",
   "alert.power_low": "Napajanje je prešibko (podnapetost)",
   "alert.sync_failed": "Sinhronizacija ni uspela",
+  "alert.update_failed": "Posodobitev ni uspela",
   "alert.version_mismatch": "Drugačna različica",
   "alert.video_fallback": "Strojno dekodiranje videa izklopljeno po napakah",
   "alerts.ack": "Potrdi",

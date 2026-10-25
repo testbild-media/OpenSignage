@@ -132,6 +132,9 @@ describe('alerts', () => {
     ]);
     expect(g[0]!.alerts.map((x) => x.kind)).toEqual(['device_offline', 'version_mismatch']);
     expect(countBySeverity(list)).toEqual({ critical: 1, warning: 3 });
+    // A failed update (with its time) comes before the differing version it explains.
+    const upd = groupAlerts([a('4', 'Terrace', 'version_mismatch', 'warning'), a('4', 'Terrace', 'update_failed', 'warning', '2026-10-24T15:46:18Z')]);
+    expect(upd[0]!.alerts.map((x) => x.kind)).toEqual(['update_failed', 'version_mismatch']);
     expect(groupAlerts([])).toEqual([]);
   });
 

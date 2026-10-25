@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"opensignage/internal/common/version"
 	"opensignage/internal/contracts"
 )
 
@@ -18,7 +19,7 @@ import (
 
 // Alert kinds.
 const (
-	AlertOffline         = "device_offline"
+	AlertOffline         = "device_offline" // (warning)
 	AlertPlayerCrashed   = "player_crashed"
 	AlertSyncFailed      = "sync_failed"
 	AlertVersionMismatch = "version_mismatch"
@@ -27,6 +28,7 @@ const (
 	AlertPowerLow        = "power_low"      // under-voltage now or within powerRecent (warning)
 	AlertVideoFallback   = "video_fallback" // "auto" switched to software decoding after decode errors (warning)
 	AlertGPULost         = "gpu_lost"       // the player lost the GPU and restarting it did not help (warning)
+	AlertUpdateFailed    = "update_failed"  // the last update to the server version failed or was rolled back (warning)
 )
 
 // powerRecent keeps a power warning visible after a short dip (the CPU was throttled).
@@ -46,24 +48,69 @@ const (
 
 // Alert is a problem shown on every admin page.
 type Alert struct {
-	Kind       string `json:"kind"`     // device_offline | player_crashed | sync_failed | version_mismatch | disk_low | disk_critical | power_low | video_fallback | gpu_lost
+	Kind       string `json:"kind"`     // device_offline | player_crashed | sync_failed | version_mismatch | update_failed | disk_low | disk_critical | power_low | video_fallback | gpu_lost
 	Severity   string `json:"severity"` // critical | warning
 	DeviceID   string `json:"deviceId"`
 	DeviceName string `json:"deviceName"`
 	ZoneID     string `json:"zoneId,omitempty"`
 	ZoneName   string `json:"zoneName,omitempty"`
 	Since      string `json:"since,omitempty"`
-	// Detail: the player state, the sync error, the device version or the free share in
-	// percent ("8.53") depending on the kind.
+	// Detail: the player state, the sync error, the device version, the error code of a
+	// failed update or the free share in percent ("8.53") depending on the kind.
 	Detail string `json:"detail,omitempty"`
+	// Version: the version a failed update was to install (update_failed).
+	Version string `json:"version,omitempty"`
 	// Ack: a user acknowledged the problem; it does not count as open until it is gone
 	// and comes back (acks.go).
 	Ack *AlertAck `json:"ack,omitempty"`
 }
 
-var alertSeverity = map[string]string{AlertOffline: SeverityCritical, AlertPlayerCrashed: SeverityCritical,
+// An offline device is a warning: screens are often switched off at night or outside
+// opening hours, and that is no problem.
+var alertSeverity = map[string]string{AlertOffline: SeverityWarning, AlertPlayerCrashed: SeverityCritical,
 	AlertDiskCritical: SeverityCritical, AlertSyncFailed: SeverityWarning, AlertVersionMismatch: SeverityWarning,
-	AlertDiskLow: SeverityWarning, AlertPowerLow: SeverityWarning, AlertVideoFallback: SeverityWarning, AlertGPULost: SeverityWarning}
+	AlertDiskLow: SeverityWarning, AlertPowerLow: SeverityWarning, AlertVideoFallback: SeverityWarning, AlertGPULost: SeverityWarning,
+	AlertUpdateFailed: SeverityWarning}
+
+// updateFailure is the last update of a device when it failed or was rolled back.
+type updateFailure struct {
+	version, code, at string
+}
+
+// updateFailures reads the newest update of every device (or of one) and keeps those that
+// failed or were rolled back. A failed update shows as a problem of its own – "version
+// differs" alone does not tell that the device tried and returned to its old version.
+func (m *Module) updateFailures(ctx context.Context, deviceID string) (map[string]updateFailure, error) {
+	q, args := `SELECT du.device_id, r.version, du.state, du.error, du.updated_at
+		FROM device_updates du JOIN update_runs r ON r.id = du.run_id`, []any{}
+	if deviceID != "" {
+		q, args = q+` WHERE du.device_id = ?`, append(args, deviceID)
+	}
+	rows, err := m.app.DB.R.QueryContext(ctx, q+` ORDER BY du.device_id, du.updated_at`, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[string]updateFailure{}
+	for rows.Next() {
+		var dev, ver, state, errText, at string
+		if err := rows.Scan(&dev, &ver, &state, &errText, &at); err != nil {
+			return nil, err
+		}
+		if state != "failed" && state != "rolled_back" {
+			delete(out, dev) // a later update replaces an earlier failure
+			continue
+		}
+		var e struct {
+			Code string `json:"code"`
+		}
+		if json.Unmarshal([]byte(errText), &e) != nil || e.Code == "" {
+			e.Code = "update_" + state // update_failed | update_rolled_back
+		}
+		out[dev] = updateFailure{version: ver, code: e.Code, at: at}
+	}
+	return out, rows.Err()
+}
 
 // gpuLost reports a player that lost the GPU and runs in software although restarts were
 // tried (agent self-healing, kiosk/gpu.go).
@@ -207,8 +254,8 @@ func (m *Module) observeStatus(ctx context.Context, deviceID string, st contract
 }
 
 // deviceAlerts lists the problems of one paired device. lp is its newest deployment
-// progress (nil when none).
-func (m *Module) deviceAlerts(d *deviceRow, online bool, lp *progressRow, now time.Time) []Alert {
+// progress (nil when none), uf its last update when that failed (nil when not).
+func (m *Module) deviceAlerts(d *deviceRow, online bool, lp *progressRow, uf *updateFailure, now time.Time) []Alert {
 	if !d.Paired {
 		return nil // devices that are not paired never count
 	}
@@ -233,6 +280,12 @@ func (m *Module) deviceAlerts(d *deviceRow, online bool, lp *progressRow, now ti
 		add(AlertSyncFailed, lp.updatedAt, lp.errText)
 	}
 	if !versionMatches(d.Version) {
+		// A failed update counts while it was the update to this server version; it tells
+		// why the version differs, so it comes first.
+		if uf != nil && uf.version == version.Version {
+			add(AlertUpdateFailed, uf.at, uf.code)
+			out[len(out)-1].Version = uf.version
+		}
 		add(AlertVersionMismatch, m.since.since(d.ID, AlertVersionMismatch), d.Version)
 	}
 	if kind, pct := diskAlert(st); kind != "" {

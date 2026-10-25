@@ -25,6 +25,7 @@
   "alert.player_crashed": "Awaria odtwarzacza",
   "alert.power_low": "Zasilacz jest zbyt słaby (zbyt niskie napięcie)",
   "alert.sync_failed": "Synchronizacja nie powiodła się",
+  "alert.update_failed": "Aktualizacja nie powiodła się",
   "alert.version_mismatch": "Inna wersja",
   "alert.video_fallback": "Sprzętowe dekodowanie wideo wyłączone po błędach",
   "alerts.ack": "Potwierdź",

@@ -25,6 +25,7 @@
   "alert.player_crashed": "Soitin kaatui",
   "alert.power_low": "Virtalähde on liian heikko (alijännite)",
   "alert.sync_failed": "Synkronointi epäonnistui",
+  "alert.update_failed": "Päivitys epäonnistui",
   "alert.version_mismatch": "Eri versio",
   "alert.video_fallback": "Laitteistopohjainen videon dekoodaus poistettiin käytöstä virheiden jälkeen",
   "alerts.ack": "Kuittaa",

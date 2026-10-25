@@ -25,6 +25,7 @@
   "alert.player_crashed": "Afspilleren gik ned",
   "alert.power_low": "Strømforsyningen er for svag (underspænding)",
   "alert.sync_failed": "Synkronisering mislykkedes",
+  "alert.update_failed": "Opdatering mislykkedes",
   "alert.version_mismatch": "Afvigende version",
   "alert.video_fallback": "Hardwarebaseret videoafkodning slået fra efter fejl",
   "alerts.ack": "Bekræft",

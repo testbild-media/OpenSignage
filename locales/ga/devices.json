@@ -25,6 +25,7 @@
   "alert.player_crashed": "Thuairteáil an seinnteoir",
   "alert.power_low": "Soláthar cumhachta ró-lag (íosvoltas)",
   "alert.sync_failed": "Theip ar an sioncronú",
+  "alert.update_failed": "Theip ar an nuashonrú",
   "alert.version_mismatch": "Leagan difriúil",
   "alert.video_fallback": "Múchadh díchódú físeáin crua-earraí tar éis earráidí",
   "alerts.ack": "Admhaigh",

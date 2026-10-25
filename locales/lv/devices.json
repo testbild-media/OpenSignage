@@ -25,6 +25,7 @@
   "alert.player_crashed": "Atskaņotāja avārija",
   "alert.power_low": "Barošanas avots ir pārāk vājš (pazemināts spriegums)",
   "alert.sync_failed": "Sinhronizācija neizdevās",
+  "alert.update_failed": "Atjaunināšana neizdevās",
   "alert.version_mismatch": "Versija atšķiras",
   "alert.video_fallback": "Aparatūras video dekodēšana izslēgta pēc kļūdām",
   "alerts.ack": "Apstiprināt",

@@ -277,6 +277,12 @@ h2 {
 .kpi-danger .kpi-value {
   color: #ff8c8c;
 }
+.kpi-warning {
+  border-color: #f0c060;
+}
+.kpi-warning .kpi-value {
+  color: #f0c060;
+}
 .quick-links {
   display: flex;
   gap: 10px;

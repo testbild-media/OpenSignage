@@ -25,6 +25,7 @@
   "alert.player_crashed": "Plantage du lecteur",
   "alert.power_low": "Alimentation trop faible (sous-tension)",
   "alert.sync_failed": "Échec de la synchronisation",
+  "alert.update_failed": "Échec de la mise à jour",
   "alert.version_mismatch": "Version différente",
   "alert.video_fallback": "Décodage vidéo matériel désactivé après des erreurs",
   "alerts.ack": "Confirmer",

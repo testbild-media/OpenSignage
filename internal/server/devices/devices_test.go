@@ -607,6 +607,10 @@ func TestOfflineAlert(t *testing.T) {
 	if code != 200 || out["count"] != float64(1) || !strings.Contains(toJSON(out), `"kind":"device_offline"`) || !strings.Contains(toJSON(out), id) {
 		t.Fatalf("alerts: %v", out)
 	}
+	// Offline is a warning (screens switched off at night are no problem).
+	if a := out["alerts"].([]any)[0].(map[string]any); a["severity"] != "warning" {
+		t.Fatalf("offline severity: %v", a)
+	}
 }
 
 // Without the updates module (no package provider) the device endpoint answers no_package.
@@ -714,5 +718,53 @@ func TestGroupPlaceClockKeyAndTimePing(t *testing.T) {
 	pong := decode[contracts.TimePong](t, a.waitFor(contracts.MsgTimePong, 2*time.Second, nil).P)
 	if pong.Seq != 42 || pong.T0 != 123 || pong.Server < before.UnixMicro() || pong.Server > time.Now().UnixMicro() {
 		t.Fatalf("pong: %+v", pong)
+	}
+}
+
+// A device whose update to the server version failed or rolled back has a problem of its
+// own (with the version and the reason) – "version differs" alone does not say that it
+// tried and returned to its old version.
+func TestUpdateFailedAlert(t *testing.T) {
+	e := newEnv(t)
+	devtest.Zone(t, e.db(), "z1", "Bar")
+	id, _ := e.pair("hw-upd", "z1")
+	devtest.Exec(t, e.db(), `UPDATE devices SET version = '0.0.1' WHERE id = ?`, id)
+	run := func(runID, ver, state, errText, at string) {
+		devtest.Exec(t, e.db(), `INSERT INTO update_runs(id, kind, version, state, started_at) VALUES (?, 'clients', ?, 'done', ?)`, runID, ver, at)
+		devtest.Exec(t, e.db(), `INSERT INTO device_updates(run_id, device_id, state, error, updated_at) VALUES (?, ?, ?, ?, ?)`, runID, id, state, errText, at)
+	}
+	alert := func() map[string]any {
+		t.Helper()
+		code, out := e.admin.do("GET", "/api/v1/alerts", nil)
+		if code != 200 {
+			t.Fatalf("alerts: %d %v", code, out)
+		}
+		for _, a := range out["alerts"].([]any) {
+			if m := a.(map[string]any); m["kind"] == "update_failed" {
+				return m
+			}
+		}
+		return nil
+	}
+	if alert() != nil {
+		t.Fatal("no update yet: no problem")
+	}
+	// An earlier version that failed does not count.
+	run("r1", "0.0.2", "failed", `{"code":"download_failed"}`, "2026-10-24T10:00:00.000000000Z")
+	if alert() != nil {
+		t.Fatal("a failure of another version is not this problem")
+	}
+	run("r2", version.Version, "rolled_back", `{"code":"crash_loop","message":"crash_loop"}`, "2026-10-24T15:46:18.000000000Z")
+	a := alert()
+	if a == nil || a["detail"] != "crash_loop" || a["version"] != version.Version || a["severity"] != "warning" || a["deviceId"] != id {
+		t.Fatalf("update failed: %v", a)
+	}
+	if _, view := e.admin.do("GET", "/api/v1/devices/"+id, nil); !strings.Contains(toJSON(view), `"kind":"update_failed"`) {
+		t.Fatalf("device view without the problem: %v", view["alerts"])
+	}
+	// A later attempt that is still running (or done) replaces the failure.
+	run("r3", version.Version, "sent", "", "2026-10-24T16:00:00.000000000Z")
+	if alert() != nil {
+		t.Fatal("a newer attempt replaces the failure")
 	}
 }

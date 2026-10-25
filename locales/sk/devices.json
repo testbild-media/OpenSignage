@@ -25,6 +25,7 @@
   "alert.player_crashed": "Prehrávač zlyhal",
   "alert.power_low": "Napájanie je príliš slabé (podpätie)",
   "alert.sync_failed": "Synchronizácia zlyhala",
+  "alert.update_failed": "Aktualizácia zlyhala",
   "alert.version_mismatch": "Iná verzia",
   "alert.video_fallback": "Hardvérové dekódovanie videa vypnuté po chybách",
   "alerts.ack": "Potvrdiť",

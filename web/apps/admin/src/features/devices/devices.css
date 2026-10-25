@@ -91,6 +91,9 @@
   align-items: center;
   gap: 6px;
 }
+.alert-problem > svg {
+  flex-shrink: 0; /* long texts (a failed update with its reason) wrap beside the icon */
+}
 .sev-critical {
   color: #ff8c8c;
 }

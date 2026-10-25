@@ -25,6 +25,7 @@
   "alert.player_crashed": "Arresto anomalo del player",
   "alert.power_low": "Alimentatore troppo debole (sottotensione)",
   "alert.sync_failed": "Sincronizzazione non riuscita",
+  "alert.update_failed": "Aggiornamento non riuscito",
   "alert.version_mismatch": "Versione diversa",
   "alert.video_fallback": "Decodifica video hardware disattivata dopo errori",
   "alerts.ack": "Conferma",

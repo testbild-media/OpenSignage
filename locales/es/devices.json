@@ -25,6 +25,7 @@
   "alert.player_crashed": "El reproductor se ha bloqueado",
   "alert.power_low": "Fuente de alimentación demasiado débil (subtensión)",
   "alert.sync_failed": "Error de sincronización",
+  "alert.update_failed": "Actualización fallida",
   "alert.version_mismatch": "Versión distinta",
   "alert.video_fallback": "Decodificación de vídeo por hardware desactivada tras errores",
   "alerts.ack": "Confirmar",

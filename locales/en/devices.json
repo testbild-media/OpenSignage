@@ -25,6 +25,7 @@
   "alert.player_crashed": "Player crashed",
   "alert.power_low": "Power supply too weak (under-voltage)",
   "alert.sync_failed": "Sync failed",
+  "alert.update_failed": "Update failed",
   "alert.version_mismatch": "Version differs",
   "alert.video_fallback": "Hardware video decoding switched off after errors",
   "alerts.ack": "Acknowledge",

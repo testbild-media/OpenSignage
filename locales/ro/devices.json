@@ -25,6 +25,7 @@
   "alert.player_crashed": "Playerul s-a închis neașteptat",
   "alert.power_low": "Sursa de alimentare este prea slabă (subtensiune)",
   "alert.sync_failed": "Sincronizare eșuată",
+  "alert.update_failed": "Actualizare eșuată",
   "alert.version_mismatch": "Versiune diferită",
   "alert.video_fallback": "Decodarea video hardware a fost oprită după erori",
   "alerts.ack": "Confirmă",

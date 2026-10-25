@@ -5,7 +5,7 @@
 import { Link } from 'react-router';
 import { AlertTriangle, Check, Eye, OctagonAlert } from 'lucide-react';
 import { has } from '@opensignage/i18n';
-import { post } from '../../lib/api';
+import { post, translateError } from '../../lib/api';
 import { useAction, useQuery, useT } from '../../lib/hooks';
 import { useEvents } from '../../lib/events';
 import { Badge, Button, DataState, ErrorText, PageHeader } from '../../components/ui';
@@ -39,6 +39,10 @@ export function useAlertText(): (a: Alert) => string {
       }
       case 'version_mismatch':
         return a.detail ? `${label} · ${a.detail}` : label;
+      case 'update_failed': {
+        const head = a.version ? `${label} · ${a.version}` : label;
+        return a.detail ? `${head} · ${translateError(a.detail, {}, a.detail)}` : head;
+      }
       case 'sync_failed':
         return a.detail
           ? `${label} · ${has(`client.syncError.${a.detail}`) ? t(`client.syncError.${a.detail}`) : a.detail}`

@@ -19,6 +19,7 @@ export type AlertKind =
   | 'player_crashed'
   | 'sync_failed'
   | 'version_mismatch'
+  | 'update_failed'
   | 'disk_low'
   | 'disk_critical'
   | 'power_low'
@@ -35,6 +36,8 @@ export interface Alert {
   zoneName?: string;
   since?: string;
   detail?: string;
+  /** update_failed: the version the update was to install (detail: the reason code). */
+  version?: string;
   /** Acknowledged by a user: not open until the problem is gone and comes back. */
   ack?: { at: string; by: string };
 }
@@ -309,11 +312,11 @@ export function groupAlerts(list: Alert[]): DeviceAlerts[] {
     if (severityRank(a.severity) < severityRank(g.severity)) g.severity = a.severity;
   }
   const groups = [...byDevice.values()];
+  // Within a device: critical first, then the oldest; problems without a time (e.g. a
+  // differing version) after those with one (e.g. the failed update that explains it).
+  const at = (a: Alert): string => a.since || '￿';
   for (const g of groups) {
-    g.alerts.sort(
-      (x, y) =>
-        severityRank(x.severity) - severityRank(y.severity) || (x.since ?? '').localeCompare(y.since ?? ''),
-    );
+    g.alerts.sort((x, y) => severityRank(x.severity) - severityRank(y.severity) || at(x).localeCompare(at(y)));
   }
   return groups.sort(
     (x, y) =>

@@ -25,6 +25,7 @@
   "alert.player_crashed": "Speler gecrasht",
   "alert.power_low": "Voeding te zwak (onderspanning)",
   "alert.sync_failed": "Synchronisatie mislukt",
+  "alert.update_failed": "Update mislukt",
   "alert.version_mismatch": "Andere versie",
   "alert.video_fallback": "Hardwarematige videodecodering na fouten uitgeschakeld",
   "alerts.ack": "Bevestigen",

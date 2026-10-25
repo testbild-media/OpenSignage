@@ -168,9 +168,11 @@ temperature, disk, cache, clock, video decoding, display mode and a screenshot o
   (Raspberry Pi 4), Strong (PC). It decides which video variant a player downloads.
 - **Plasma protection** (slight pixel shift) and **plasma regeneration** (white noise until
   stopped or restarted).
-- **Problems:** offline, other version, sync failed, low disk space, under-voltage, graphics
-  acceleration lost and more – shown on the dashboard and in the sidebar. Acknowledge a
-  problem to hide it until it goes away and comes back.
+- **Problems:** errors (player crashed, disk almost full) and warnings (offline, other
+  version, failed update with its reason, sync failed, low disk space, under-voltage,
+  graphics acceleration lost and more) – all on the dashboard and the problems page; the
+  sidebar shows errors only, so screens switched off at night raise no alarm. Acknowledge
+  a problem to hide it until it goes away and comes back.
 
 Players heal themselves: a crashed browser restarts, a hanging video is skipped, a player
 that lost its graphics acceleration restarts (at most three times an hour, then it raises
@@ -267,4 +269,6 @@ The audit log records every change.
 - **Storage:** what uses the disk, unused media, old revisions.
 - **Backup:** database, media (ZIP) or everything; restore with a controlled restart.
 - **Updates:** new releases are shown (daily check), installed on click or from an uploaded
-  offline bundle; the server updates itself first, then the players zone by zone.
+  offline bundle; the server updates itself first, then the players zone by zone. A player
+  whose new version does not run returns to its previous version by itself; the problems
+  list says why ("Update failed").

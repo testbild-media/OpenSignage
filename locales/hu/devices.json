@@ -25,6 +25,7 @@
   "alert.player_crashed": "A lejátszó összeomlott",
   "alert.power_low": "Túl gyenge a tápegység (alacsony feszültség)",
   "alert.sync_failed": "A szinkronizálás sikertelen",
+  "alert.update_failed": "Sikertelen frissítés",
   "alert.version_mismatch": "Eltérő verzió",
   "alert.video_fallback": "A hardveres videódekódolás hibák után kikapcsolt",
   "alerts.ack": "Nyugtázás",

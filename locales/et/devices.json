@@ -25,6 +25,7 @@
   "alert.player_crashed": "Esitaja jooksis kokku",
   "alert.power_low": "Toiteallikas on liiga nõrk (alapinge)",
   "alert.sync_failed": "Sünkroonimine ebaõnnestus",
+  "alert.update_failed": "Uuendus ebaõnnestus",
   "alert.version_mismatch": "Erinev versioon",
   "alert.video_fallback": "Riistvaraline videodekodeerimine lülitati vigade järel välja",
   "alerts.ack": "Kinnita",

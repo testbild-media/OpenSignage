@@ -25,6 +25,7 @@
   "alert.player_crashed": "O reprodutor falhou",
   "alert.power_low": "Fonte de alimentação demasiado fraca (subtensão)",
   "alert.sync_failed": "Falha na sincronização",
+  "alert.update_failed": "Falha na atualização",
   "alert.version_mismatch": "Versão diferente",
   "alert.video_fallback": "Descodificação de vídeo por hardware desligada após erros",
   "alerts.ack": "Confirmar",

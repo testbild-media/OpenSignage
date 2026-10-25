@@ -25,6 +25,7 @@
   "alert.player_crashed": "Reproduktor se srušio",
   "alert.power_low": "Napajanje je preslabo (podnapon)",
   "alert.sync_failed": "Sinkronizacija nije uspjela",
+  "alert.update_failed": "Ažuriranje nije uspjelo",
   "alert.version_mismatch": "Verzija se razlikuje",
   "alert.video_fallback": "Hardversko dekodiranje videa isključeno nakon pogrešaka",
   "alerts.ack": "Potvrdi",

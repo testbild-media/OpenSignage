@@ -25,6 +25,7 @@
   "alert.player_crashed": "Player abgestürzt",
   "alert.power_low": "Netzteil zu schwach (Unterspannung)",
   "alert.sync_failed": "Synchronisierung fehlgeschlagen",
+  "alert.update_failed": "Update fehlgeschlagen",
   "alert.version_mismatch": "Version weicht ab",
   "alert.video_fallback": "Hardware-Videodekodierung nach Fehlern abgeschaltet",
   "alerts.ack": "Bestätigen",

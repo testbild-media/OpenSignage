@@ -25,6 +25,7 @@
   "alert.player_crashed": "Il-plejer ikkraxxja",
   "alert.power_low": "Provvista tal-enerġija dgħajfa wisq (vultaġġ baxx)",
   "alert.sync_failed": "Is-sinkronizzazzjoni falliet",
+  "alert.update_failed": "L-aġġornament ma rnexxiex",
   "alert.version_mismatch": "Verżjoni differenti",
   "alert.video_fallback": "Id-dekodifikazzjoni tal-vidjo permezz tat-tagħmir intfiet wara żbalji",
   "alerts.ack": "Ikkonferma",

@@ -25,6 +25,7 @@
   "alert.player_crashed": "Grotuvo strigtis",
   "alert.power_low": "Per silpnas maitinimo šaltinis (per maža įtampa)",
   "alert.sync_failed": "Sinchronizuoti nepavyko",
+  "alert.update_failed": "Naujinimas nepavyko",
   "alert.version_mismatch": "Versija skiriasi",
   "alert.video_fallback": "Aparatinis vaizdo dekodavimas išjungtas po klaidų",
   "alerts.ack": "Patvirtinti",

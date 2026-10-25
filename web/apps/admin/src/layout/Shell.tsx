@@ -6,11 +6,13 @@ import { useStoredState, useT, useQuery } from '../lib/hooks';
 import { roleAtLeast, useSession } from '../lib/session';
 import { useRights } from '../lib/rights';
 import { useConnected, useEvents } from '../lib/events';
+import { countBySeverity, openAlerts, type Alert } from '../features/devices/model';
 import iconUrl from '../../../../../branding/Icon.png';
 import logoUrl from '../../../../../branding/logo_horizontal.svg';
 
 interface AlertsResponse {
   count: number;
+  alerts: Alert[];
 }
 
 function useAlerts(): number {
@@ -21,8 +23,9 @@ function useAlerts(): number {
     const id = window.setInterval(q.reload, 30000);
     return () => clearInterval(id);
   }, [q.reload]);
-  // 404 = devices module not available yet: no alerts to show.
-  return q.data?.count ?? 0;
+  // Only errors show in the sidebar; warnings (e.g. a screen switched off at night) are
+  // listed on the dashboard and the problems page. 404 = devices module not available yet.
+  return countBySeverity(openAlerts(q.data?.alerts)).critical;
 }
 
 function isActive(item: NavDef, pathname: string): boolean {

@@ -25,6 +25,7 @@
   "alert.player_crashed": "Плейърът се срина",
   "alert.power_low": "Захранването е слабо (понижено напрежение)",
   "alert.sync_failed": "Синхронизирането е неуспешно",
+  "alert.update_failed": "Неуспешна актуализация",
   "alert.version_mismatch": "Различна версия",
   "alert.video_fallback": "Хардуерното декодиране на видео е изключено след грешки",
   "alerts.ack": "Потвърди",
