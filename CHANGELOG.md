@@ -4,6 +4,18 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.7 – 2026-10-25
+
+Brand logos after replacing their image, and downloads of media. Installations on 1.x update
+from the web interface (Settings → Updates); no installer needed.
+
+### Fixed
+- Product lists: a brand logo whose image was replaced could keep the size measured for its
+  previous image within the same browser session and came out larger or smaller than the
+  other logos. Every logo is now measured from the image it shows.
+- Media: a downloaded original (or an earlier version of it) had no file extension when the
+  medium was renamed; the download now gets the extension of its content.
+
 ## 1.4.6 – 2026-10-20
 
 Video settings in presentations are kept. Installations on 1.x update from the web interface
