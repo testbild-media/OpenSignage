@@ -4,6 +4,31 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.8 – 2026-10-25
+
+Failed player updates are visible and can be diagnosed from the administration; offline
+screens are no alarm any more. Installations on 1.x update from the web interface (Settings →
+Updates); the players take the new reporting with the update, no installer needed.
+
+### Added
+- Problems: a player whose update failed or rolled back to its previous version shows
+  "Update failed" with the version and the reason in plain words – before, only "version
+  differs" was listed. The player sends the last log lines and the crash output of the failed
+  version along; the problems list and the updates page show them, folded, so the cause can be
+  found without access to the device.
+
+### Changed
+- An offline screen is a warning, no longer an error, and the sidebar shows errors only:
+  screens switched off at night or outside opening hours raise no alarm. Warnings stay on the
+  dashboard (yellow) and the problems page.
+- Updates page: only releases with files on this server and newer ones are listed (older
+  releases only on GitHub cannot be installed and are hidden), and the history shows the
+  newest ten entries, older ones on request.
+
+### Fixed
+- Updates page: the reasons of failed player updates (e.g. "crash_loop") were shown as codes;
+  they are explained now in every language.
+
 ## 1.4.7 – 2026-10-25
 
 Brand logos after replacing their image, and downloads of media. Installations on 1.x update
