@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyzeWordmark, wordmarkBox } from './wordmark';
+import { analyzeWordmark, wordmarkBox, wordmarkOf } from './wordmark';
 
 // Builds an alpha function from column ink ranges [x0, x1, top, bottom].
 function image(w: number, h: number, inks: [number, number, number, number][]): (x: number, y: number) => number {
@@ -37,6 +37,24 @@ describe('wordmark analysis', () => {
     // Letters 5–34 fully covered, plus a lighter anti-aliased row 35 (alpha 100) below.
     const a = (x: number, y: number): number => (x >= 10 && x <= 60 ? (y >= 5 && y <= 34 ? 255 : y === 35 ? 100 : 0) : 0);
     expect(analyzeWordmark(a, 80, 40)).toEqual({ top: 5, baseline: 34, height: 40 });
+  });
+
+  it('measures every image itself, also two versions of a medium under one address', () => {
+    // A replaced medium keeps its address: the old version (letters 10–39 in 60 rows) must not
+    // lend its result to the new one (letters 0–39 in 40 rows).
+    const src = '/api/v1/media/a/file?variant=display';
+    const old = { currentSrc: src, src } as HTMLImageElement;
+    const fresh = { currentSrc: src, src } as HTMLImageElement;
+    let reads = 0;
+    const reader = (pix: [number, number, number, number][], w: number, h: number) => () => {
+      reads++;
+      return { alpha: image(w, h, pix), w, h };
+    };
+    expect(wordmarkOf(old, reader([[0, 99, 10, 39]], 100, 60))).toEqual({ top: 10, baseline: 39, height: 60 });
+    expect(wordmarkOf(fresh, reader([[0, 99, 0, 39]], 100, 40))).toEqual({ top: 0, baseline: 39, height: 40 });
+    // The same image is read once.
+    expect(wordmarkOf(old, reader([[0, 99, 0, 39]], 100, 40))).toEqual({ top: 10, baseline: 39, height: 60 });
+    expect(reads).toBe(2);
   });
 
   it('gives up on empty or degenerate images', () => {

@@ -70,27 +70,37 @@ export function wordmarkBox(m: Wordmark, ascender: number): { height: number; of
   return { height: round(m.height * em), offset: offset === 0 ? 0 : offset };
 }
 
-const cache = new Map<string, Wordmark | null>();
+/** The alpha channel of a loaded image; null when it cannot be read (cross origin). */
+export type AlphaReader = (img: HTMLImageElement) => { alpha: (x: number, y: number) => number; w: number; h: number } | null;
+
+function readAlpha(img: HTMLImageElement): ReturnType<AlphaReader> {
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const ctx = w && h ? document.createElement('canvas').getContext('2d', { willReadFrequently: true }) : null;
+  if (!ctx) return null;
+  ctx.canvas.width = w;
+  ctx.canvas.height = h;
+  ctx.drawImage(img, 0, 0);
+  const data = ctx.getImageData(0, 0, w, h).data;
+  return { alpha: (x, y) => data[(y * w + x) * 4 + 3]!, w, h };
+}
+
+// One result per image element and source. Never per address alone: a replaced medium keeps
+// its address, and a result of its previous version gave the new logo the wrong size.
+const cache = new WeakMap<HTMLImageElement, { src: string; result: Wordmark | null }>();
 
 /** Analyses a loaded image (same origin); null when it cannot be read (cross origin). */
-export function wordmarkOf(img: HTMLImageElement): Wordmark | null {
-  const key = img.currentSrc || img.src;
-  if (cache.has(key)) return cache.get(key)!;
+export function wordmarkOf(img: HTMLImageElement, read: AlphaReader = readAlpha): Wordmark | null {
+  const src = img.currentSrc || img.src;
+  const hit = cache.get(img);
+  if (hit && hit.src === src) return hit.result;
   let result: Wordmark | null = null;
   try {
-    const w = img.naturalWidth;
-    const h = img.naturalHeight;
-    const ctx = w && h ? document.createElement('canvas').getContext('2d', { willReadFrequently: true }) : null;
-    if (ctx) {
-      ctx.canvas.width = w;
-      ctx.canvas.height = h;
-      ctx.drawImage(img, 0, 0);
-      const data = ctx.getImageData(0, 0, w, h).data;
-      result = analyzeWordmark((x, y) => data[(y * w + x) * 4 + 3]!, w, h);
-    }
+    const a = read(img);
+    result = a ? analyzeWordmark(a.alpha, a.w, a.h) : null;
   } catch {
     result = null;
   }
-  cache.set(key, result);
+  cache.set(img, { src, result });
   return result;
 }
