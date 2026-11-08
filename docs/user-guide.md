@@ -176,7 +176,10 @@ temperature, disk, cache, clock, video decoding, display mode and a screenshot o
 
 Players heal themselves: a crashed browser restarts, a hanging video is skipped, a player
 that lost its graphics acceleration restarts (at most three times an hour, then it raises
-a problem).
+a problem). A player whose picture froze (the browser draws nothing any more) restarts its
+browser after a minute, and a screen that stayed black after it was away for a moment (an
+HDMI splitter or a TV switched off and on) is switched on again within 30 seconds. The
+player log notes both, so a black screen can be explained afterwards.
 
 Each player also has its own small web interface (`https://<player-ip>:8443`): status,
 server address, pair again, display, network, actions, logs and update. A central password

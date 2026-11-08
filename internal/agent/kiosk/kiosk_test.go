@@ -318,3 +318,40 @@ func TestGPUNeverHadIsLeftAlone(t *testing.T) {
 		t.Fatalf("gpu %+v, cdp sessions %d", g, cdp.conns.Load())
 	}
 }
+
+// A player that still pings but draws no frames (stuck compositor or graphics driver: the
+// screen looks frozen or black) is restarted – not while no screen shows the picture.
+func TestDrawStallRestartsPlayer(t *testing.T) {
+	cdp := newFakeCDP(t)
+	s := newTestSupervisor(t, "stay", cdp, time.Minute)
+	var active atomic.Bool
+	s.o.ScreenActive = active.Load
+	s.o.DrawTimeout = 200 * time.Millisecond
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { s.Run(ctx); close(done) }()
+	defer func() { cancel(); <-done }()
+	waitFor(t, "cdp session", func() bool { return s.Reload(context.Background()) == nil })
+	stop := make(chan struct{})
+	defer close(stop)
+	go func() { // the heartbeat goes on, without frames
+		for {
+			select {
+			case <-stop:
+				return
+			case <-time.After(30 * time.Millisecond):
+				s.Heartbeat(wire.PlayerPing{Item: "slide 3", FPS: 0})
+			}
+		}
+	}()
+	s.Heartbeat(wire.PlayerPing{Item: "slide 3", FPS: 30})
+	time.Sleep(600 * time.Millisecond)
+	if _, n, _, _ := s.Status(); n != 0 {
+		t.Fatalf("restarted although no screen shows the picture: %d", n)
+	}
+	active.Store(true)
+	waitFor(t, "restart because nothing is drawn", func() bool {
+		_, n, lastErr, _ := s.Status()
+		return n >= 1 && lastErr == "player not drawing"
+	})
+}

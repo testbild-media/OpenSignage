@@ -259,10 +259,25 @@ function connect(): void {
   };
 }
 
+// Frames the browser drew: a page whose script still runs but that draws nothing (a stuck
+// compositor or graphics driver) looks frozen or black on the screen while the heartbeat
+// goes on – the agent restarts the browser when the frames stop.
+let frames = 0;
+let framesSince = performance.now();
+const countFrame = (): void => {
+  frames++;
+  requestAnimationFrame(countFrame);
+};
+requestAnimationFrame(countFrame);
+
 // Heartbeat for the agent watchdog (no ping for 30 s → the agent restarts the browser).
 window.setInterval(() => {
   const mem = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
-  send({ t: 'ping', p: { heap: mem?.usedJSHeapSize ?? 0, item: lastItem, fps: 0 } });
+  const now = performance.now();
+  const fps = Math.round((frames * 1000 * 10) / Math.max(1, now - framesSince)) / 10;
+  frames = 0;
+  framesSince = now;
+  send({ t: 'ping', p: { heap: mem?.usedJSHeapSize ?? 0, item: lastItem, fps } });
 }, 5000);
 
 window.addEventListener('error', (e) => report('error', `${e.message} @ ${e.filename}:${e.lineno}`));

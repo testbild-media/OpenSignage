@@ -160,6 +160,9 @@ func Modes(o Output) []wire.DisplayModes {
 
 // Matches reports whether the output already shows the requested setting.
 func Matches(o Output, d wire.Display) bool {
+	if o.Width == 0 || o.Height == 0 {
+		return false // the output is off: whatever is wanted, it is not shown
+	}
 	if o.Rotation != NormRotation(d.Rotation) {
 		return false
 	}
@@ -263,6 +266,9 @@ func (f *Fake) Apply(_ context.Context, d wire.Display) error {
 		return f.Fail
 	}
 	f.Applied = append(f.Applied, d)
+	if d.IsAuto() && f.Out.Connected && f.Out.Width == 0 {
+		f.Out.Width, f.Out.Height = 1920, 1080 // --auto switches an output that was off on
+	}
 	if !d.IsAuto() {
 		f.Out.Width, f.Out.Height = d.Width, d.Height
 		if d.Refresh > 0 {

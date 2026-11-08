@@ -1,7 +1,7 @@
 // Package kiosk starts and supervises Chromium as a child process: fixed
 // kiosk flags, a CDP connection for reload/screenshots/health, and a watchdog that
-// restarts the browser when it exits, stops sending player pings, stops answering
-// CDP, uses too much memory or lost its GPU (gpu.go). Restarts back off 2, 4, 8 … 300 s (reset after 10
+// restarts the browser when it exits, stops sending player pings, stops drawing frames,
+// stops answering CDP, uses too much memory or lost its GPU (gpu.go). Restarts back off 2, 4, 8 … 300 s (reset after 10
 // minutes of stable operation). Every restart path re-creates the CDP connection.
 package kiosk
 
@@ -51,8 +51,14 @@ type Options struct {
 	// GPUProbe asks Chromium for its GPU state (default: CDP SystemInfo).
 	GPUProbe GPUProbe
 
-	PingTimeout      time.Duration // 30 s
-	FirstPingGrace   time.Duration // 90 s after start
+	PingTimeout    time.Duration // 30 s
+	FirstPingGrace time.Duration // 90 s after start
+	// DrawTimeout: the player pings but has drawn no frame for this long (60 s) – a stuck
+	// compositor or graphics driver; the screen looks frozen or black.
+	DrawTimeout time.Duration
+	// ScreenActive reports whether a screen shows the picture (nil = always): without one
+	// the browser may draw nothing, which is no reason to restart it.
+	ScreenActive     func() bool
 	CheckInterval    time.Duration // 5 s
 	CDPTimeout       time.Duration // 30 s to find DevToolsActivePort
 	MinBackoff       time.Duration // 2 s
@@ -71,6 +77,7 @@ type Supervisor struct {
 	mu        sync.Mutex
 	state     string
 	lastPing  time.Time
+	lastDraw  time.Time // last ping that reported drawn frames (or the first ping)
 	item      string
 	cdp       *CDP
 	restarts  int
@@ -99,6 +106,7 @@ func New(o Options) *Supervisor {
 	}
 	def(&o.PingTimeout, 30*time.Second)
 	def(&o.FirstPingGrace, 90*time.Second)
+	def(&o.DrawTimeout, time.Minute)
 	def(&o.CheckInterval, 5*time.Second)
 	def(&o.CDPTimeout, 30*time.Second)
 	def(&o.MinBackoff, 2*time.Second)
@@ -168,6 +176,9 @@ func (s *Supervisor) Args() []string {
 func (s *Supervisor) Heartbeat(p wire.PlayerPing) {
 	s.mu.Lock()
 	s.lastPing = time.Now()
+	if p.FPS > 0 || s.lastDraw.IsZero() {
+		s.lastDraw = s.lastPing
+	}
 	s.item = p.Item
 	up := s.state == wire.PlayerStarting
 	if up {
@@ -381,6 +392,7 @@ func (s *Supervisor) runOnce(ctx context.Context, bin string) (reason string) {
 	s.state = wire.PlayerStarting
 	s.startedAt = time.Now()
 	s.lastPing = time.Time{}
+	s.lastDraw = time.Time{}
 	s.running = true
 	s.mu.Unlock()
 	if changed {
@@ -476,7 +488,7 @@ func (s *Supervisor) runOnce(ctx context.Context, bin string) (reason string) {
 		case <-ticker.C:
 		}
 		s.mu.Lock()
-		startedAt, lastPing := s.startedAt, s.lastPing
+		startedAt, lastPing, lastDraw, item := s.startedAt, s.lastPing, s.lastDraw, s.item
 		s.mu.Unlock()
 		if (!fitted && time.Since(startedAt) < 2*time.Minute) || time.Since(lastFit) >= time.Minute {
 			fit()
@@ -486,6 +498,9 @@ func (s *Supervisor) runOnce(ctx context.Context, bin string) (reason string) {
 			return "no player ping since start"
 		case !lastPing.IsZero() && time.Since(lastPing) > s.o.PingTimeout:
 			return "player ping timeout"
+		case !lastDraw.IsZero() && time.Since(lastDraw) > s.o.DrawTimeout && (s.o.ScreenActive == nil || s.o.ScreenActive()):
+			slog.Warn("player stopped drawing, restarting it", "since", lastDraw.Format(time.RFC3339), "item", item)
+			return "player not drawing"
 		}
 		// CDP health; a lost session is re-created, three failures in a row restart.
 		c, err := s.currentCDP()

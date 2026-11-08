@@ -96,6 +96,7 @@ type Agent struct {
 	hardwareID  string
 	ips         []string
 	displayErr  string
+	screen      string // state of the screen output (screen.go); "" = not looked at yet
 	updating    bool
 	// regen: plasma regeneration (white noise) is on. Volatile on purpose: it ends when
 	// switched off, with a player restart or when the agent restarts.
@@ -201,6 +202,7 @@ func New(cfg *config.Config, opts Options) (*Agent, error) {
 			VideoAccel:   a.videoAccel,
 			DisplayReady: a.applySavedDisplay,
 			WindowSize:   a.screenSize,
+			ScreenActive: a.screenActive,
 			OnStateChange: func(state string) {
 				if state == wire.PlayerCrashed {
 					a.playerCrashed(time.Now())
@@ -359,6 +361,7 @@ func (a *Agent) Run(ctx context.Context, web interface{ Run(context.Context) err
 	safe.Loop(ctx, "scheduler", a.sched.Run)
 	safe.Loop(ctx, "housekeeping", a.housekeeping)
 	safe.Loop(ctx, "clock", a.clockLoop)
+	safe.Loop(ctx, "screen", a.screenWatch)
 	peers := a.clockPeers()
 	safe.Loop(ctx, "clock-lan", func(ctx context.Context) {
 		if err := peers.Run(ctx); err != nil && ctx.Err() == nil {

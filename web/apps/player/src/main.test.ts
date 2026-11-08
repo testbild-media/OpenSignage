@@ -273,6 +273,18 @@ describe('network change waiting for its confirmation', () => {
   });
 });
 
+// ---------------------------------------------------------------- heartbeat
+
+describe('heartbeat for the agent watchdog', () => {
+  it('reports the frames drawn, so the agent sees a player that stopped drawing', async () => {
+    await push({ t: 'mode', p: MODE }, { t: 'config', p: CONFIG });
+    await vi.advanceTimersByTimeAsync(5_000);
+    const pings = ws().sent.filter((m): m is { t: 'ping'; p: { fps: number } } => (m as { t?: string }).t === 'ping');
+    expect(pings.length).toBeGreaterThan(0);
+    expect(pings.at(-1)!.p.fps).toBeGreaterThan(30);
+  });
+});
+
 // ---------------------------------------------------------------- scale mode and assets
 
 describe('scale mode and assets on the player', () => {

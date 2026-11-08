@@ -348,7 +348,17 @@ length on the corrected clock; position: the track of a playlist for several scr
 { scaleMode, perf, plasmaShift, showIpOverlay }`, `cmd { name: "reload"|"blackout"|… }`,
 `versionNotice { text? }`, `networkNotice { text? }` (shown until a network change is
 confirmed; names the WebGUI addresses).
-Player → agent: `ping { heap, fps, item }` (every 5 s), `log { level, msg }`.
+Player → agent: `ping { heap, fps, item }` (every 5 s; `fps` = frames the browser drew
+since the last ping), `log { level, msg }`.
+
+The kiosk watchdog restarts the browser (with backoff) when it exits, sends no ping for 30 s
+(90 s after start), draws no frame for 60 s while a screen shows the picture (a stuck
+compositor or graphics driver: the screen looks frozen or black although the page runs; the
+log names the item that was playing), stops answering CDP, uses too much memory or lost its
+GPU. The screen watch of the agent looks at the primary output every 30 s: a screen that is
+connected but whose output is off (the X server left it off after the screen went away for a
+moment – an HDMI splitter syncing again, a TV switched off and on) is switched on again with
+the saved mode; every change (disconnected, output off, picture again) is logged.
 
 ### 5.9 Release
 
@@ -522,8 +532,9 @@ server data and re-enters pairing.
   daily), downloads a release (all packages, resumable) or accepts the offline bundle, and
   verifies `SHA256SUMS.sig` against the built-in and admin-added keys before anything is used.
 - **Server:** database backup (`VACUUM INTO`, `backups/pre-update-*.db`) and config copy →
-  package extracted to `releases/<v>` → `update-state.json` → `previous`/`current` switched →
-  restart. The new version migrates and runs a self-test; on failure (or more than two
+  package extracted to `releases/<v>` (every file and directory fsynced, so a power cut right
+  after the switch cannot leave a release whose data never reached the disk) →
+  `update-state.json` → `previous`/`current` switched → restart. The new version migrates and runs a self-test; on failure (or more than two
   starts) it restores the backup and switches back itself. If it crashes before that,
   systemd's `OnFailure` runs `<previous>/bin/opensignage-server rollback` as the service user
   (the command refuses to run as root and only accepts an update state that names the
@@ -537,7 +548,8 @@ server data and re-enters pairing.
   does not return with the new version within 10 minutes stops the rollout. The agent first
   fetches the signed metadata (`GET /device/v1/update/release`), verifies it with its own
   keys (§5.9) and installs only the package whose checksum and size the signed data names –
-  side by side, with a health check and its own rollback. After a rollback the previous
+  side by side (extracted with fsync, like the server), with a health check and its own
+  rollback. After a rollback the previous
   version reports `update.progress rolled_back` with `log`: the last lines of the agent log
   from the start of the update on (kept in memory at start, from before this run wrote
   anything) and the crash output of the failed version (`<data>/logs/crash.log`, written by
