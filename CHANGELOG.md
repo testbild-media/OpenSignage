@@ -4,6 +4,28 @@ All notable changes to OpenSignage are documented in this file. The format is ba
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## 1.4.9 – 2026-11-08
+
+Players recover from a frozen or black picture by themselves, and updates survive a power cut
+right after they were installed. Installations on 1.x update from the web interface (Settings
+→ Updates); no installer needed.
+
+### Added
+- Players: a player whose picture froze – the page still runs, but the browser draws no frame
+  any more (a stuck graphics driver) – restarts its browser after a minute. The player reports
+  the frames it draws with its heartbeat; the log names the item that was playing.
+- Players: a screen that is connected but stays black after it was away for a moment (an HDMI
+  splitter syncing again, a TV switched off and on) is switched on again with the saved mode
+  within 30 seconds. Before, it stayed black until a restart. Every change of the screen
+  (disconnected, black, picture again) is logged.
+
+### Fixed
+- Updates: a power cut seconds after a player or server update could leave the new version
+  incomplete on disk; the player then crashed on every start until it rolled back
+  ("crash_loop"). Every file of an update is written to disk before the switch to it.
+- Player log: a log that was cut by a power cut showed empty or broken lines in the problems
+  list and the updates page.
+
 ## 1.4.8 – 2026-10-25
 
 Failed player updates are visible and can be diagnosed from the administration; offline
