@@ -152,7 +152,9 @@ func OpenCrashFile(path string) (*os.File, error) {
 func CompactLines(b []byte, since time.Time, max int) []string {
 	var out []string
 	for _, line := range strings.Split(string(b), "\n") {
-		line = strings.TrimRight(line, "\r")
+		// NUL bytes: log data that never reached the disk before a power cut (the file
+		// grew, its blocks stayed empty).
+		line = strings.TrimRight(strings.ReplaceAll(line, "\x00", ""), "\r")
 		if strings.TrimSpace(line) == "" {
 			continue
 		}

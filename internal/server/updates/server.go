@@ -488,7 +488,9 @@ func modTime(p string) time.Time {
 
 // extractPackage unpacks a release package (tar.gz with one top directory) into dest,
 // stripping the top directory. Only regular files and directories are accepted; paths
-// escaping dest are refused.
+// escaping dest are refused. Every file and directory is on disk when it returns (fsync):
+// the update switches to the new release right after, and a power cut must not leave the
+// switch pointing at files whose data never reached the disk.
 func extractPackage(src, dest string) error {
 	f, err := os.Open(src)
 	if err != nil {
@@ -505,12 +507,14 @@ func extractPackage(src, dest string) error {
 	}
 	tr := tar.NewReader(gz)
 	var total int64
+	dirs := map[string]bool{dest: true}
 	for n := 0; ; n++ {
 		if n > maxPackageEntries {
 			return errors.New("too many entries")
 		}
 		h, err := tr.Next()
 		if errors.Is(err, io.EOF) {
+			syncDirs(dirs)
 			return nil
 		}
 		if err != nil {
@@ -533,6 +537,7 @@ func extractPackage(src, dest string) error {
 			if err := os.MkdirAll(target, 0o755); err != nil {
 				return err
 			}
+			dirs[target] = true
 		case tar.TypeReg:
 			total += h.Size
 			if total > maxPackageBytes {
@@ -541,6 +546,7 @@ func extractPackage(src, dest string) error {
 			if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 				return err
 			}
+			dirs[filepath.Dir(target)] = true
 			mode := os.FileMode(0o644)
 			if h.FileInfo().Mode().Perm()&0o111 != 0 {
 				mode = 0o755
@@ -550,6 +556,9 @@ func extractPackage(src, dest string) error {
 				return err
 			}
 			_, err = io.Copy(out, io.LimitReader(tr, h.Size))
+			if err == nil {
+				err = out.Sync()
+			}
 			if cerr := out.Close(); err == nil {
 				err = cerr
 			}
@@ -559,6 +568,18 @@ func extractPackage(src, dest string) error {
 		default:
 			return fmt.Errorf("unsupported entry type in %q", h.Name)
 		}
+	}
+}
+
+// syncDirs writes the directory entries of extracted files to disk, deepest first.
+func syncDirs(dirs map[string]bool) {
+	list := make([]string, 0, len(dirs))
+	for d := range dirs {
+		list = append(list, d)
+	}
+	sort.Slice(list, func(i, j int) bool { return len(list[i]) > len(list[j]) })
+	for _, d := range list {
+		atomicfile.SyncDir(d)
 	}
 }
 

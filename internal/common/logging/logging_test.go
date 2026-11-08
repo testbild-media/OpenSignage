@@ -63,6 +63,12 @@ panic: runtime error: index out of range
 	if got := CompactLines([]byte(log), time.Time{}, 2); len(got) != 2 || !strings.HasPrefix(got[0], "panic:") {
 		t.Fatalf("last two: %q", got)
 	}
+	// After a power cut the file can hold NUL bytes where data never reached the disk.
+	cut := "{\"time\":\"2026-10-24T13:12:55Z\",\"level\":\"INFO\",\"msg\":\"player connected\"}\n" + strings.Repeat("\x00", 300) +
+		"{\"time\":\"2026-10-24T17:46:18Z\",\"level\":\"WARN\",\"msg\":\"running the previous version\"}\n"
+	if got := CompactLines([]byte(cut), time.Time{}, 10); len(got) != 2 || got[1] != "2026-10-24 17:46:18 WARN running the previous version" {
+		t.Fatalf("NUL bytes: %q", got)
+	}
 }
 
 func TestOpenCrashFileStartsAnewWhenLarge(t *testing.T) {

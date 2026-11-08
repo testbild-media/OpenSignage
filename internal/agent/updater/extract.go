@@ -9,7 +9,10 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
+
+	"opensignage/internal/common/atomicfile"
 )
 
 // Extract unpacks a release package (tar.gz with one top-level directory
@@ -17,6 +20,11 @@ import (
 // regular files and directories are accepted; paths may not escape dest; the server
 // binary is skipped (clients never run it). The package must contain
 // bin/opensignage-agent.
+//
+// Every file and directory is on disk when Extract returns (fsync): the update switches to
+// the new release right after, and a power cut seconds later must not leave the switch
+// pointing at files whose data never reached the disk – the new agent would crash on every
+// start until the rollback.
 func Extract(tgz, dest string, maxBytes int64) error {
 	f, err := os.Open(tgz)
 	if err != nil {
@@ -34,6 +42,7 @@ func Extract(tgz, dest string, maxBytes int64) error {
 	tr := tar.NewReader(gz)
 	var total int64
 	haveAgent := false
+	dirs := map[string]bool{dest: true}
 	for {
 		h, err := tr.Next()
 		if errors.Is(err, io.EOF) {
@@ -62,6 +71,7 @@ func Extract(tgz, dest string, maxBytes int64) error {
 			if err := os.MkdirAll(target, 0o755); err != nil {
 				return err
 			}
+			dirs[target] = true
 		case tar.TypeReg:
 			total += h.Size
 			if total > maxBytes {
@@ -70,6 +80,7 @@ func Extract(tgz, dest string, maxBytes int64) error {
 			if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 				return err
 			}
+			dirs[filepath.Dir(target)] = true
 			mode := os.FileMode(0o644)
 			if h.Mode&0o111 != 0 {
 				mode = 0o755
@@ -79,6 +90,9 @@ func Extract(tgz, dest string, maxBytes int64) error {
 				return err
 			}
 			_, err = io.Copy(out, io.LimitReader(tr, h.Size))
+			if err == nil {
+				err = out.Sync()
+			}
 			if cerr := out.Close(); err == nil {
 				err = cerr
 			}
@@ -97,6 +111,15 @@ func Extract(tgz, dest string, maxBytes int64) error {
 	}
 	if !haveAgent {
 		return errors.New("package contains no bin/opensignage-agent")
+	}
+	// The directory entries of the new files as well, deepest first.
+	list := make([]string, 0, len(dirs))
+	for d := range dirs {
+		list = append(list, d)
+	}
+	sort.Slice(list, func(i, j int) bool { return len(list[i]) > len(list[j]) })
+	for _, d := range list {
+		atomicfile.SyncDir(d)
 	}
 	return nil
 }
